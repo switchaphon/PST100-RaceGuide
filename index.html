@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>PST100 Race Day</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PST100">
+<style>
+:root{--bg:#0b0f14;--card:#151c25;--card2:#1c2531;--tx:#eef2f7;--mut:#8fa0b3;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5a5f;--acc:#4da3ff;--line:#26313f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Thai","Sarabun",sans-serif}
+body{padding:0 12px calc(86px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;font-size:17px;line-height:1.35}
+header{position:sticky;top:0;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 8px;border-bottom:1px solid var(--line);z-index:5;display:flex;justify-content:space-between;align-items:flex-end}
+.clock{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.sub{color:var(--mut);font-size:13px}
+.right{text-align:right}
+.card{background:var(--card);border-radius:14px;padding:14px;margin:12px 0}
+.card h2{margin:0 0 6px;font-size:14px;color:var(--mut);font-weight:600;text-transform:none}
+.big{font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05}
+.mid{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px}
+.row>div{flex:1;background:var(--card2);border-radius:10px;padding:10px}
+.row .lab{font-size:12px;color:var(--mut)}
+.good{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}.acc{color:var(--acc)}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:18px;font-size:22px;font-weight:800;color:#06120b;background:var(--ok);margin:10px 0}
+.btn.alt{background:var(--acc);color:#04101e}
+.btn.ghost{background:var(--card2);color:var(--tx);font-size:16px;padding:12px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font-size:14px;padding:4px 9px;border-radius:99px;background:var(--card2)}
+.chip.y{background:#12351f;color:var(--ok)}.chip.n{background:#3a1519;color:var(--bad);text-decoration:line-through}
+.bar{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin:8px 0 2px}
+.bar>i{display:block;height:100%;background:var(--acc);width:0}
+ul.chk{list-style:none;margin:6px 0 0;padding:0}
+ul.chk li{padding:11px 10px;margin:6px 0;background:var(--card2);border-radius:10px;font-size:18px;display:flex;gap:10px;align-items:flex-start}
+ul.chk li.done{opacity:.45;text-decoration:line-through}
+ul.chk li:before{content:"\2610";font-size:22px;line-height:1}
+ul.chk li.done:before{content:"\2611";color:var(--ok)}
+.tip{background:var(--card2);border-radius:10px;padding:10px;margin-top:8px;font-size:16px}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-weight:600;font-size:12px}
+tr.cur td{background:#14283d}
+nav{position:fixed;left:0;right:0;bottom:0;background:#0e141bf2;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--mut);padding:14px 4px;font-size:16px;font-weight:700}
+nav button.on{color:var(--acc);border-top:3px solid var(--acc);padding-top:11px}
+select,input{background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:16px}
+input.s{width:64px;text-align:center}
+.small{font-size:13px;color:var(--mut)}
+svg text{font-family:inherit}
+.seg{display:flex;gap:8px;margin:8px 0}
+.seg button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:15px;font-weight:700}
+.seg button.on{background:var(--acc);color:#04101e;border-color:var(--acc)}
+.kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:16px}
+.kv:last-child{border:0}.kv b{font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:center;gap:5px}
+.chip.bag{background:#fde047;color:#1a1400;font-weight:800;border:1px solid #fff59d;box-shadow:0 0 10px #fde04799}
+.ic{display:inline-flex;width:34px;height:34px;border-radius:10px;align-items:center;justify-content:center;border:1px solid transparent}
+.ic.sm{width:26px;height:26px;border-radius:8px}
+.ic.no{background:#2a1517;border-color:#5b2327;color:#ff5a5f;font-weight:800;font-size:15px}
+.ic.un{color:#4a5666}
+.ic.bag{background:#fde047;border-color:#fff59d;box-shadow:0 0 10px #fde047aa}
+table.mx td,table.mx th{text-align:center;padding:4px 1px}
+table.mx td.mid-id{text-align:left;padding-left:6px;font-size:14px}
+table.mx .ml{font-size:9px;line-height:1.1;margin-top:2px;font-weight:700}
+.blk{border-top:1px solid var(--line);padding:6px 0 4px}
+.blk.cur{background:#14283d;border-radius:8px}
+.r1{display:grid;grid-template-columns:84px 1fr 1fr 1fr 40px;gap:2px;align-items:start;font-size:15px;font-variant-numeric:tabular-nums;text-align:center}
+.r1>div:first-child{text-align:left;padding-left:4px}
+.r1.hd{font-size:12px;color:var(--mut);font-weight:600;padding-bottom:6px;line-height:1.2}
+.r2{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-top:5px}
+.r2.hd{border-bottom:1px solid var(--line);padding-bottom:6px}
+.r2.hd .ml{font-size:9px;line-height:1.1;margin-top:2px;font-weight:700}
+.bagtag{max-width:64px;line-height:1.1;white-space:normal;display:inline-flex;align-items:center;gap:3px;background:#fde047;color:#1a1400;font-weight:800;font-size:10px;border-radius:6px;padding:2px 5px;margin-top:3px;box-shadow:0 0 8px #fde047aa}
+.r3{display:grid;grid-template-columns:84px repeat(7,1fr);align-items:center;text-align:center}
+.r3 .idc{text-align:left;padding-left:4px}
+.r3.hd{border-bottom:1px solid var(--line);padding-bottom:6px;align-items:start}
+.r3.hd .ml{font-size:9px;line-height:1.1;margin-top:2px;font-weight:700}
+.ctr{padding:3px 0}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="sub">Time of Day · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
+  <div class="right"><div class="sub">Race time</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
+</header>
+<main id="main"></main>
+<nav>
+  <button id="t-now" onclick="setTab('now')">ตอนนี้</button>
+  <button id="t-map" onclick="setTab('map')">กราฟ/GPS</button>
+  <button id="t-all" onclick="setTab('all')">ทุกจุด</button>
+  <button id="t-set" onclick="setTab('set')">ตั้งค่า</button>
+</nav>
+
+<script>
+"use strict";
+/* ---------- DATA (source: pst.mytrails.run official table + official aid-station graphic) ---------- */
+var START = Date.parse('2026-11-14T05:00:00+07:00');
+var H24 = 24*60;
+// index: 0 START,1 A1,2 A2,3 A3,4 A4,5 A5,6 A6,7 W0,8 A7,9 A8,10 FINISH
+var P = [
+ {id:'START',n:'วัดวิมุตติการาม',km:0,   cut:0,   crew:1,sup:[0,0,0,0,0,0,0],gain:750,loss:179,
+  arrive:[],
+  leg:'ช่วงเปิดตัว: ขึ้นเขาต่อเนื่อง +750 ม. ใน 12.4 กม. ออกช้า ๆ อย่าเร่ง ใจเย็นช่วง 2 ชม.แรก'},
+ {id:'A1',n:'ปางมะโอ',km:12.4, cut:230, crew:0,sup:[1,1,1,1,1,0,0],gain:576,loss:607,
+  arrive:['เติมน้ำเต็มขวด + Pocari','กินเจล/ขนมที่พกมา (ไม่มีอาหารร้อนที่นี่)','ซัพพอร์ตเข้าไม่ได้ ใช้ของที่พกเอง'],
+  leg:'ลูกคลื่นขึ้นลงพอ ๆ กัน 12.3 กม. รักษาจังหวะ ไม่ต้องรีบ'},
+ {id:'A2',n:'วัดหลวงขุนวิน',km:24.7, cut:460, crew:1,sup:[1,1,1,1,1,1,0],gain:277,loss:904,
+  arrive:['กินมื้อจริง (อาหารร้อน)','เติมน้ำ + Pocari เต็ม','ซัพพอร์ต: เปลี่ยนถุงเท้า/เติมของ ถ้ามี','ถัดไป A3 ไม่มีอาหารร้อน กินให้พอก่อนออก'],
+  leg:'ลงยาว -904 ม. ใน 13.8 กม. อย่าเร่งจนต้นขาพัง เก็บแรงไว้ช่วงกลางคืน'},
+ {id:'A3',n:'สันปูเลย',km:38.5, cut:645, crew:1,sup:[1,1,1,1,1,0,0],gain:508,loss:429,
+  arrive:['เติมน้ำ + Pocari','ผลไม้/ขนม ไม่มีอาหารร้อน','ซัพพอร์ต: เติมเจล/เกลือแร่'],
+  leg:'ขึ้นลงปานกลาง 13.3 กม. ช่วงบ่ายอาจร้อน ดื่มน้ำสม่ำเสมอ'},
+ {id:'A4',n:'วัดนิลประภา',km:51.8, cut:870, crew:1,sup:[1,1,1,1,1,1,0],gain:594,loss:634,
+  arrive:['กินอาหารร้อน','เติมน้ำเต็ม','เตรียมไฟฉายตัวที่ 1 ไว้ใช้ได้ทันที (ใกล้มืด)','ซัพพอร์ต: เสื้อ/แบตสำรองสำหรับกลางคืน'],
+  leg:'9.9 กม. +594/-634 ถึง A5 ราวเริ่มมืด ไฟฉายติดหัวได้เลย'},
+ {id:'A5',n:'บ้านปง (Dropped bag)',km:61.7, cut:1055, crew:1,sup:[1,1,1,1,1,1,1],gain:1117,loss:207,
+  arrive:['รับ Dropped bag (Special Need Bag) ที่ฝากไว้ตอนสตาร์ท','กินมื้อใหญ่ (อาหารร้อน)','เปลี่ยนเสื้อแห้ง/ถุงเท้า','ไฟฉาย + แบตสำรอง เช็คว่าติด','เติมน้ำเต็ม + อาหารพอไป A7 (~25 กม. ไม่มีซัพพอร์ต)','นี่คือจุดซัพพอร์ตจุดสุดท้ายก่อน A7'],
+  leg:'ช่วงโหด +1,117 ม. ใน 10.3 กม. ขึ้นช้า ๆ ใช้โพล/ถุงมือ ระวังงู ไปเป็นกลุ่มถ้าทำได้'},
+ {id:'A6',n:'บ้านม้งดอยปุย',km:72.0, cut:1330, crew:0,sup:[1,1,1,1,1,1,0],gain:450,loss:483,
+  arrive:['กินอาหารร้อนให้พอ (ถัดไป W0 ไม่มีอาหาร)','เติมน้ำเต็ม','ซัพพอร์ตเข้าไม่ได้','ใส่เสื้อกันหนาวถ้าเย็น (พื้นที่สูง)'],
+  leg:'กลางคืน บนพื้นที่สูง +450/-483 ถึง W0 ระวังหลงทาง ตามริบบิ้นสะท้อนแสง'},
+ {id:'W0',n:'ทางแยก (Crossroads)',km:80.8, cut:1500, crew:0,sup:[1,1,1,1,0,0,0],gain:41,loss:758,
+  arrive:['06:00 คือ "เวลาแนะนำ" ไม่ใช่ cut-off','เติมน้ำ/Pocari ผ่านเร็ว ไม่มีห้องน้ำ ไม่มีอาหารร้อน','ซัพพอร์ตเข้าไม่ได้','เตรียมโพล/ปรับสายเป้ ก่อนลงชัน'],
+  leg:'ลงชัน -758 ม. ใน 5.9 กม. (ชันสุดของสนาม) ถนอมเข่า/ต้นขา ก้าวสั้น ใช้โพล'},
+ {id:'A7',n:'แม่แมะ',km:86.7, cut:1595, crew:1,sup:[1,1,1,1,1,1,0],gain:151,loss:335,
+  arrive:['กินอาหารร้อน','ห้องน้ำ','เติมน้ำ + Pocari','ซัพพอร์ต: เปลี่ยนรองเท้า/ถุงเท้า ถ้าจำเป็น'],
+  leg:'10.8 กม. +151/-335 ทางเรียบกว่าแล้ว ฝึกจังหวะให้คงที่'},
+ {id:'A8',n:'ห้วยตึงเฒ่า',km:97.5, cut:1770, crew:1,sup:[1,1,1,1,1,1,0],gain:268,loss:283,
+  arrive:['กินอาหารร้อนเบา ๆ','เติมน้ำพอถึงเส้นชัย','ซัพพอร์ตเข้าได้'],
+  leg:'8.3 กม. สุดท้าย มีเนินปลาย ๆ อีก +268 ม. เหลืออีกนิดเดียว'},
+ {id:'FIN',n:'CMECC เส้นชัย',km:105.8, cut:1920, crew:1,sup:[1,1,1,1,1,1,1],gain:0,loss:0,arrive:[],leg:''}
+];
+
+var DEF_PLAN=[0,136,283,438,596,738,907,1033,1111,1238,1350];
+var DEF_STOP=[0,7,7,7,7,7,7,0,7,7,0];
+
+/* ---------- STATE ---------- */
+var S={arr:{},dep:{},hist:[],sim:0,plan:null,stop:null,chk:{},tab:'now',back:0};
+try{var raw=localStorage.getItem('pst100_v1');if(raw){var o=JSON.parse(raw);for(var k in o)S[k]=o[k];}}catch(e){}
+function save(){try{localStorage.setItem('pst100_v1',JSON.stringify(S));}catch(e){}}
+function plan(){return S.plan||DEF_PLAN}
+function stp(){return S.stop||DEF_STOP}
+function now(){return Date.now()+(S.sim||0)}
+function planArr(i){return plan()[i]}
+function planDep(i){return plan()[i]+stp()[i]}
+
+/* ---------- FORMAT ---------- */
+function p2(n){return (n<10?'0':'')+n}
+function clock(ms){var d=new Date(ms+7*3600000);var h=d.getUTCHours(),m=d.getUTCMinutes();var day=d.getUTCDate();var t=p2(h)+':'+p2(m);return day===14?t:t+' (อา.)'}
+function clockS(ms){var d=new Date(ms+7*3600000);return p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+':'+p2(d.getUTCSeconds())}
+function dur(min){var neg=min<0;min=Math.abs(Math.round(min));var h=Math.floor(min/60),m=min%60;return (neg?'-':'')+h+':'+p2(m)}
+function mmss(ms){var neg=ms<0;var s=Math.floor(Math.abs(ms)/1000);var h=Math.floor(s/3600);var m=Math.floor(s%3600/60);return (neg?'-':'')+(h?h+':'+p2(m):m)+':'+p2(s%60)}
+function hm(min){var neg=min<0;min=Math.abs(Math.round(min));var h=Math.floor(min/60),m=min%60;return (neg?'-':'')+(h?h+' ชม. ':'')+m+' น.'}
+function deltaTxt(d){ // d minutes, positive = behind plan
+  if(d>0.5)return ['ช้ากว่าแผน '+hm(d),'warn'];
+  if(d<-0.5)return ['เร็วกว่าแผน '+hm(-d),'good'];
+  return ['ตรงแผน','good'];
+}
+var WD=['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'],MN=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+function dateTh(ms){var d=new Date(ms+7*3600000);return WD[d.getUTCDay()]+' '+d.getUTCDate()+' '+MN[d.getUTCMonth()]}
+function hms(ms){var s=Math.floor(Math.abs(ms)/1000);return p2(Math.floor(s/3600))+':'+p2(Math.floor(s%3600/60))+':'+p2(s%60)}
+function cdown(ms){var s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400);s-=d*86400;var h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (d?d+' วัน ':'')+p2(h)+':'+p2(m)+':'+p2(s%60)}
+function hmsShort(ms){var s=Math.floor(Math.abs(ms)/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>=24?Math.floor(h/24)+' วัน '+(h%24)+' ชม.':h+':'+p2(m)}
+function parseHM(s){var m=/^(\d{1,2}):(\d{2})$/.exec((s||'').trim());return m?(+m[1])*60+(+m[2]):null}
+
+/* ---------- MODEL ---------- */
+function model(){
+  var n=now(),m={now:n},last=0,i;
+  if(S.dep[0]==null){m.mode='pre';m.toStart=START-n;return m}
+  for(i=1;i<=10;i++){if(S.arr[i]!=null)last=i}
+  m.last=last;
+  if(last===10){m.mode='done';return m}
+  if(last>=1&&S.dep[last]==null){m.mode='atcp'}else{m.mode='enroute'}
+  return m;
+}
+function legPlan(from,to){return planArr(to)-planDep(from)}
+function finishProj(deltaMin){return START+(planArr(10)+deltaMin)*60000}
+
+/* ---------- ACTIONS ---------- */
+function backMs(){return (S.back||0)*60000}
+function act(kind,i){
+  var t=now()-backMs();
+  if(kind==='dep'){S.dep[i]=t}else{S.arr[i]=t}
+  S.hist.push([kind,i]);S.back=0;save();render();
+}
+function undo(){var h=S.hist.pop();if(!h)return;if(h[0]==='dep')delete S.dep[h[1]];else delete S.arr[h[1]];save();render()}
+function setBack(v){S.back=+v;save();render()}
+function toggleChk(k){S.chk[k]=!S.chk[k];save();render()}
+function setTab(t){S.tab=t;save();render()}
+function resetAll(){if(confirm('ล้างข้อมูลที่บันทึกทั้งหมด?')){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;save();render()}}
+function setSim(v){if(!v){S.sim=0}else{var ms=Date.parse(v+':00+07:00');if(!isNaN(ms))S.sim=ms-Date.now()}save();render()}
+function savePlan(){
+  var pl=[],st=[],ok=true;
+  pl.push(0);st.push(0);
+  for(var i=1;i<=10;i++){
+    var a=document.getElementById('pa'+i),s=document.getElementById('ps'+i);
+    var v=parseHM(a.value);if(v===null){ok=false;a.style.borderColor='var(--bad)'}
+    pl.push(v);st.push(Math.max(0,+s.value||0));
+  }
+  if(!ok)return;S.plan=pl;S.stop=st;save();render();
+}
+function resetPlan(){S.plan=null;S.stop=null;save();render()}
+
+/* ---------- VIEWS ---------- */
+var ITEMS=[
+ {l:'Pocari',c:'#4da3ff',p:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'},
+ {l:'น้ำ',c:'#22d3ee',p:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>'},
+ {l:'ผลไม้',c:'#a3e635',p:'<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>'},
+ {l:'พยาบาล',c:'#f472b6',p:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'},
+ {l:'ห้องน้ำ',c:'#c084fc',t:'WC'},
+ {l:'อาหารร้อน',c:'#fb923c',p:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>'},
+ {l:'Dropped bag',c:'#fde047',bag:1,p:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'},
+ {l:'ซัพพอร์ต',c:'#2dd4bf',p:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+];
+function svgIc(it,sz,col){
+  if(it.t)return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-size="11.5" font-weight="800" fill="'+col+'" style="font-family:system-ui,sans-serif">'+it.t+'</text></svg>';
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="none" stroke="'+col+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+it.p+'</svg>';
+}
+function supVal(i,k){ // 1 yes, 0 no, null unknown
+  if(k===7)return P[i].crew;
+  if(i===0)return k===6?1:null;
+  return P[i].sup[k];
+}
+function chips(i){
+  var h='';
+  for(var k=0;k<8;k++){
+    var it=ITEMS[k],v=supVal(i,k);
+    if(v==null)continue;
+    if(k===6&&!v)continue;
+    if(!v){h+='<span class="chip n">'+it.l+'</span>';continue}
+    if(it.bag)h+='<span class="chip bag">'+svgIc(it,16,'#1a1400')+' '+it.l+'</span>';
+    else h+='<span class="chip" style="background:'+it.c+'26;color:'+it.c+';border:1px solid '+it.c+'66">'+svgIc(it,16,it.c)+' '+it.l+'</span>';
+  }
+  return h;
+}
+function icCell(i,k){
+  var it=ITEMS[k],v=supVal(i,k);
+  if(v==null)return '<td><span class="ic un">·</span></td>';
+  if(!v)return k===6?'<td><span class="ic un">·</span></td>':'<td><span class="ic no">✕</span></td>';
+  if(it.bag)return '<td><span class="ic bag">'+svgIc(it,22,'#1a1400')+'</span></td>';
+  return '<td><span class="ic" style="background:'+it.c+'2b;border-color:'+it.c+'88">'+svgIc(it,20,it.c)+'</span></td>';
+}
+function matrix(){
+  var h='<div class="card" style="padding:10px 6px"><h2 style="padding-left:6px">ของที่มีในแต่ละจุด</h2><table class="mx"><tr><th></th>';
+  for(var k=0;k<8;k++){var it=ITEMS[k];h+='<th><span class="ic sm'+(it.bag?' bag':'')+'" '+(it.bag?'':'style="background:'+it.c+'2b;border-color:'+it.c+'88"')+'>'+svgIc(it,15,it.bag?'#1a1400':it.c)+'</span><div class="ml" style="color:'+(it.bag?'#fde047':it.c)+'">'+it.l.replace('Dropped bag','Dropped<br>bag')+'</div></th>'}
+  h+='</tr>';
+  for(var i=0;i<=10;i++){
+    h+='<tr><td class="mid-id"><b>'+P[i].id+'</b></td>';
+    for(var k=0;k<8;k++)h+=icCell(i,k);
+    h+='</tr>';
+  }
+  return h+'</table><div class="small" style="padding:6px">✕ = ไม่มีที่จุดนั้น · · = ไม่มี/ไม่มีข้อมูล · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · เปิดที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00 · ซัพพอร์ต = ทีมซัพพอร์ตเข้าช่วยได้ที่จุดนั้น</div></div>';
+}
+function checklist(i){
+  var p=P[i];if(!p.arrive.length)return '';
+  var h='<ul class="chk">';
+  p.arrive.forEach(function(t,j){var k=i+':'+j;h+='<li class="'+(S.chk[k]?'done':'')+'" onclick="toggleChk(\''+k+'\')">'+t+'</li>'});
+  return h+'</ul>';
+}
+function backSel(){
+  var o=[0,2,5,10,15],h='<div class="small" style="margin-top:6px">บันทึกเวลาเป็น: <select onchange="setBack(this.value)">';
+  o.forEach(function(v){h+='<option value="'+v+'"'+((S.back||0)===v?' selected':'')+'>'+(v?v+' นาทีที่แล้ว':'ตอนนี้')+'</option>'});
+  return h+'</select></div>';
+}
+function undoBtn(){return S.hist.length?'<button class="btn ghost" onclick="undo()">ย้อนกลับการกดล่าสุด</button>':''}
+
+function viewNow(m){
+  var h='',k,p;
+  if(m.mode==='pre'){
+    h+='<div class="card"><h2>รอปล่อยตัว 05:00 (เสาร์ 14 พ.ย.)</h2><div class="big" data-k="toStart">-</div>'
+     +'<div class="tip">'+P[0].leg+'</div></div>'
+     +'<button class="btn" onclick="act(\'dep\',0)">ออกตัวแล้ว</button>'+backSel();
+    return h;
+  }
+  if(m.mode==='done'){
+    var fin=S.arr[10],el=(fin-START)/60000;
+    h+='<div class="card"><h2>เข้าเส้นชัยแล้ว</h2><div class="big '+(el<=H24?'good':'warn')+'">'+dur(el)+'</div>'
+     +'<div class="mid">'+clock(fin)+'</div>'
+     +'<div class="small">'+(el<=H24?'ภายใน 24 ชม. สำเร็จ':'เลย 24 ชม. แต่ยังอยู่ใน cut-off 32 ชม.')+'</div></div>'+undoBtn();
+    return h;
+  }
+  var L=m.last;
+  if(m.mode==='enroute'){
+    var to=L+1;p=P[to];
+    h+='<div class="card"><h2>กำลังไปจุดถัดไป</h2><div class="mid">'+p.id+' · '+p.n+'</div>'
+     +'<div class="small">กม. '+p.km+' · ช่วงนี้ '+(p.km-P[L].km).toFixed(1)+' กม. · ไต่ +'+P[L].gain+' / ลง -'+P[L].loss+' ม.</div>'
+     +'<div class="bar"><i data-k="barw"></i></div>'
+     +'<div class="small">ใช้เวลาในช่วงนี้ <b data-k="used">-</b> / แผน <b>'+hm(legPlan(L,to))+'</b></div></div>';
+    h+='<div class="row"><div><div class="lab">คาดว่าถึง (ตามความเร็วแผน)</div><div class="mid" data-k="eta">-</div><div class="small" data-k="etaEl"></div></div>'
+     +'<div><div class="lab">เทียบเวลาตามแผน '+clock(START+planArr(to)*60000)+'</div><div class="mid" data-k="delta">-</div></div></div>';
+    h+='<div class="row" style="margin-top:10px"><div><div class="lab">'+(to===7?'เวลาแนะนำที่ W0':'Cut-off '+p.id+' '+clock(START+p.cut*60000))+'</div><div class="mid" data-k="buf">-</div></div>'
+     +'<div><div class="lab">คาดเข้าเส้นชัย</div><div class="mid" data-k="fin">-</div><div class="small" data-k="fin24"></div></div></div>';
+    h+='<button class="btn" onclick="act(\'arr\','+to+')">ถึง '+p.id+' แล้ว</button>'+backSel();
+    h+='<div class="card"><h2>ที่ '+p.id+' มีอะไร</h2><div class="chips">'+chips(to)+'</div></div>';
+    if(p.arrive.length)h+='<div class="card"><h2>ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</h2>'+checklist(to)+'</div>';
+    h+='<div class="card"><h2>ช่วงที่กำลังวิ่ง</h2><div class="tip" style="margin:0">'+P[L].leg+'</div></div>';
+    h+=undoBtn();
+    return h;
+  }
+  // at control point
+  p=P[L];var nx=P[L+1];
+  h+='<div class="card"><h2>อยู่ที่ '+p.id+' · '+p.n+'</h2>'
+   +'<div class="lab small">เวลาพักตามแผนเหลือ ('+stp()[L]+' นาที)</div><div class="big" data-k="stopLeft">-</div>'
+   +'<div class="small" data-k="arrDelta"></div></div>';
+  h+='<div class="row"><div><div class="lab">ออกตามแผน</div><div class="mid">'+clock(START+planDep(L)*60000)+'</div></div>'
+   +'<div><div class="lab">'+(L+1===7?'ออกช้าสุด (ให้ถึง W0 ตามเวลาแนะนำ)':'ออกช้าสุดไม่ให้ตก cut-off '+nx.id)+'</div><div class="mid" data-k="latest">-</div><div class="small" data-k="latestIn"></div></div></div>';
+  h+='<div class="row" style="margin-top:10px"><div><div class="lab">คาดเข้าเส้นชัย (ถ้าออกตามแผน)</div><div class="mid" data-k="fin">-</div><div class="small" data-k="fin24"></div></div></div>';
+  h+='<button class="btn alt" onclick="act(\'dep\','+L+')">ออกจาก '+p.id+' แล้ว</button>'+backSel();
+  h+='<div class="card"><h2>ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
+  h+='<div class="card"><h2>ช่วงถัดไป → '+nx.id+' '+nx.n+'</h2><div class="small">'+(nx.km-p.km).toFixed(1)+' กม. · ไต่ +'+p.gain+' / ลง -'+p.loss+' ม. · แผนใช้ '+hm(legPlan(L,L+1))+'</div>'
+   +'<div class="tip">'+p.leg+'</div>'
+   +'<div class="chips" style="margin-top:8px"><span class="small" style="width:100%">ที่ '+nx.id+' จะมี:</span>'+chips(L+1)+'</div></div>';
+  h+=undoBtn();
+  return h;
+}
+
+function icSpan(i,k){
+  var it=ITEMS[k],v=supVal(i,k);
+  if(v==null)return '<span class="ic un">·</span>';
+  if(!v)return '<span class="ic no">✕</span>';
+  return '<span class="ic" style="background:'+it.c+'2b;border-color:'+it.c+'88">'+svgIc(it,19,it.c)+'</span>';
+}
+var SLOTS=[0,1,2,3,4,5,7];
+function setAv(v){S.av=v;save();render()}
+function viewAll(m){
+  var av=S.av||'time',star=function(x){return x.replace(' (อา.)','*')};
+  var h='<div class="seg"><button class="'+(av==='time'?'on':'')+'" onclick="setAv(\'time\')">เวลา</button><button class="'+(av==='sup'?'on':'')+'" onclick="setAv(\'sup\')">ของที่มี</button></div>';
+  h+='<div class="card" style="padding:10px 8px">';
+  if(av==='time'){
+    h+='<div class="r1 hd"><div>จุด</div><div>แผนถึง<br><span class="small">Race time</span></div><div>Cut-off</div><div>จริง<br><span class="small">Race time</span></div><div>±นาที</div></div>';
+    for(var i=0;i<=10;i++){
+      var p=P[i],cur=(m.mode==='enroute'&&i===m.last+1)||(m.mode==='atcp'&&i===m.last);
+      var act_=i===0?S.dep[0]:S.arr[i],d='';
+      if(act_!=null){var dd=(act_-(START+planArr(i)*60000))/60000;var t=deltaTxt(dd);d='<span class="'+t[1]+'">'+(dd>0?'+':'')+Math.round(dd)+'</span>'}
+      h+='<div class="blk'+(cur?' cur':'')+'"><div class="r1"><div><b>'+p.id+'</b><div class="small">กม. '+p.km+'</div></div>'
+        +'<div>'+(i===0?'05:00':star(clock(START+planArr(i)*60000)))+'<div class="small">'+dur(planArr(i))+'</div></div>'
+        +'<div>'+(i===0?'-':(i===7?'<span class="small">แนะนำ</span><br>':'')+star(clock(START+p.cut*60000)))+'</div>'
+        +'<div>'+(act_!=null?star(clock(act_))+'<div class="small">'+dur((act_-START)/60000)+'</div>':'-')+'</div>'
+        +'<div>'+d+'</div></div></div>';
+    }
+    h+='<div class="small" style="padding:8px 4px 2px">* = วันอาทิตย์ 15 พ.ย. · ± เป็นนาที (+ ช้ากว่าแผน, − เร็วกว่าแผน) · W0 06:00 เป็นเวลาแนะนำ ไม่ใช่ cut-off · บรรทัดเล็ก = Race time (ชม:นาที หลังปล่อยตัว)</div>';
+  } else {
+    h+='<div class="r3 hd"><div></div>';
+    SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div><span class="ic sm" style="background:'+it.c+'2b;border-color:'+it.c+'88">'+svgIc(it,15,it.c)+'</span><div class="ml" style="color:'+it.c+'">'+it.l+'</div></div>'});
+    h+='</div>';
+    for(var j=0;j<=10;j++){
+      var q=P[j],cur2=(m.mode==='enroute'&&j===m.last+1)||(m.mode==='atcp'&&j===m.last);
+      h+='<div class="blk'+(cur2?' cur':'')+'"><div class="r3"><div class="idc"><b>'+q.id+'</b><div class="small">กม. '+q.km+'</div>'+(j===5?'<div class="bagtag">'+svgIc(ITEMS[6],13,'#1a1400')+' Dropped bag</div>':'')+'</div>';
+      SLOTS.forEach(function(k){h+='<div class="ctr">'+icSpan(j,k)+'</div>'});
+      h+='</div></div>';
+    }
+    h+='<div class="small" style="padding:8px 4px 2px">✕ = ไม่มีที่จุดนั้น · "·" = ไม่มีข้อมูล · ซัพพอร์ต = ทีมซัพพอร์ตเข้าช่วยได้ · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · รับที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00</div>';
+  }
+  return h+'</div>';
+}
+
+function viewSet(m){
+  var h='<div class="card"><h2>แผนเวลา (แก้ได้ รูปแบบ ชม:นาที นับจากปล่อยตัว)</h2><table><tr><th>จุด</th><th>ถึง (ชม:นาที)</th><th>พัก (นาที)</th></tr>';
+  var pl=plan(),st=stp();
+  for(var i=0;i<=10;i++){
+    var v=Math.floor(pl[i]/60)+':'+p2(pl[i]%60);
+    h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?'0:00':'<input class="s" id="pa'+i+'" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s" id="ps'+i+'" type="number" value="'+st[i]+'">')+'</td></tr>';
+  }
+  h+='</table><button class="btn alt" onclick="savePlan()">บันทึกแผน</button><button class="btn ghost" onclick="resetPlan()">คืนค่าแผนเดิม (เป้า 22:30)</button>'
+   +'<div class="small">แผนเริ่มต้นเป็นร่างจากแบบจำลอง ยังไม่ปรับตามข้อมูลซ้อมจริง แก้ให้ตรงกับจังหวะของคุณก่อนวันแข่ง</div></div>';
+  var sv=S.sim?new Date(now()+7*3600000).toISOString().slice(0,16):'';
+  h+='<div class="card"><h2>ทดสอบก่อนแข่ง: จำลองเวลา</h2><input type="datetime-local" id="simv" value="'+sv+'" style="width:100%">'
+   +'<button class="btn ghost" onclick="setSim(document.getElementById(\'simv\').value)">ตั้งเวลาจำลอง (เวลาไทย)</button>'
+   +'<button class="btn ghost" onclick="setSim(\'\')">เลิกจำลอง ใช้เวลาจริง</button>'
+   +'<div class="small">ใช้เล่นลองกดปุ่มดูว่าตัวเลขเปลี่ยนอย่างไร ทดสอบเสร็จกด "ล้างข้อมูล" ก่อนวันแข่งจริง</div></div>';
+  h+='<div class="card"><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">ล้างข้อมูลที่บันทึกทั้งหมด</button>'
+   +'<div class="small">ข้อมูลเก็บในเครื่องนี้เท่านั้น ใช้งานออฟไลน์ได้ ไม่ต้องมีสัญญาณ อย่าลบข้อมูลเบราว์เซอร์ระหว่างแข่ง</div></div>';
+  return h;
+}
+
+/* ---------- LIVE VALUES ---------- */
+function live(){
+  var m=model(),n=now(),o={};
+  o.clock=[clockS(n),''];
+  o.date=[dateTh(n),''];
+  o.sim=[S.sim?'โหมดจำลองเวลา':'',''];
+  var el=(n-START)/60000;
+  o.elapsed=[m.mode==='pre'?'00:00:00':hms(n-START),m.mode==='pre'?'':''];
+  o.raceclk=[m.mode==='pre'?'ปล่อยตัวอีก '+cdown(START-n):'ชม:นาที:วินาที หลังปล่อยตัว 05:00',''];
+  if(m.mode==='pre'){o.toStart=[cdown(START-n),'']}
+  if(m.mode==='enroute'){
+    var L=m.last,to=L+1,dep=S.dep[L],used=(n-dep)/60000,pl=legPlan(L,to);
+    var eta=Math.max(dep+pl*60000,n);
+    var dl=(eta-(START+planArr(to)*60000))/60000;
+    var dt=deltaTxt(dl);
+    var lim=to===7?1500:P[to].cut;var buf=lim-(eta-START)/60000;
+    o.barw=[Math.min(100,used/pl*100)+'%',''];
+    o.used=[hm(used),used>pl?'bad':''];
+    o.eta=[clock(eta),used>pl?'warn':''];o.etaEl=['Race time '+dur((eta-START)/60000),''];
+    o.delta=[dt[0],dt[1]];
+    o.buf=[hm(buf),buf<30?'bad':(buf<90?'warn':'good')];
+    var fp=finishProj(dl);var fm=(fp-START)/60000;
+    o.fin=[clock(fp),fm<=H24?'good':'warn'];
+    o.fin24=[fm<=H24?'ทัน 24 ชม. เหลือ '+hm(H24-fm):'เกิน 24 ชม. '+hm(fm-H24),fm<=H24?'good':'warn'];
+  }
+  if(m.mode==='atcp'){
+    var i=m.last,ar=S.arr[i],dl2=(ar-(START+planArr(i)*60000))/60000,t2=deltaTxt(dl2);
+    var left=stp()[i]*60000-(n-ar);
+    o.stopLeft=[mmss(left),left>60000?'good':(left>0?'warn':'bad')];
+    o.arrDelta=['ถึงจุดนี้ '+clock(ar)+' (Race time '+dur((ar-START)/60000)+') · '+t2[0],t2[1]];
+    var nxt=i+1,lim2=nxt===7?1500:P[nxt].cut;
+    var lat=START+(lim2-legPlan(i,nxt))*60000;
+    var latin=(lat-n)/60000;
+    o.latest=[clock(lat),latin<10?'bad':(latin<30?'warn':'')];
+    o.latestIn=[latin>=0?'อีก '+hm(latin):'เลยเวลาแล้ว ต้องวิ่งเร็วกว่าแผน','' ];
+    var dd=dl2+Math.max(0,(n-ar)/60000-stp()[i]); // delay if over planned stop
+    var fp2=finishProj(dd),fm2=(fp2-START)/60000;
+    o.fin=[clock(fp2),fm2<=H24?'good':'warn'];
+    o.fin24=[fm2<=H24?'ทัน 24 ชม. เหลือ '+hm(H24-fm2):'เกิน 24 ชม. '+hm(fm2-H24),fm2<=H24?'good':'warn'];
+  }
+  return o;
+}
+function applyLive(){
+  var o=live(),els=document.querySelectorAll('[data-k]');
+  for(var i=0;i<els.length;i++){
+    var e=els[i],k=e.getAttribute('data-k'),v=o[k];if(!v)continue;
+    if(k==='barw'){e.style.width=v[0];continue}
+    e.textContent=v[0];
+    e.className=(e.dataset.base||'')+(v[1]?' '+v[1]:'');
+  }
+}
+function render(){
+  var m=model(),h='';
+  if(S.tab==='now')h=viewNow(m);else if(S.tab==='map')h=viewMap(m);else if(S.tab==='all')h=viewAll(m);else h=viewSet(m);
+  document.getElementById('main').innerHTML=h;
+  ['now','map','all','set'].forEach(function(t){document.getElementById('t-'+t).className=(S.tab===t?'on':'')});
+  var els=document.querySelectorAll('[data-k]');
+  for(var i=0;i<els.length;i++){els[i].dataset.base=els[i].className}
+  applyLive();
+}
+
+/* ---------- ROUTE (from pst.mytrails.run map track, resampled; NOT the official GPX) ---------- */
+var TRACK_RAW="1867049,9865657,418;89,-72,418;118,-27,420;141,-31,428;58,-130,433;15,-124,434;155,6,443;127,11,458;143,-44,480;127,6,507;72,-133,534;89,-115,556;40,-177,582;81,-101,595;83,-95,604;87,-120,632;103,-101,660;-8,-151,668;-3,-130,667;98,-82,672;129,-12,680;123,-66,679;120,-54,692;132,-42,716;103,-59,726;110,-101,729;111,49,732;143,-11,734;123,-71,736;149,-16,740;42,-134,747;123,-49,772;129,-20,798;132,-44,824;99,-62,831;101,-116,831;143,-19,851;87,31,878;66,-80,901;116,25,921;115,30,930;134,-2,932;102,-86,935;122,-51,942;135,-1,947;82,-121,946;8,-126,946;136,-76,953;125,-61,962;72,-106,966;82,-87,973;133,-45,977;62,58,972;117,60,957;109,-43,953;96,55,957;9,143,955;5,148,950;33,119,945;-35,137,936;-109,56,923;128,65,906;-63,108,904;-88,81,911;-112,96,921;-53,146,906;-52,151,886;-25,146,875;-59,106,874;-32,98,887;52,153,918;-7,128,934;66,102,942;-44,137,949;92,95,952;116,30,951;96,69,953;1,135,968;77,98,991;49,116,1012;49,120,1020;61,156,1024;34,125,1039;-2,133,1063;42,135,1081;-57,135,1093;-116,-34,1103;-71,103,1101;-29,122,1105;-33,120,1121;-100,105,1142;-114,95,1147;-99,96,1130;62,126,1124;-19,119,1109;-124,66,1076;-117,50,1043;-40,95,1019;-94,105,997;-6,112,999;19,122,1000;4,126,1002;-15,120,1006;15,142,1003;-13,155,1005;6,141,1000;42,128,1000;29,124,1005;80,119,1006;-8,127,1003;43,147,979;141,24,960;118,3,964;82,91,967;98,71,966;125,-9,980;106,57,998;85,66,1002;-20,122,995;92,72,995;131,30,998;124,21,1010;136,60,1041;115,38,1058;133,12,1060;83,104,1053;73,110,1041;-89,102,1032;-21,143,1028;-86,108,1031;-140,19,1051;-132,54,1039;-100,46,1009;-151,-40,1001;-119,72,1005;-130,61,1043;-61,79,1088;-13,117,1111;-151,66,1140;-105,89,1126;-135,10,1100;-122,72,1070;-125,77,1061;-155,-18,1061;-119,14,1059;-136,55,1055;-97,79,1044;-152,44,1025;-147,22,998;-23,114,986;41,147,977;26,119,966;114,21,958;119,69,958;-134,-60,957;-114,-57,966;-104,-89,960;-108,88,925;-111,121,895;-76,104,894;-48,117,905;-88,111,923;-87,84,933;-48,92,928;128,2,898;54,114,884;66,92,870;101,103,855;57,152,838;76,95,827;-12,154,797;-81,94,784;-9,135,773;8,132,749;29,122,719;72,119,692;70,127,682;101,110,666;53,109,658;75,117,646;59,121,639;-36,125,633;26,137,612;-3,153,596;140,38,576;136,62,563;4,138,560;-35,146,564;27,142,561;-28,120,548;-73,146,540;-41,149,527;-12,128,514;31,134,502;43,115,497;49,141,484;-107,55,458;-147,31,443;-82,148,432;-31,132,426;-81,116,421;-112,47,414;-114,119,408;-52,149,403;-29,176,387;-96,149,380;-103,100,380;-27,106,393;28,129,403;-82,131,394;-45,127,375;-108,65,365;-127,90,382;-96,92,391;-108,51,388;-75,100,380;-60,105,375;-85,94,372;-68,147,371;-113,68,373;-146,29,374;-152,34,364;-120,53,358;-71,117,358;-81,112,359;-57,113,359;37,139,359;-18,144,354;-5,151,347;-22,129,348;39,126,350;34,128,348;8,139,345;8,131,340;41,142,334;-21,128,333;21,138,333;-17,133,335;-51,151,338;56,120,336;-43,156,332;-2,144,328;114,30,327;112,40,328;112,32,336;24,128,349;-51,114,354;-121,90,357;-86,54,353;102,88,352;-36,108,366;-11,137,376;-79,97,383;-88,58,390;40,142,395;65,115,397;116,92,399;65,108,405;111,81,426;107,86,452;16,135,462;19,140,493;21,133,540;67,103,575;29,135,589;120,56,572;99,91,558;45,133,566;48,125,591;72,109,600;77,1,575;95,52,549;35,139,535;72,107,524;134,-6,511;112,71,515;100,15,531;141,17,539;95,48,554;136,12,540;113,47,544;55,144,520;125,54,495;104,89,474;119,19,466;134,-23,453;-94,-89,446;10,-135,447;122,-100,444;122,-85,433;97,-127,418;52,-149,403;7,-150,390;61,-146,377;82,-119,360;152,-18,360;109,16,369;144,39,373;112,75,362;87,-97,353;61,-122,351;93,-124,354;70,-91,364;133,-92,378;105,-88,381;172,-22,368;148,-45,366;125,-53,371;144,-81,375;160,-32,377;100,-68,385;109,45,390;66,116,391;151,7,386;88,-83,385;135,-19,390;136,1,394;132,62,396;-56,65,396;-134,42,399;108,82,406;108,25,428;117,87,456;115,84,484;36,132,509;40,136,531;77,127,559;-8,150,600;6,142,615;-28,138,594;45,130,553;41,125,518;-11,133,509;-53,102,503;-68,132,500;-40,128,501;-73,131,496;-6,154,506;3,133,520;-49,120,523;32,108,545;-28,136,550;-18,149,545;-49,143,543;-80,84,540;-132,58,520;-134,43,500;-22,124,494;60,133,503;87,118,509;-84,123,501;-126,76,490;-29,78,478;145,26,453;87,76,452;-60,81,486;-86,91,527;-94,100,555;-81,113,575;91,79,547;140,14,514;104,95,514;89,117,509;120,72,510;26,124,509;-9,148,510;-19,134,509;65,123,497;28,132,483;-81,-91,481;-97,-98,474;-110,81,463;-7,103,439;44,52,411;48,-6,397;-62,140,376;7,156,357;86,114,348;3,121,352;22,119,353;51,115,357;102,64,362;-13,96,370;-14,119,383;-80,-20,396;-93,117,405;27,123,415;23,130,423;38,122,432;62,-56,452;80,-100,467;143,64,469;111,28,474;155,-3,490;137,-54,506;146,-35,510;148,25,534;113,42,567;120,-86,587;118,-69,592;49,-111,606;98,-75,619;120,-85,633;124,-58,647;112,-26,646;127,-10,650;143,26,679;140,18,717;124,104,737;120,12,747;129,-2,760;141,-62,773;136,20,775;111,62,781;114,28,795;95,70,806;129,-24,812;122,7,828;104,-73,852;121,-81,894;150,-21,934;140,57,953;125,50,975;114,59,1023;136,-10,1072;113,-42,1111;138,-25,1158;120,2,1182;116,22,1197;115,1,1216;143,32,1250;115,34,1275;113,-7,1313;139,48,1365;127,35,1400;135,-25,1416;77,-127,1422;92,-85,1418;91,-136,1406;6,-114,1389;-21,-132,1363;60,-99,1346;70,-117,1315;127,-58,1301;50,-145,1294;69,-104,1285;85,109,1281;141,14,1284;113,81,1302;104,-13,1317;98,-76,1318;111,-34,1319;122,20,1313;-4,-129,1303;44,-117,1297;109,-20,1306;93,-85,1313;79,-115,1307;47,-119,1305;37,-134,1309;98,-79,1311;144,23,1322;103,-47,1328;100,-64,1331;95,40,1344;140,-55,1346;106,-59,1342;-30,-63,1355;35,-123,1371;76,-131,1389;19,-122,1416;-18,-121,1447;76,-59,1460;115,22,1470;145,-7,1484;90,-62,1484;90,-87,1469;101,-69,1467;107,-53,1481;128,-32,1474;160,-9,1436;138,-60,1428;89,-68,1430;127,-16,1424;130,-6,1434;127,-32,1468;109,36,1489;107,65,1492;114,47,1488;85,100,1475;111,94,1451;126,-30,1434;129,-7,1431;132,48,1424;142,37,1424;111,91,1422;103,91,1419;98,119,1398;55,125,1357;-25,141,1311;63,126,1274;122,-8,1254;118,-60,1232;100,95,1178;140,91,1142;101,84,1133;136,-4,1104;144,37,1082;119,21,1074;95,72,1057;2,142,1016;44,126,977;2,130,946;-15,159,920;64,106,900;132,16,855;121,80,822;82,-45,797;129,21,770;85,90,749;82,96,723;134,5,685;115,23,664;119,-45,668;112,46,665;106,-6,664;99,-49,669;117,56,669;131,39,654;94,-60,631;86,-95,585;67,-88,557;122,57,548;116,31,543;138,17,534;58,-141,526;11,-10,527;-41,120,532;-69,80,534;116,95,536;-44,92,541;-113,96,556;-65,120,568;-41,120,565;-84,118,563;-136,9,566;-81,104,556;-77,134,550;-101,75,553;-124,80,543;-26,147,528;-73,148,507;-54,116,491;-6,114,499;-69,104,513;38,125,511;97,71,496;55,118,490;71,119,501;20,152,501;-106,118,478;-35,143,464;1,142,458;96,109,436;0,120,412;119,97,387;148,-1,383;-30,104,390;-51,76,397;-121,28,402;-118,-30,408;-111,-83,413;-121,12,420;-126,72,415;-114,112,407;-124,90,397;-65,104,389;-73,104,385;-92,76,387;-103,97,388;-104,103,379;-104,48,375;-126,71,374;-121,82,373;-69,121,371;-25,92,368;-99,1,372;-97,62,378;-100,100,386;-95,105,384;-23,56,376;-34,125,372;-98,77,367;-10,121,362;52,113,359;-64,-6,361;-90,-62,367;-86,-65,373;-86,106,376;-118,70,373;-77,106,367;-30,117,356;-92,100,354;-111,10,358;-58,117,361;-141,43,368;-37,148,357;-96,126,350;-107,123,352;-85,112,347;-76,137,343;-119,-1,344;-109,73,341;-113,38,342;-130,20,343;-97,-24,355;-19,-161,383;-63,-132,402;-15,-134,429;-70,-127,477;-96,-97,523;-85,-116,557;-112,-75,598;-97,-39,621;-97,80,612;-130,16,610;-118,54,606;-54,128,587;-88,116,568;-113,38,549;-77,112,510;-84,105,481;-72,121,462;-100,100,433;-95,106,404;-127,51,389;-127,63,394;-115,57,403;-59,105,394;-99,73,385;-95,53,375;-54,72,370;101,100,367;24,156,368;114,62,371;35,119,353;-122,423,347;-112,-39,341;-126,-43,336;-145,-44,332;-73,-62,333";
+var RT=(function(){
+  var q=TRACK_RAW.split(';').map(function(r){return r.split(',').map(Number)});
+  var lat=q[0][0],lon=q[0][1],a=[],i;
+  a.push({la:lat/1e5,lo:lon/1e5,e:q[0][2],d:0});
+  for(i=1;i<q.length;i++){lat+=q[i][0];lon+=q[i][1];a.push({la:lat/1e5,lo:lon/1e5,e:q[i][2],d:0})}
+  for(i=1;i<a.length;i++){a[i].d=a[i-1].d+hav(a[i-1],a[i])}
+  var tot=a[a.length-1].d,SC=105.8/tot;
+  for(i=0;i<a.length;i++)a[i].k=a[i].d*SC; // official km
+  var g=0,l=0;for(i=1;i<a.length;i++){var de=a[i].e-a[i-1].e;if(de>0)g+=de;else l-=de;a[i].g=g;a[i].l=l}
+  return {p:a,tot:tot,SC:SC,gs:4732/g,ls:4819/l};
+})();
+function hav(a,b){var R=6371,r=Math.PI/180,x=(b.lo-a.lo)*r*Math.cos(a.la*r),y=(b.la-a.la)*r;return Math.sqrt(x*x+y*y)*R}
+function kmToIdx(km){var p=RT.p,lo=0,hi=p.length-1;while(hi-lo>1){var m=(lo+hi)>>1;if(p[m].k<=km)lo=m;else hi=m}return lo}
+function eleAt(km){var p=RT.p,i=kmToIdx(km),j=Math.min(i+1,p.length-1),t=p[j].k>p[i].k?(km-p[i].k)/(p[j].k-p[i].k):0;return p[i].e+(p[j].e-p[i].e)*Math.max(0,Math.min(1,t))}
+// peaks (prominence >= 120 m)
+var PEAKS=(function(){var p=RT.p,out=[],i;
+  for(i=2;i<p.length-2;i++){
+    if(p[i].e>=p[i-1].e&&p[i].e>=p[i+1].e&&p[i].e>p[i-2].e&&p[i].e>p[i+2].e){
+      var lm=p[i].e,j;for(j=i;j>=0;j--){lm=Math.min(lm,p[j].e);if(p[j].e>p[i].e+0.5)break}
+      var rm=p[i].e;for(j=i;j<p.length;j++){rm=Math.min(rm,p[j].e);if(p[j].e>p[i].e+0.5)break}
+      var prom=p[i].e-Math.max(lm,rm);
+      if(prom>=120)out.push(i);
+    }}
+  return out;})();
+/* CP positions on the route (by official km) */
+function cpKm(i){return P[i].km}
+
+/* ---------- GPS ---------- */
+var G={on:false,id:null,pos:null,err:'',idx:null,km:null,off:null,t:0,acc:null};
+function gpsStart(){
+  if(!navigator.geolocation){G.err='เครื่องนี้ไม่รองรับ GPS ในเบราว์เซอร์';render();return}
+  G.err='กำลังรอสัญญาณ GPS...';G.on=true;render();
+  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){G.err='GPS ใช้ไม่ได้: '+(e.code===1?'ยังไม่ได้อนุญาตตำแหน่ง':e.code===2?'หาตำแหน่งไม่เจอ':'หมดเวลา')+' ('+e.message+')';render()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
+}
+function gpsStop(){if(G.id!=null)navigator.geolocation.clearWatch(G.id);G.id=null;G.on=false;G.err='';render()}
+function gpsOk(pos){G.err='';G.demo=false;gpsFix(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);if(S.tab==='map')render()}
+function gpsFix(la,lo,acc){
+  var p=RT.p,best=1e9,bi=0,bt=0,i,r=Math.PI/180,cl=Math.cos(la*r);
+  var lo_i=0,hi_i=p.length-2;
+  if(G.idx!=null){lo_i=Math.max(0,G.idx-25);hi_i=Math.min(p.length-2,G.idx+120)} // keep to nearby part of route
+  function scan(a,b){
+    for(i=a;i<=b;i++){
+      var ax=(p[i].lo-lo)*r*cl*6371,ay=(p[i].la-la)*r*6371,bx=(p[i+1].lo-lo)*r*cl*6371,by=(p[i+1].la-la)*r*6371;
+      var dx=bx-ax,dy=by-ay,L=dx*dx+dy*dy,t=L>0?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L)):0;
+      var px=ax+dx*t,py=ay+dy*t,d=Math.sqrt(px*px+py*py);
+      if(d<best){best=d;bi=i;bt=t}
+    }}
+  scan(lo_i,hi_i);
+  if(best>0.4&&(lo_i>0||hi_i<p.length-2)){best=1e9;scan(0,p.length-2)} // lost: search whole route
+  G.idx=bi;G.km=p[bi].k+(p[bi+1].k-p[bi].k)*bt;G.off=best*1000;G.acc=acc;G.t=now();G.pos=[la,lo];
+}
+
+function gpsDemo(km){var i=kmToIdx(km);G.demo=true;G.idx=i;G.km=km;G.off=0;G.acc=0;G.t=now();G.pos=[RT.p[i].la,RT.p[i].lo];render()}
+function gpsClear(){G.demo=false;G.km=null;G.idx=null;G.pos=null;render()}
+function gpsOnce(){
+  if(!navigator.geolocation){G.test='เครื่องนี้ไม่รองรับ GPS ในเบราว์เซอร์นี้';render();return}
+  G.test='กำลังอ่านตำแหน่ง... (ถ้ามีหน้าต่างขออนุญาต ให้กดอนุญาต)';render();
+  navigator.geolocation.getCurrentPosition(function(p){G.test='สำเร็จ: '+p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5)+' · ความแม่นยำ ±'+Math.round(p.coords.accuracy)+' ม. · ความสูง '+(p.coords.altitude!=null?Math.round(p.coords.altitude)+' ม.':'ไม่มีข้อมูล')+' · '+clockS(now());render()},function(e){G.test='ไม่สำเร็จ: '+(e.code===1?'ถูกปฏิเสธ/ยังไม่ได้อนุญาต':e.code===2?'หาตำแหน่งไม่ได้':'หมดเวลา')+' ('+e.message+')';render()},{enableHighAccuracy:true,timeout:30000,maximumAge:0});
+}
+try{if(navigator.permissions&&navigator.permissions.query)navigator.permissions.query({name:'geolocation'}).then(function(r){G.perm=r.state;r.onchange=function(){G.perm=r.state}})}catch(e){}
+function planKmAt(minElapsed){ // where the plan says you should be at this race time
+  var pl=plan(),i;
+  if(minElapsed<=0)return 0;
+  for(i=1;i<=10;i++){
+    var dep0=planDep(i-1),arr1=planArr(i);
+    if(minElapsed<=arr1){var f=(minElapsed-dep0)/Math.max(1,arr1-dep0);return P[i-1].km+(P[i].km-P[i-1].km)*Math.max(0,Math.min(1,f))}
+    if(i<10&&minElapsed<=planDep(i))return P[i].km; // resting at CP i
+  }
+  return P[10].km;
+}
+function sumGL(k0,k1){var p=RT.p,i0=kmToIdx(k0),i1=kmToIdx(k1),g=0,l=0,i;for(i=i0+1;i<=i1;i++){var d=p[i].e-p[i-1].e;if(d>0)g+=d;else l-=d}return [g*RT.gs,l*RT.ls]}
+
+/* ---------- PROFILE GRAPH ---------- */
+function profileSvg(x0,x1,cur){
+  var W=640,H=250,L=40,R=8,T=14,B=26,p=RT.p,i;
+  var ymin=300,ymax=1550;
+  function X(k){return L+(k-x0)/(x1-x0)*(W-L-R)}
+  function Y(e){return T+(1-(e-ymin)/(ymax-ymin))*(H-T-B)}
+  var pts=[],d='';
+  for(i=0;i<p.length;i++){if(p[i].k<x0-1||p[i].k>x1+1)continue;pts.push(X(p[i].k).toFixed(1)+','+Y(p[i].e).toFixed(1))}
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">';
+  [400,600,800,1000,1200,1400].forEach(function(e){svg+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(e)+'" y2="'+Y(e)+'" stroke="#26313f"/><text x="'+(L-4)+'" y="'+(Y(e)+4)+'" fill="#8fa0b3" font-size="11" text-anchor="end">'+e+'</text>'});
+  if(pts.length)svg+='<polygon points="'+X(Math.max(x0,0))+','+Y(ymin)+' '+pts.join(' ')+' '+X(Math.min(x1,105.8))+','+Y(ymin)+'" fill="#1f5fa8" opacity=".85"/><polyline points="'+pts.join(' ')+'" fill="none" stroke="#6db3ff" stroke-width="1.5"/>';
+  // CPs
+  for(i=1;i<=10;i++){var k=cpKm(i);if(k<x0-0.5||k>x1+0.5)continue;
+    var done=(i===0)?true:S.arr[i]!=null;
+    svg+='<line x1="'+X(k)+'" x2="'+X(k)+'" y1="'+T+'" y2="'+(H-B)+'" stroke="'+(done?'#3ddc84':'#8fa0b3')+'" stroke-dasharray="3 3" opacity=".8"/>'
+       +'<text x="'+X(k)+'" y="'+(H-B+13)+'" fill="'+(done?'#3ddc84':'#eef2f7')+'" font-size="11" font-weight="700" text-anchor="middle">'+P[i].id+'</text>';}
+  // peaks
+  PEAKS.forEach(function(ix){var k=p[ix].k;if(k<x0||k>x1)return;svg+='<text x="'+X(k)+'" y="'+(Y(p[ix].e)-5)+'" fill="#ffb020" font-size="11" text-anchor="middle">▲'+Math.round(p[ix].e)+'</text>'});
+  // plan-time position
+  var m=model();
+  if(m.mode!=='pre'&&m.mode!=='done'){var pk=planKmAt((now()-START)/60000);if(pk>=x0&&pk<=x1)svg+='<circle cx="'+X(pk)+'" cy="'+Y(eleAt(pk))+'" r="6" fill="none" stroke="#fff" stroke-width="2"/>'}
+  // last recorded CP
+  if(m.mode==='atcp'||m.mode==='enroute'){var lk=cpKm(m.last);if(lk>=x0&&lk<=x1)svg+='<rect x="'+(X(lk)-5)+'" y="'+(Y(eleAt(lk))-5)+'" width="10" height="10" fill="#3ddc84" transform="rotate(45 '+X(lk)+' '+Y(eleAt(lk))+')"/>'}
+  // gps
+  if(G.km!=null&&G.km>=x0&&G.km<=x1)svg+='<circle cx="'+X(G.km)+'" cy="'+Y(eleAt(G.km))+'" r="8" fill="#ff5a5f" stroke="#fff" stroke-width="2"/>';
+  return svg+'</svg>';
+}
+
+function viewMap(m){
+  var h='';
+  var win=S.gz||'next';
+  var curKm=(G.km!=null)?G.km:null;
+  var base=curKm!=null?curKm:(m.last!=null?cpKm(m.last):0);
+  var x0=0,x1=105.8;
+  if(win==='next'){x0=Math.max(0,base-3);x1=Math.min(105.8,x0+30);x0=Math.max(0,x1-30)}
+  h+='<div class="seg"><button class="'+(win==='next'?'on':'')+'" onclick="S.gz=\'next\';save();render()">ช่วงถัดไป 30 กม.</button><button class="'+(win==='all'?'on':'')+'" onclick="S.gz=\'all\';save();render()">ทั้งเส้นทาง</button></div>';
+  h+='<div class="card" style="padding:8px">'+profileSvg(x0,x1)+'<div class="small" style="padding:4px 6px">● แดง = ตำแหน่ง GPS · ○ ขาว = ที่ควรอยู่ตามแผนเวลาตอนนี้ · ◆ เขียว = จุดที่บันทึกล่าสุด · ▲ = ยอด · เส้นเขียว = จุดที่ผ่านแล้ว</div></div>';
+  // GPS controls
+  h+='<div class="card"><h2>GPS</h2>';
+  if(!G.on)h+='<button class="btn alt" onclick="gpsStart()">เปิด GPS ติดตามตำแหน่ง</button><div class="small">GPS ในมือถือทำงานได้โดยไม่ต้องมีเน็ต แต่กินแบตเพิ่ม เปิดเฉพาะตอนอยากเช็กตำแหน่ง แล้วกดปิด</div>';
+  else h+='<button class="btn ghost" onclick="gpsStop()">ปิด GPS</button>';
+  if(G.err)h+='<div class="tip warn">'+G.err+'</div>';
+  if(G.km!=null){
+    var nx=null,i;for(i=1;i<=10;i++){if(cpKm(i)>G.km+0.05){nx=i;break}}
+    var age=Math.round((now()-G.t)/1000);
+    h+='<div class="kv"><span>ตำแหน่งบนเส้นทาง</span><b>กม. '+G.km.toFixed(1)+' / 105.8</b></div>'
+     +'<div class="kv"><span>ความสูง (ประมาณ)</span><b>'+Math.round(eleAt(G.km))+' ม.</b></div>'
+     +'<div class="kv"><span>ห่างจากเส้นทาง</span><b class="'+(G.off>150?'bad':'good')+'">'+Math.round(G.off)+' ม.'+(G.off>150?' (หลงทาง?)':'')+'</b></div>'
+     +'<div class="kv"><span>ความแม่นยำ GPS · อัปเดตเมื่อ</span><b>±'+Math.round(G.acc||0)+' ม. · '+age+' วิ ที่แล้ว</b></div>';
+    if(nx){var gl=sumGL(G.km,cpKm(nx));
+      h+='<div class="kv"><span>ถึง '+P[nx].id+' '+P[nx].n+'</span><b>อีก '+(cpKm(nx)-G.km).toFixed(1)+' กม.</b></div>'
+       +'<div class="kv"><span>ไต่/ลง ที่เหลือถึง '+P[nx].id+'</span><b>+'+Math.round(gl[0])+' / -'+Math.round(gl[1])+' ม.</b></div>';}
+    var pk=null;for(i=0;i<PEAKS.length;i++){if(RT.p[PEAKS[i]].k>G.km+0.1){pk=RT.p[PEAKS[i]];break}}
+    if(pk){var g2=sumGL(G.km,pk.k);h+='<div class="kv"><span>ยอดถัดไป ▲'+Math.round(pk.e)+' ม.</span><b>อีก '+(pk.k-G.km).toFixed(1)+' กม. · ไต่อีก +'+Math.round(g2[0])+' ม.</b></div>'}
+    var plk=planKmAt((now()-START)/60000),df=G.km-plk;
+    h+='<div class="kv"><span>เทียบแผนเวลา (ตอนนี้ควรอยู่ กม. '+plk.toFixed(1)+')</span><b class="'+(df>=0?'good':'warn')+'">'+(df>=0?'นำ ':'ตาม ')+Math.abs(df).toFixed(1)+' กม.</b></div>';
+  }
+  h+='<div class="small" style="margin-top:8px">ตำแหน่ง CP และกราฟคำนวณจากเส้นทางบนเว็บผู้จัด (ยังไม่ใช่ GPX ทางการ) คลาดเคลื่อนได้ราว 1–2 กม. ใช้เป็นแนวทาง ไม่ใช่ตัวตัดสิน cut-off เมื่อได้ GPX ทางการแล้วจะอัปเดตให้แม่นขึ้น</div></div>';
+  // --- test tools ---
+  h+='<div class="card"><h2>ทดสอบ (ก่อนวันแข่ง)</h2>'
+   +'<div class="kv"><span>เปิดไฟล์แบบ</span><b>'+location.protocol+'</b></div>'
+   +'<div class="kv"><span>Secure context</span><b class="'+(window.isSecureContext?'good':'bad')+'">'+(window.isSecureContext?'ใช่':'ไม่')+'</b></div>'
+   +'<div class="kv"><span>GPS รองรับ</span><b class="'+(navigator.geolocation?'good':'bad')+'">'+(navigator.geolocation?'ใช่':'ไม่')+'</b></div>'
+   +'<div class="kv"><span>สิทธิ์ตำแหน่ง</span><b>'+(G.perm||'ไม่ทราบ')+'</b></div>';
+  h+='<button class="btn ghost" onclick="gpsOnce()">ทดสอบ GPS 1 ครั้ง (ไม่เทียบเส้นทาง)</button>';
+  if(G.test)h+='<div class="tip">'+G.test+'</div>';
+  h+='<div class="small" style="margin-top:10px">ทดสอบกราฟโดยไม่ใช้ GPS: เลื่อนตำแหน่งจำลองบนเส้นทาง (ปล่อยนิ้วแล้วกราฟจะย้ายจุด)</div>'
+   +'<input type="range" min="0" max="105.8" step="0.1" value="'+(G.demo&&G.km!=null?G.km:0)+'" style="width:100%;margin-top:8px" onchange="gpsDemo(+this.value)">'
+   +(G.demo?'<button class="btn ghost" onclick="gpsClear()">ล้างตำแหน่งจำลอง</button>':'')
+   +'<div class="small" style="margin-top:8px">เคล็ดลับทดสอบ GPS จริง: เดินออกไปที่โล่งนอกอาคาร 5 นาที กด "เปิด GPS" จะต้องเห็นค่าความแม่นยำ ±10–20 ม. (ระยะห่างจากเส้นทางจะเป็นพันเมตรเพราะไม่ได้อยู่บนสนาม ซึ่งเป็นเรื่องปกติ) ทดสอบแบบโหมดเครื่องบินด้วยก็ได้ GPS ยังทำงาน</div></div>';
+  return h;
+}
+
+render();
+setInterval(applyLive,1000);
+setInterval(function(){if(S.tab==='map'&&G.on)render()},15000);
+</script>
+<script>
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){navigator.serviceWorker.register('sw.js').catch(function(){});}
+</script>
+</body>
+</html>
