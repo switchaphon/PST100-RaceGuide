@@ -372,7 +372,7 @@ function viewSet(m){
   h+='</table><button class="btn alt" onclick="savePlan()">บันทึกแผน</button><button class="btn ghost" onclick="resetPlan()">คืนค่าแผนเดิม (เป้า 22:30)</button>'
    +'<div class="small">แผนเริ่มต้นเป็นร่างจากแบบจำลอง ยังไม่ปรับตามข้อมูลซ้อมจริง แก้ให้ตรงกับจังหวะของคุณก่อนวันแข่ง</div></div>';
   var sv=S.sim?new Date(now()+7*3600000).toISOString().slice(0,16):'';
-  h+='<div class="card"><h2>ทดสอบก่อนแข่ง: จำลองเวลา</h2><input type="datetime-local" id="simv" value="'+sv+'" style="width:100%">'
+  h+='<div class="card"><h2>ทดสอบก่อนแข่ง: จำลองเวลา</h2><input type="datetime-local" id="simv" value="'+sv+'" style="display:block;width:100%;max-width:100%;min-height:44px;-webkit-appearance:none">'
    +'<button class="btn ghost" onclick="setSim(document.getElementById(\'simv\').value)">ตั้งเวลาจำลอง (เวลาไทย)</button>'
    +'<button class="btn ghost" onclick="setSim(\'\')">เลิกจำลอง ใช้เวลาจริง</button>'
    +'<div class="small">ใช้เล่นลองกดปุ่มดูว่าตัวเลขเปลี่ยนอย่างไร ทดสอบเสร็จกด "ล้างข้อมูล" ก่อนวันแข่งจริง</div></div>';
@@ -476,7 +476,7 @@ var G={on:false,id:null,pos:null,err:'',idx:null,km:null,off:null,t:0,acc:null};
 function gpsStart(){
   if(!navigator.geolocation){G.err='เครื่องนี้ไม่รองรับ GPS ในเบราว์เซอร์';render();return}
   G.err='กำลังรอสัญญาณ GPS...';G.on=true;render();
-  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){G.err='GPS ใช้ไม่ได้: '+(e.code===1?'ยังไม่ได้อนุญาตตำแหน่ง':e.code===2?'หาตำแหน่งไม่เจอ':'หมดเวลา')+' ('+e.message+')';render()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
+  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){if(e.code!==1&&G.km!=null&&!G.demo){G.err='สัญญาณ GPS หายชั่วคราว กำลังหาใหม่ (แสดงตำแหน่งล่าสุด)';}else{G.err='GPS ใช้ไม่ได้: '+(e.code===1?'ยังไม่ได้อนุญาตตำแหน่ง':e.code===2?'หาตำแหน่งไม่เจอ (ลองออกที่โล่ง)':'หมดเวลา')+' ('+e.message+')';}render()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
 }
 function gpsStop(){if(G.id!=null)navigator.geolocation.clearWatch(G.id);G.id=null;G.on=false;G.err='';render()}
 function gpsOk(pos){G.err='';G.demo=false;gpsFix(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);if(S.tab==='map')render()}
@@ -540,7 +540,7 @@ function profileSvg(x0,x1,cur){
   // last recorded CP
   if(m.mode==='atcp'||m.mode==='enroute'){var lk=cpKm(m.last);if(lk>=x0&&lk<=x1)svg+='<rect x="'+(X(lk)-5)+'" y="'+(Y(eleAt(lk))-5)+'" width="10" height="10" fill="#3ddc84" transform="rotate(45 '+X(lk)+' '+Y(eleAt(lk))+')"/>'}
   // gps
-  if(G.km!=null&&G.km>=x0&&G.km<=x1)svg+='<circle cx="'+X(G.km)+'" cy="'+Y(eleAt(G.km))+'" r="8" fill="#ff5a5f" stroke="#fff" stroke-width="2"/>';
+  if(G.km!=null&&G.off<=2000&&G.km>=x0&&G.km<=x1)svg+='<circle cx="'+X(G.km)+'" cy="'+Y(eleAt(G.km))+'" r="8" fill="#ff5a5f" stroke="#fff" stroke-width="2"/>';
   return svg+'</svg>';
 }
 
@@ -558,7 +558,9 @@ function viewMap(m){
   if(!G.on)h+='<button class="btn alt" onclick="gpsStart()">เปิด GPS ติดตามตำแหน่ง</button><div class="small">GPS ในมือถือทำงานได้โดยไม่ต้องมีเน็ต แต่กินแบตเพิ่ม เปิดเฉพาะตอนอยากเช็กตำแหน่ง แล้วกดปิด</div>';
   else h+='<button class="btn ghost" onclick="gpsStop()">ปิด GPS</button>';
   if(G.err)h+='<div class="tip warn">'+G.err+'</div>';
-  if(G.km!=null){
+  var farOff=G.km!=null&&G.off>2000;
+  if(farOff){h+='<div class="tip">GPS ใช้งานได้ ✓ ความแม่นยำ ±'+Math.round(G.acc||0)+' ม. · แต่ตอนนี้คุณอยู่ห่างจากเส้นทาง '+(G.off/1000).toFixed(1)+' กม. จึงยังไม่แสดงระยะถึงจุดถัดไป (จะแสดงเมื่ออยู่ในสนาม)</div>';}
+  if(G.km!=null&&!farOff){
     var nx=null,i;for(i=1;i<=10;i++){if(cpKm(i)>G.km+0.05){nx=i;break}}
     var age=Math.round((now()-G.t)/1000);
     h+='<div class="kv"><span>ตำแหน่งบนเส้นทาง</span><b>กม. '+G.km.toFixed(1)+' / 105.8</b></div>'
@@ -571,7 +573,7 @@ function viewMap(m){
     var pk=null;for(i=0;i<PEAKS.length;i++){if(RT.p[PEAKS[i]].k>G.km+0.1){pk=RT.p[PEAKS[i]];break}}
     if(pk){var g2=sumGL(G.km,pk.k);h+='<div class="kv"><span>ยอดถัดไป ▲'+Math.round(pk.e)+' ม.</span><b>อีก '+(pk.k-G.km).toFixed(1)+' กม. · ไต่อีก +'+Math.round(g2[0])+' ม.</b></div>'}
     var plk=planKmAt((now()-START)/60000),df=G.km-plk;
-    h+='<div class="kv"><span>เทียบแผนเวลา (ตอนนี้ควรอยู่ กม. '+plk.toFixed(1)+')</span><b class="'+(df>=0?'good':'warn')+'">'+(df>=0?'นำ ':'ตาม ')+Math.abs(df).toFixed(1)+' กม.</b></div>';
+    if(now()>=START)h+='<div class="kv"><span>เทียบแผนเวลา (ตอนนี้ควรอยู่ กม. '+plk.toFixed(1)+')</span><b class="'+(df>=0?'good':'warn')+'">'+(df>=0?'นำ ':'ตาม ')+Math.abs(df).toFixed(1)+' กม.</b></div>';
   }
   h+='<div class="small" style="margin-top:8px">ตำแหน่ง CP และกราฟคำนวณจากเส้นทางบนเว็บผู้จัด (ยังไม่ใช่ GPX ทางการ) คลาดเคลื่อนได้ราว 1–2 กม. ใช้เป็นแนวทาง ไม่ใช่ตัวตัดสิน cut-off เมื่อได้ GPX ทางการแล้วจะอัปเดตให้แม่นขึ้น</div></div>';
   // --- test tools ---
