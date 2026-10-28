@@ -1,5 +1,5 @@
 // Offline cache for PST100 Race Day. Bump VERSION on every deploy.
-const VERSION = 'pst100-v2';
+const VERSION = 'pst100-v3';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

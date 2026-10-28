@@ -17,7 +17,10 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Thai","Sarabun",sans-serif}
 body{padding:0 12px calc(86px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;font-size:17px;line-height:1.35}
-header{position:sticky;top:0;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 8px;border-bottom:1px solid var(--line);z-index:5;display:flex;justify-content:space-between;align-items:flex-end}
+header{position:sticky;top:0;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 8px;border-bottom:1px solid var(--line);z-index:5}
+.hrow{display:flex;justify-content:space-between;align-items:flex-end}
+.strip{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.sv{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
 .clock{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .sub{color:var(--mut);font-size:13px}
 .right{text-align:right}
@@ -84,12 +87,27 @@ table.mx .ml{font-size:9px;line-height:1.1;margin-top:2px;font-weight:700}
 .r3.hd{border-bottom:1px solid var(--line);padding-bottom:6px;align-items:start}
 .r3.hd .ml{font-size:9px;line-height:1.1;margin-top:2px;font-weight:700}
 .ctr{padding:3px 0}
+.hero .st{font-size:15px;font-weight:700;color:var(--acc);margin-bottom:6px}
+.hero .lab,.ns .lab,.g2 .lab,.g3 .lab{font-size:12px;color:var(--mut)}
+.g2,.g3{display:grid;gap:8px;margin-top:10px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
+.g2>div,.g3>div{background:var(--card2);border-radius:10px;padding:8px 10px}
+.g2 .v,.g3 .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.nsname{font-size:24px;font-weight:800;margin:2px 0}
+.rec{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;font-size:13px;color:var(--mut);margin:-2px 2px 8px}
+.adj{display:flex;gap:4px}
+.adj button{background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:13px;font-weight:700}
 </style>
 </head>
 <body>
 <header>
-  <div><div class="sub">Time of Day · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
-  <div class="right"><div class="sub">Race time</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
+  <div class="hrow">
+    <div><div class="sub">Time of Day · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
+    <div class="right"><div class="sub">Race time</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
+  </div>
+  <div class="strip">
+    <div><div class="sub">เทียบแผน</div><div class="sv" data-k="hdDelta">—</div></div>
+    <div class="right"><div class="sub" data-k="hdCutLab">Cut-off ถัดไป</div><div class="sv" data-k="hdCut">—</div></div>
+  </div>
 </header>
 <main id="main"></main>
 <nav>
@@ -145,6 +163,8 @@ var DEF_STOP=[0,7,7,7,7,7,7,0,7,7,0];
 /* ---------- STATE ---------- */
 var S={arr:{},dep:{},hist:[],sim:0,plan:null,stop:null,chk:{},tab:'now',back:0};
 try{var raw=localStorage.getItem('pst100_v1');if(raw){var o=JSON.parse(raw);for(var k in o)S[k]=o[k];}}catch(e){}
+// records made long before race day without test mode were accidental taps: clear them
+try{if(S.dep&&S.dep[0]!=null&&!S.sim&&S.dep[0]<START-2*3600000){S.arr={};S.dep={};S.hist=[];S.chk={}}}catch(e){}
 function save(){try{localStorage.setItem('pst100_v1',JSON.stringify(S));}catch(e){}}
 function plan(){return S.plan||DEF_PLAN}
 function stp(){return S.stop||DEF_STOP}
@@ -187,12 +207,13 @@ function finishProj(deltaMin){return START+(planArr(10)+deltaMin)*60000}
 /* ---------- ACTIONS ---------- */
 function backMs(){return (S.back||0)*60000}
 function act(kind,i){
-  var t=now()-backMs();
+  var t=now();
   if(kind==='dep'){S.dep[i]=t}else{S.arr[i]=t}
   S.hist.push([kind,i]);S.back=0;save();render();
 }
 function undo(){var h=S.hist.pop();if(!h)return;if(h[0]==='dep')delete S.dep[h[1]];else delete S.arr[h[1]];save();render()}
-function setBack(v){S.back=+v;save();render()}
+function adjLast(min){var h=S.hist[S.hist.length-1];if(!h)return;var o=h[0]==='dep'?S.dep:S.arr;o[h[1]]+=min*60000;save();render()}
+function testStart(){S.sim=START-Date.now();S.dep[0]=START;S.hist=[['dep',0]];save();render()}
 function toggleChk(k){S.chk[k]=!S.chk[k];save();render()}
 function setTab(t){S.tab=t;save();render()}
 function resetAll(){if(confirm('ล้างข้อมูลที่บันทึกทั้งหมด?')){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;save();render()}}
@@ -265,60 +286,70 @@ function checklist(i){
   p.arrive.forEach(function(t,j){var k=i+':'+j;h+='<li class="'+(S.chk[k]?'done':'')+'" onclick="toggleChk(\''+k+'\')">'+t+'</li>'});
   return h+'</ul>';
 }
-function backSel(){
-  var o=[0,2,5,10,15],h='<div class="small" style="margin-top:6px">บันทึกเวลาเป็น: <select onchange="setBack(this.value)">';
-  o.forEach(function(v){h+='<option value="'+v+'"'+((S.back||0)===v?' selected':'')+'>'+(v?v+' นาทีที่แล้ว':'ตอนนี้')+'</option>'});
-  return h+'</select></div>';
+function lastRec(){
+  var h=S.hist[S.hist.length-1];if(!h)return '';
+  var t=h[0]==='dep'?S.dep[h[1]]:S.arr[h[1]];
+  var lab=h[0]==='dep'?(h[1]===0?'ออกตัว':'ออกจาก '+P[h[1]].id):'ถึง '+P[h[1]].id;
+  return '<div class="rec"><span>บันทึกล่าสุด: <b>'+lab+' '+clockS(t).slice(0,5)+'</b></span>'
+   +'<span class="adj"><button onclick="adjLast(-5)">−5</button><button onclick="adjLast(-1)">−1</button><button onclick="adjLast(1)">+1</button><button onclick="adjLast(5)">+5</button><button onclick="undo()">ยกเลิก</button></span></div>';
 }
-function undoBtn(){return S.hist.length?'<button class="btn ghost" onclick="undo()">ย้อนกลับการกดล่าสุด</button>':''}
+function nextStopCard(j,from,title){
+  var p=P[j],pa=START+planArr(j)*60000,cutLab=j===7?'แนะนำ':'Cut-off';
+  var h='<div class="card ns"><h2>'+title+'</h2>'
+   +'<div class="nsname">'+p.id+' · '+p.n+'</div>'
+   +'<div class="small">กม. '+p.km+' · ช่วงนี้ '+(p.km-P[from].km).toFixed(1)+' กม. · ไต่ +'+P[from].gain+' / ลง -'+P[from].loss+' ม.</div>'
+   +'<div class="g3"><div><div class="lab">แผนถึง</div><div class="v">'+clockS(pa).slice(0,5)+'</div></div>'
+   +'<div><div class="lab">คาดถึง</div><div class="v" data-k="nsEta">-</div></div>'
+   +'<div><div class="lab">'+cutLab+'</div><div class="v">'+clockS(START+p.cut*60000).slice(0,5)+'</div></div></div>';
+  if(j<10)h+='<div class="small" style="margin-top:6px">แผนที่จุดนี้: พัก '+stp()[j]+' นาที · ออก '+clockS(START+planDep(j)*60000).slice(0,5)+'</div>';
+  h+='<div class="chips" style="margin-top:8px">'+chips(j)+'</div>';
+  if(p.arrive.length)h+='<div class="small" style="margin-top:10px">ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</div>'+checklist(j);
+  return h+'</div>';
+}
+function finCard(){return '<div class="card"><div class="row"><div><div class="lab">คาดเข้าเส้นชัย</div><div class="mid" data-k="fin">-</div></div><div><div class="lab">เทียบเป้า 24 ชม.</div><div class="mid" data-k="fin24">-</div></div></div></div>'}
 
 function viewNow(m){
-  var h='',k,p;
+  var h='',p;
   if(m.mode==='pre'){
-    h+='<div class="card"><h2>รอปล่อยตัว 05:00 (เสาร์ 14 พ.ย.)</h2><div class="big" data-k="toStart">-</div>'
-     +'<div class="tip">'+P[0].leg+'</div></div>'
-     +'<button class="btn" onclick="act(\'dep\',0)">ออกตัวแล้ว</button>'+backSel();
+    var early=now()<START-60*60000;
+    h+='<div class="card hero"><div class="st">ก่อนแข่ง · รอปล่อยตัว ส. 14 พ.ย. 05:00</div><div class="big" data-k="toStart">-</div></div>';
+    if(early)h+='<div class="tip">ยังไม่ถึงวันแข่ง ปุ่มออกตัวจะใช้ได้ 1 ชม. ก่อนปล่อยตัว อยากลองใช้ตอนนี้ให้กด "ลองโหมดทดสอบ" (จำลองเวลาเป็น 05:00 วันแข่ง ปิดได้ในแท็บตั้งค่า)</div><button class="btn ghost" onclick="testStart()">ลองโหมดทดสอบ</button>';
+    else h+='<button class="btn" onclick="act(\'dep\',0)">ออกตัวแล้ว</button>';
+    h+=nextStopCard(1,0,'จุดแรก');
+    h+='<div class="card"><h2>ช่วงแรก</h2><div class="tip" style="margin:0">'+P[0].leg+'</div></div>';
     return h;
   }
   if(m.mode==='done'){
     var fin=S.arr[10],el=(fin-START)/60000;
-    h+='<div class="card"><h2>เข้าเส้นชัยแล้ว</h2><div class="big '+(el<=H24?'good':'warn')+'">'+dur(el)+'</div>'
-     +'<div class="mid">'+clock(fin)+'</div>'
-     +'<div class="small">'+(el<=H24?'ภายใน 24 ชม. สำเร็จ':'เลย 24 ชม. แต่ยังอยู่ใน cut-off 32 ชม.')+'</div></div>'+undoBtn();
+    h+='<div class="card hero"><div class="st">เข้าเส้นชัยแล้ว</div><div class="big '+(el<=H24?'good':'warn')+'">'+dur(el)+'</div>'
+     +'<div class="small">เข้าเส้นชัย '+clock(fin)+' · '+(el<=H24?'ภายใน 24 ชม. สำเร็จ 🎉':'เลย 24 ชม. แต่ยังอยู่ใน cut-off 32 ชม.')+'</div></div>'+lastRec();
     return h;
   }
   var L=m.last;
   if(m.mode==='enroute'){
     var to=L+1;p=P[to];
-    h+='<div class="card"><h2>กำลังไปจุดถัดไป</h2><div class="mid">'+p.id+' · '+p.n+'</div>'
-     +'<div class="small">กม. '+p.km+' · ช่วงนี้ '+(p.km-P[L].km).toFixed(1)+' กม. · ไต่ +'+P[L].gain+' / ลง -'+P[L].loss+' ม.</div>'
+    h+='<div class="card hero"><div class="st">กำลังวิ่ง · '+P[L].id+' → '+p.id+'</div>'
+     +'<div class="lab">เหลือเวลาตามแผนถึง '+p.id+'</div><div class="big" data-k="legLeft">-</div>'
      +'<div class="bar"><i data-k="barw"></i></div>'
-     +'<div class="small">ใช้เวลาในช่วงนี้ <b data-k="used">-</b> / แผน <b>'+hm(legPlan(L,to))+'</b></div></div>';
-    h+='<div class="row"><div><div class="lab">คาดว่าถึง (ตามความเร็วแผน)</div><div class="mid" data-k="eta">-</div><div class="small" data-k="etaEl"></div></div>'
-     +'<div><div class="lab">เทียบเวลาตามแผน '+clock(START+planArr(to)*60000)+'</div><div class="mid" data-k="delta">-</div></div></div>';
-    h+='<div class="row" style="margin-top:10px"><div><div class="lab">'+(to===7?'เวลาแนะนำที่ W0':'Cut-off '+p.id+' '+clock(START+p.cut*60000))+'</div><div class="mid" data-k="buf">-</div></div>'
-     +'<div><div class="lab">คาดเข้าเส้นชัย</div><div class="mid" data-k="fin">-</div><div class="small" data-k="fin24"></div></div></div>';
-    h+='<button class="btn" onclick="act(\'arr\','+to+')">ถึง '+p.id+' แล้ว</button>'+backSel();
-    h+='<div class="card"><h2>ที่ '+p.id+' มีอะไร</h2><div class="chips">'+chips(to)+'</div></div>';
-    if(p.arrive.length)h+='<div class="card"><h2>ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</h2>'+checklist(to)+'</div>';
+     +'<div class="small">ใช้ไป <b data-k="used">-</b> จากแผน '+hm(legPlan(L,to))+' · ช่วงนี้ '+(p.km-P[L].km).toFixed(1)+' กม. +'+P[L].gain+' ม.</div></div>';
+    h+='<button class="btn" onclick="act(\'arr\','+to+')">ถึง '+p.id+' แล้ว</button>'+lastRec();
+    h+=nextStopCard(to,L,'จุดถัดไป');
     h+='<div class="card"><h2>ช่วงที่กำลังวิ่ง</h2><div class="tip" style="margin:0">'+P[L].leg+'</div></div>';
-    h+=undoBtn();
+    h+=finCard();
     return h;
   }
   // at control point
-  p=P[L];var nx=P[L+1];
-  h+='<div class="card"><h2>อยู่ที่ '+p.id+' · '+p.n+'</h2>'
-   +'<div class="lab small">เวลาพักตามแผนเหลือ ('+stp()[L]+' นาที)</div><div class="big" data-k="stopLeft">-</div>'
+  p=P[L];
+  h+='<div class="card hero"><div class="st">อยู่ที่ '+p.id+' · '+p.n+'</div>'
+   +'<div class="lab">พักได้อีก (แผน '+stp()[L]+' นาที)</div><div class="big" data-k="stopLeft">-</div>'
+   +'<div class="g2"><div><div class="lab">ออกตามแผน</div><div class="v">'+clockS(START+planDep(L)*60000).slice(0,5)+'</div></div>'
+   +'<div><div class="lab">'+(L+1===7?'ออกช้าสุด (ถึง W0 ตามเวลาแนะนำ)':'ออกช้าสุด (ไม่ตก cut-off '+P[L+1].id+')')+'</div><div class="v" data-k="latest">-</div></div></div>'
    +'<div class="small" data-k="arrDelta"></div></div>';
-  h+='<div class="row"><div><div class="lab">ออกตามแผน</div><div class="mid">'+clock(START+planDep(L)*60000)+'</div></div>'
-   +'<div><div class="lab">'+(L+1===7?'ออกช้าสุด (ให้ถึง W0 ตามเวลาแนะนำ)':'ออกช้าสุดไม่ให้ตก cut-off '+nx.id)+'</div><div class="mid" data-k="latest">-</div><div class="small" data-k="latestIn"></div></div></div>';
-  h+='<div class="row" style="margin-top:10px"><div><div class="lab">คาดเข้าเส้นชัย (ถ้าออกตามแผน)</div><div class="mid" data-k="fin">-</div><div class="small" data-k="fin24"></div></div></div>';
-  h+='<button class="btn alt" onclick="act(\'dep\','+L+')">ออกจาก '+p.id+' แล้ว</button>'+backSel();
+  h+='<button class="btn alt" onclick="act(\'dep\','+L+')">ออกจาก '+p.id+' แล้ว</button>'+lastRec();
   h+='<div class="card"><h2>ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
-  h+='<div class="card"><h2>ช่วงถัดไป → '+nx.id+' '+nx.n+'</h2><div class="small">'+(nx.km-p.km).toFixed(1)+' กม. · ไต่ +'+p.gain+' / ลง -'+p.loss+' ม. · แผนใช้ '+hm(legPlan(L,L+1))+'</div>'
-   +'<div class="tip">'+p.leg+'</div>'
-   +'<div class="chips" style="margin-top:8px"><span class="small" style="width:100%">ที่ '+nx.id+' จะมี:</span>'+chips(L+1)+'</div></div>';
-  h+=undoBtn();
+  h+=nextStopCard(L+1,L,'จุดถัดไป');
+  h+='<div class="card"><h2>ช่วงถัดไป</h2><div class="tip" style="margin:0">'+p.leg+'</div></div>';
+  h+=finCard();
   return h;
 }
 
@@ -382,45 +413,50 @@ function viewSet(m){
 }
 
 /* ---------- LIVE VALUES ---------- */
+function dShort(d){if(d>0.5)return ['+'+Math.round(d)+' น. ช้ากว่า','warn'];if(d<-0.5)return ['−'+Math.round(-d)+' น. เร็วกว่า','good'];return ['ตรงแผน','good']}
+function nextCut(j){if(j===7)j=8;return j>10?null:j}
 function live(){
   var m=model(),n=now(),o={};
   o.clock=[clockS(n),''];
   o.date=[dateTh(n),''];
   o.sim=[S.sim?'โหมดจำลองเวลา':'',''];
-  var el=(n-START)/60000;
-  o.elapsed=[m.mode==='pre'?'00:00:00':hms(n-START),m.mode==='pre'?'':''];
-  o.raceclk=[m.mode==='pre'?'ปล่อยตัวอีก '+cdown(START-n):'ชม:นาที:วินาที หลังปล่อยตัว 05:00',''];
-  if(m.mode==='pre'){o.toStart=[cdown(START-n),'']}
+  o.elapsed=[m.mode==='pre'?'00:00:00':hms(n-START),''];
+  o.raceclk=[m.mode==='pre'?'ปล่อยตัวอีก '+cdown(START-n):'หลังปล่อยตัว 05:00',''];
+  var delta=null,cj=null;
+  if(m.mode==='pre'){o.toStart=[cdown(START-n),''];cj=1}
   if(m.mode==='enroute'){
     var L=m.last,to=L+1,dep=S.dep[L],used=(n-dep)/60000,pl=legPlan(L,to);
     var eta=Math.max(dep+pl*60000,n);
-    var dl=(eta-(START+planArr(to)*60000))/60000;
-    var dt=deltaTxt(dl);
-    var lim=to===7?1500:P[to].cut;var buf=lim-(eta-START)/60000;
+    delta=(eta-(START+planArr(to)*60000))/60000;cj=nextCut(to);
     o.barw=[Math.min(100,used/pl*100)+'%',''];
     o.used=[hm(used),used>pl?'bad':''];
-    o.eta=[clock(eta),used>pl?'warn':''];o.etaEl=['Race time '+dur((eta-START)/60000),''];
-    o.delta=[dt[0],dt[1]];
-    o.buf=[hm(buf),buf<30?'bad':(buf<90?'warn':'good')];
-    var fp=finishProj(dl);var fm=(fp-START)/60000;
-    o.fin=[clock(fp),fm<=H24?'good':'warn'];
-    o.fin24=[fm<=H24?'ทัน 24 ชม. เหลือ '+hm(H24-fm):'เกิน 24 ชม. '+hm(fm-H24),fm<=H24?'good':'warn'];
+    var lf=pl-used;o.legLeft=[lf>=0?dur(lf):'เกิน '+dur(-lf),lf>=0?'':'bad'];
+    o.nsEta=[clockS(eta).slice(0,5),delta>0.5?'warn':'good'];
   }
   if(m.mode==='atcp'){
     var i=m.last,ar=S.arr[i],dl2=(ar-(START+planArr(i)*60000))/60000,t2=deltaTxt(dl2);
     var left=stp()[i]*60000-(n-ar);
     o.stopLeft=[mmss(left),left>60000?'good':(left>0?'warn':'bad')];
-    o.arrDelta=['ถึงจุดนี้ '+clock(ar)+' (Race time '+dur((ar-START)/60000)+') · '+t2[0],t2[1]];
+    o.arrDelta=['ถึง '+clockS(ar).slice(0,5)+' · '+t2[0],t2[1]];
     var nxt=i+1,lim2=nxt===7?1500:P[nxt].cut;
-    var lat=START+(lim2-legPlan(i,nxt))*60000;
-    var latin=(lat-n)/60000;
-    o.latest=[clock(lat),latin<10?'bad':(latin<30?'warn':'')];
-    o.latestIn=[latin>=0?'อีก '+hm(latin):'เลยเวลาแล้ว ต้องวิ่งเร็วกว่าแผน','' ];
-    var dd=dl2+Math.max(0,(n-ar)/60000-stp()[i]); // delay if over planned stop
-    var fp2=finishProj(dd),fm2=(fp2-START)/60000;
-    o.fin=[clock(fp2),fm2<=H24?'good':'warn'];
-    o.fin24=[fm2<=H24?'ทัน 24 ชม. เหลือ '+hm(H24-fm2):'เกิน 24 ชม. '+hm(fm2-H24),fm2<=H24?'good':'warn'];
+    var lat=START+(lim2-legPlan(i,nxt))*60000,latin=(lat-n)/60000;
+    o.latest=[clockS(lat).slice(0,5)+(latin>=0?' (อีก '+dur(latin)+')':' (เลยแล้ว)'),latin<10?'bad':(latin<30?'warn':'')];
+    delta=dl2+Math.max(0,(n-ar)/60000-stp()[i]);cj=nextCut(nxt);
+    var depEst=Math.max(n,ar+stp()[i]*60000);
+    o.nsEta=[clockS(depEst+legPlan(i,nxt)*60000).slice(0,5),delta>0.5?'warn':'good'];
   }
+  if(m.mode==='done'){delta=(S.arr[10]-(START+planArr(10)*60000))/60000}
+  if(delta!=null){
+    var ds=dShort(delta);o.hdDelta=[ds[0],ds[1]];
+    var fp=finishProj(delta),fm=(fp-START)/60000;
+    o.fin=[clock(fp),fm<=H24?'good':'warn'];
+    o.fin24=[fm<=H24?'เหลือ '+hm(H24-fm):'เกิน '+hm(fm-H24),fm<=H24?'good':'warn'];
+  } else o.hdDelta=['—',''];
+  if(cj!=null&&m.mode!=='done'){
+    var cms=START+P[cj].cut*60000,cin=(cms-n)/60000;
+    o.hdCutLab=['Cut-off ถัดไป · '+P[cj].id,''];
+    o.hdCut=[clockS(cms).slice(0,5)+' · '+(cin>=0?(cin>=1440?Math.floor(cin/1440)+' วัน':'อีก '+dur(cin)):'เลยแล้ว'),m.mode==='pre'?'':(cin<30?'bad':(cin<90?'warn':'good'))];
+  } else {o.hdCutLab=['Cut-off ถัดไป',''];o.hdCut=['—','']}
   return o;
 }
 function applyLive(){
