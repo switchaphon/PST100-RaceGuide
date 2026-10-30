@@ -23,6 +23,17 @@ header{position:sticky;top:0;background:var(--bg);padding:calc(10px + env(safe-a
 .sv{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
 .clock{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .sub{color:var(--mut);font-size:13px}
+.ti{width:.78em;height:.78em;vertical-align:-.06em;margin-right:.22em;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ti.c{stroke:#6ec1ff}.ti.d{stroke:#c9a6ff}
+.tc,.td{white-space:nowrap}
+u{text-decoration:none;font-size:.64em;font-weight:700;color:#b4c2d3;margin:0 .12em 0 .06em;letter-spacing:0}
+.tc em{font-style:normal;font-size:.5em;font-weight:700;color:#0b0f14;background:#6ec1ff;border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:.25em}
+.g3 .tc em{display:block;width:max-content;margin:2px 0 0}
+.sub2{display:block;font-size:13px;font-weight:600;color:var(--mut);margin-top:1px}
+.sub2 .ti{width:.95em;height:.95em}
+.dl{font-size:.6em;font-weight:700;color:inherit;opacity:.85}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin:6px 2px 0}
+.lg .ti{width:1.1em;height:1.1em}
 .right{text-align:right}
 .card{background:var(--card);border-radius:14px;padding:14px;margin:12px 0}
 .card h2{margin:0 0 6px;font-size:14px;color:var(--mut);font-weight:600;text-transform:none}
@@ -91,7 +102,7 @@ table.mx .ml{font-size:9px;line-height:1.1;margin-top:2px;font-weight:700}
 .hero .lab,.ns .lab,.g2 .lab,.g3 .lab{font-size:12px;color:var(--mut)}
 .g2,.g3{display:grid;gap:8px;margin-top:10px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
 .g2>div,.g3>div{background:var(--card2);border-radius:10px;padding:8px 10px}
-.g2 .v,.g3 .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.g2 .v,.g3 .v{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
 .nsname{font-size:24px;font-weight:800;margin:2px 0}
 .rec{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;font-size:13px;color:var(--mut);margin:-2px 2px 8px}
 .adj{display:flex;gap:4px}
@@ -101,11 +112,11 @@ table.mx .ml{font-size:9px;line-height:1.1;margin-top:2px;font-weight:700}
 <body>
 <header>
   <div class="hrow">
-    <div><div class="sub">Time of Day · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
-    <div class="right"><div class="sub">Race time</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
+    <div><div class="sub"><svg class="ti c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Time of Day · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
+    <div class="right"><div class="sub"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>Race time</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
   </div>
   <div class="strip">
-    <div><div class="sub">เทียบแผน</div><div class="sv" data-k="hdDelta">—</div></div>
+    <div><div class="sub"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>เทียบแผน</div><div class="sv" data-k="hdDelta">—</div></div>
     <div class="right"><div class="sub" data-k="hdCutLab">Cut-off ถัดไป</div><div class="sv" data-k="hdCut">—</div></div>
   </div>
 </header>
@@ -189,6 +200,24 @@ function dateTh(ms){var d=new Date(ms+7*3600000);return WD[d.getUTCDay()]+' '+d.
 function hms(ms){var s=Math.floor(Math.abs(ms)/1000);return p2(Math.floor(s/3600))+':'+p2(Math.floor(s%3600/60))+':'+p2(s%60)}
 function cdown(ms){var s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400);s-=d*86400;var h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (d?d+' วัน ':'')+p2(h)+':'+p2(m)+':'+p2(s%60)}
 function hmsShort(ms){var s=Math.floor(Math.abs(ms)/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>=24?Math.floor(h/24)+' วัน '+(h%24)+' ชม.':h+':'+p2(m)}
+var IC_CLK='<svg class="ti c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+var IC_TMR='<svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>';
+function U(x){return '<u>'+x+'</u>'}
+/* tC = เวลานาฬิกา (นาฬิกา + "น."), tDur/tM = ระยะเวลา (นาฬิกาจับเวลา + ชม./น./วิ) */
+function tC(ms,o){o=o||{};var d=new Date(ms+7*3600000);var t=p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+(o.sec?':'+p2(d.getUTCSeconds()):'');
+  return '<span class="tc">'+(o.noicon?'':IC_CLK)+t+U('น.')+((!o.noday&&d.getUTCDate()!==14)?'<em>อา.</em>':'')+'</span>'}
+function tDur(sec,o){o=o||{};var neg=sec<0;sec=Math.abs(Math.round(sec));var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60,out='',dd=0;
+  if(o.days&&h>=24){dd=Math.floor(h/24);h%=24;out+=dd+U('วัน')+' '}
+  var showH=h||dd||o.fh;if(showH)out+=h+U('ชม.')+' ';
+  out+=(showH?p2(m):m)+U('น.');
+  if(o.sec)out+=' '+p2(s)+U('วิ');
+  return '<span class="td">'+(o.noicon?'':IC_TMR)+(neg?'−':'')+out+'</span>'}
+function tM(min,o){return tDur(min*60,o)}
+function deltaH(d){ // d นาที, + = ช้ากว่าแผน
+  if(d>0.5)return ['<span class="dl">ช้ากว่าแผน</span> '+tM(d),'warn'];
+  if(d<-0.5)return ['<span class="dl">เร็วกว่าแผน</span> '+tM(-d),'good'];
+  return ['ตรงแผน','good'];
+}
 function parseHM(s){var m=/^(\d{1,2}):(\d{2})$/.exec((s||'').trim());return m?(+m[1])*60+(+m[2]):null}
 
 /* ---------- MODEL ---------- */
@@ -290,7 +319,7 @@ function lastRec(){
   var h=S.hist[S.hist.length-1];if(!h)return '';
   var t=h[0]==='dep'?S.dep[h[1]]:S.arr[h[1]];
   var lab=h[0]==='dep'?(h[1]===0?'ออกตัว':'ออกจาก '+P[h[1]].id):'ถึง '+P[h[1]].id;
-  return '<div class="rec"><span>บันทึกล่าสุด: <b>'+lab+' '+clockS(t).slice(0,5)+'</b></span>'
+  return '<div class="rec"><span>บันทึกล่าสุด: <b>'+lab+'</b> '+tC(t,{noday:1})+'</span>'
    +'<span class="adj"><button onclick="adjLast(-5)">−5</button><button onclick="adjLast(-1)">−1</button><button onclick="adjLast(1)">+1</button><button onclick="adjLast(5)">+5</button><button onclick="undo()">ยกเลิก</button></span></div>';
 }
 function nextStopCard(j,from,title){
@@ -298,10 +327,10 @@ function nextStopCard(j,from,title){
   var h='<div class="card ns"><h2>'+title+'</h2>'
    +'<div class="nsname">'+p.id+' · '+p.n+'</div>'
    +'<div class="small">กม. '+p.km+' · ช่วงนี้ '+(p.km-P[from].km).toFixed(1)+' กม. · ไต่ +'+P[from].gain+' / ลง -'+P[from].loss+' ม.</div>'
-   +'<div class="g3"><div><div class="lab">แผนถึง</div><div class="v">'+clockS(pa).slice(0,5)+'</div></div>'
+   +'<div class="g3"><div><div class="lab">แผนถึง</div><div class="v">'+tC(pa)+'</div></div>'
    +'<div><div class="lab">คาดถึง</div><div class="v" data-k="nsEta">-</div></div>'
-   +'<div><div class="lab">'+cutLab+'</div><div class="v">'+clockS(START+p.cut*60000).slice(0,5)+'</div></div></div>';
-  if(j<10)h+='<div class="small" style="margin-top:6px">แผนที่จุดนี้: พัก '+stp()[j]+' นาที · ออก '+clockS(START+planDep(j)*60000).slice(0,5)+'</div>';
+   +'<div><div class="lab">'+cutLab+'</div><div class="v">'+tC(START+p.cut*60000)+'</div></div></div>';
+  if(j<10)h+='<div class="small" style="margin-top:6px">แผนที่จุดนี้: พัก '+tM(stp()[j])+' · ออก '+tC(START+planDep(j)*60000)+'</div>';
   h+='<div class="chips" style="margin-top:8px">'+chips(j)+'</div>';
   if(p.arrive.length)h+='<div class="small" style="margin-top:10px">ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</div>'+checklist(j);
   return h+'</div>';
@@ -321,8 +350,8 @@ function viewNow(m){
   }
   if(m.mode==='done'){
     var fin=S.arr[10],el=(fin-START)/60000;
-    h+='<div class="card hero"><div class="st">เข้าเส้นชัยแล้ว</div><div class="big '+(el<=H24?'good':'warn')+'">'+dur(el)+'</div>'
-     +'<div class="small">เข้าเส้นชัย '+clock(fin)+' · '+(el<=H24?'ภายใน 24 ชม. สำเร็จ 🎉':'เลย 24 ชม. แต่ยังอยู่ใน cut-off 32 ชม.')+'</div></div>'+lastRec();
+    h+='<div class="card hero"><div class="st">เข้าเส้นชัยแล้ว</div><div class="big '+(el<=H24?'good':'warn')+'">'+tM(el,{})+'</div>'
+     +'<div class="small">เข้าเส้นชัย '+tC(fin)+' · '+(el<=H24?'ภายใน 24 ชม. สำเร็จ 🎉':'เลย 24 ชม. แต่ยังอยู่ใน cut-off 32 ชม.')+'</div></div>'+lastRec();
     return h;
   }
   var L=m.last;
@@ -331,7 +360,7 @@ function viewNow(m){
     h+='<div class="card hero"><div class="st">กำลังวิ่ง · '+P[L].id+' → '+p.id+'</div>'
      +'<div class="lab">เหลือเวลาตามแผนถึง '+p.id+'</div><div class="big" data-k="legLeft">-</div>'
      +'<div class="bar"><i data-k="barw"></i></div>'
-     +'<div class="small">ใช้ไป <b data-k="used">-</b> จากแผน '+hm(legPlan(L,to))+' · ช่วงนี้ '+(p.km-P[L].km).toFixed(1)+' กม. +'+P[L].gain+' ม.</div></div>';
+     +'<div class="small">ใช้ไป <b data-k="used">-</b> จากแผน '+tM(legPlan(L,to))+' · ช่วงนี้ '+(p.km-P[L].km).toFixed(1)+' กม. +'+P[L].gain+' ม.</div></div>';
     h+='<button class="btn" onclick="act(\'arr\','+to+')">ถึง '+p.id+' แล้ว</button>'+lastRec();
     h+=nextStopCard(to,L,'จุดถัดไป');
     h+='<div class="card"><h2>ช่วงที่กำลังวิ่ง</h2><div class="tip" style="margin:0">'+P[L].leg+'</div></div>';
@@ -341,8 +370,8 @@ function viewNow(m){
   // at control point
   p=P[L];
   h+='<div class="card hero"><div class="st">อยู่ที่ '+p.id+' · '+p.n+'</div>'
-   +'<div class="lab">พักได้อีก (แผน '+stp()[L]+' นาที)</div><div class="big" data-k="stopLeft">-</div>'
-   +'<div class="g2"><div><div class="lab">ออกตามแผน</div><div class="v">'+clockS(START+planDep(L)*60000).slice(0,5)+'</div></div>'
+   +'<div class="lab">พักได้อีก (แผน '+tM(stp()[L])+')</div><div class="big" data-k="stopLeft">-</div>'
+   +'<div class="g2"><div><div class="lab">ออกตามแผน</div><div class="v">'+tC(START+planDep(L)*60000)+'</div></div>'
    +'<div><div class="lab">'+(L+1===7?'ออกช้าสุด (ถึง W0 ตามเวลาแนะนำ)':'ออกช้าสุด (ไม่ตก cut-off '+P[L+1].id+')')+'</div><div class="v" data-k="latest">-</div></div></div>'
    +'<div class="small" data-k="arrDelta"></div></div>';
   h+='<button class="btn alt" onclick="act(\'dep\','+L+')">ออกจาก '+p.id+' แล้ว</button>'+lastRec();
@@ -366,18 +395,18 @@ function viewAll(m){
   var h='<div class="seg"><button class="'+(av==='time'?'on':'')+'" onclick="setAv(\'time\')">เวลา</button><button class="'+(av==='sup'?'on':'')+'" onclick="setAv(\'sup\')">ของที่มี</button></div>';
   h+='<div class="card" style="padding:10px 8px">';
   if(av==='time'){
-    h+='<div class="r1 hd"><div>จุด</div><div>แผนถึง<br><span class="small">Race time</span></div><div>Cut-off</div><div>จริง<br><span class="small">Race time</span></div><div>±นาที</div></div>';
+    h+='<div class="r1 hd"><div>จุด</div><div>'+IC_CLK+'แผนถึง<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_CLK+'Cut-off</div><div>'+IC_CLK+'จริง<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_TMR+'±</div></div>';
     for(var i=0;i<=10;i++){
       var p=P[i],cur=(m.mode==='enroute'&&i===m.last+1)||(m.mode==='atcp'&&i===m.last);
       var act_=i===0?S.dep[0]:S.arr[i],d='';
-      if(act_!=null){var dd=(act_-(START+planArr(i)*60000))/60000;var t=deltaTxt(dd);d='<span class="'+t[1]+'">'+(dd>0?'+':'')+Math.round(dd)+'</span>'}
+      if(act_!=null){var dd=(act_-(START+planArr(i)*60000))/60000;var t=deltaTxt(dd);d='<span class="'+t[1]+'">'+(dd>0.5?'+':(dd<-0.5?'−':''))+Math.abs(Math.round(dd))+U('น.')+'</span>'}
       h+='<div class="blk'+(cur?' cur':'')+'"><div class="r1"><div><b>'+p.id+'</b><div class="small">กม. '+p.km+'</div></div>'
-        +'<div>'+(i===0?'05:00':star(clock(START+planArr(i)*60000)))+'<div class="small">'+dur(planArr(i))+'</div></div>'
+        +'<div>'+(i===0?'05:00':star(clock(START+planArr(i)*60000)))+'<div class="small">'+tM(planArr(i))+'</div></div>'
         +'<div>'+(i===0?'-':(i===7?'<span class="small">แนะนำ</span><br>':'')+star(clock(START+p.cut*60000)))+'</div>'
-        +'<div>'+(act_!=null?star(clock(act_))+'<div class="small">'+dur((act_-START)/60000)+'</div>':'-')+'</div>'
+        +'<div>'+(act_!=null?star(clock(act_))+'<div class="small">'+tM((act_-START)/60000)+'</div>':'-')+'</div>'
         +'<div>'+d+'</div></div></div>';
     }
-    h+='<div class="small" style="padding:8px 4px 2px">* = วันอาทิตย์ 15 พ.ย. · ± เป็นนาที (+ ช้ากว่าแผน, − เร็วกว่าแผน) · W0 06:00 เป็นเวลาแนะนำ ไม่ใช่ cut-off · บรรทัดเล็ก = Race time (ชม:นาที หลังปล่อยตัว)</div>';
+    h+='<div class="small" style="padding:8px 4px 2px">* = วันอาทิตย์ 15 พ.ย. · ± (+ ช้ากว่าแผน, − เร็วกว่าแผน) · W0 06:00 เป็นเวลาแนะนำ ไม่ใช่ cut-off</div><div class="lg"><span>'+IC_CLK+'เวลานาฬิกา (มี น.)</span><span>'+IC_TMR+'ระยะเวลา (มี ชม./น.)</span></div>';
   } else {
     h+='<div class="r3 hd"><div></div>';
     SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div><span class="ic sm" style="background:'+it.c+'2b;border-color:'+it.c+'88">'+svgIc(it,15,it.c)+'</span><div class="ml" style="color:'+it.c+'">'+it.l+'</div></div>'});
@@ -413,50 +442,49 @@ function viewSet(m){
 }
 
 /* ---------- LIVE VALUES ---------- */
-function dShort(d){if(d>0.5)return ['+'+Math.round(d)+' น. ช้ากว่า','warn'];if(d<-0.5)return ['−'+Math.round(-d)+' น. เร็วกว่า','good'];return ['ตรงแผน','good']}
 function nextCut(j){if(j===7)j=8;return j>10?null:j}
 function live(){
   var m=model(),n=now(),o={};
-  o.clock=[clockS(n),''];
+  o.clock=[tC(n,{sec:1,noicon:1,noday:1}),''];
   o.date=[dateTh(n),''];
   o.sim=[S.sim?'โหมดจำลองเวลา':'',''];
-  o.elapsed=[m.mode==='pre'?'00:00:00':hms(n-START),''];
-  o.raceclk=[m.mode==='pre'?'ปล่อยตัวอีก '+cdown(START-n):'หลังปล่อยตัว 05:00',''];
+  o.elapsed=[tDur(m.mode==='pre'?0:Math.floor((n-START)/1000),{sec:1,noicon:1,fh:1}),''];
+  o.raceclk=[m.mode==='pre'?'ปล่อยตัวอีก '+tDur(Math.floor((START-n)/1000),{sec:1,days:1,noicon:1}):'หลังปล่อยตัว '+tC(START,{noicon:1,noday:1}),''];
   var delta=null,cj=null;
-  if(m.mode==='pre'){o.toStart=[cdown(START-n),''];cj=1}
+  if(m.mode==='pre'){o.toStart=[tDur(Math.max(0,Math.floor((START-n)/1000)),{sec:1,days:1}),''];cj=1}
   if(m.mode==='enroute'){
     var L=m.last,to=L+1,dep=S.dep[L],used=(n-dep)/60000,pl=legPlan(L,to);
     var eta=Math.max(dep+pl*60000,n);
     delta=(eta-(START+planArr(to)*60000))/60000;cj=nextCut(to);
     o.barw=[Math.min(100,used/pl*100)+'%',''];
-    o.used=[hm(used),used>pl?'bad':''];
-    var lf=pl-used;o.legLeft=[lf>=0?dur(lf):'เกิน '+dur(-lf),lf>=0?'':'bad'];
-    o.nsEta=[clockS(eta).slice(0,5),delta>0.5?'warn':'good'];
+    o.used=[tM(used),used>pl?'bad':''];
+    var lf=pl-used;o.legLeft=[lf>=0?tM(lf):'เกิน '+tM(-lf),lf>=0?'':'bad'];
+    o.nsEta=[tC(eta),delta>0.5?'warn':'good'];
   }
   if(m.mode==='atcp'){
-    var i=m.last,ar=S.arr[i],dl2=(ar-(START+planArr(i)*60000))/60000,t2=deltaTxt(dl2);
+    var i=m.last,ar=S.arr[i],dl2=(ar-(START+planArr(i)*60000))/60000,t2=deltaH(dl2);
     var left=stp()[i]*60000-(n-ar);
-    o.stopLeft=[mmss(left),left>60000?'good':(left>0?'warn':'bad')];
-    o.arrDelta=['ถึง '+clockS(ar).slice(0,5)+' · '+t2[0],t2[1]];
+    o.stopLeft=[tDur(Math.floor(left/1000),{sec:1}),left>60000?'good':(left>0?'warn':'bad')];
+    o.arrDelta=['ถึง '+tC(ar,{noday:1})+' · '+t2[0],t2[1]];
     var nxt=i+1,lim2=nxt===7?1500:P[nxt].cut;
     var lat=START+(lim2-legPlan(i,nxt))*60000,latin=(lat-n)/60000;
-    o.latest=[clockS(lat).slice(0,5)+(latin>=0?' (อีก '+dur(latin)+')':' (เลยแล้ว)'),latin<10?'bad':(latin<30?'warn':'')];
+    o.latest=[tC(lat)+'<span class="sub2">'+(latin>=0?'อีก '+tM(latin):'เลยแล้ว')+'</span>',latin<10?'bad':(latin<30?'warn':'')];
     delta=dl2+Math.max(0,(n-ar)/60000-stp()[i]);cj=nextCut(nxt);
     var depEst=Math.max(n,ar+stp()[i]*60000);
-    o.nsEta=[clockS(depEst+legPlan(i,nxt)*60000).slice(0,5),delta>0.5?'warn':'good'];
+    o.nsEta=[tC(depEst+legPlan(i,nxt)*60000),delta>0.5?'warn':'good'];
   }
   if(m.mode==='done'){delta=(S.arr[10]-(START+planArr(10)*60000))/60000}
   if(delta!=null){
-    var ds=dShort(delta);o.hdDelta=[ds[0],ds[1]];
+    var ds=deltaH(delta);o.hdDelta=[ds[0],ds[1]];
     var fp=finishProj(delta),fm=(fp-START)/60000;
-    o.fin=[clock(fp),fm<=H24?'good':'warn'];
-    o.fin24=[fm<=H24?'เหลือ '+hm(H24-fm):'เกิน '+hm(fm-H24),fm<=H24?'good':'warn'];
+    o.fin=[tC(fp),fm<=H24?'good':'warn'];
+    o.fin24=[fm<=H24?'เหลือ '+tM(H24-fm):'เกิน '+tM(fm-H24),fm<=H24?'good':'warn'];
   } else o.hdDelta=['—',''];
   if(cj!=null&&m.mode!=='done'){
     var cms=START+P[cj].cut*60000,cin=(cms-n)/60000;
-    o.hdCutLab=['Cut-off ถัดไป · '+P[cj].id,''];
-    o.hdCut=[clockS(cms).slice(0,5)+' · '+(cin>=0?(cin>=1440?Math.floor(cin/1440)+' วัน':'อีก '+dur(cin)):'เลยแล้ว'),m.mode==='pre'?'':(cin<30?'bad':(cin<90?'warn':'good'))];
-  } else {o.hdCutLab=['Cut-off ถัดไป',''];o.hdCut=['—','']}
+    o.hdCutLab=[IC_CLK+'Cut-off ถัดไป · '+P[cj].id,''];
+    o.hdCut=[tC(cms)+'<span class="sub2">'+(cin>=0?(cin>=1440?'อีก '+Math.floor(cin/1440)+' วัน':'อีก '+tM(cin)):'เลยแล้ว')+'</span>',m.mode==='pre'?'':(cin<30?'bad':(cin<90?'warn':'good'))];
+  } else {o.hdCutLab=[IC_CLK+'Cut-off ถัดไป',''];o.hdCut=['—','']}
   return o;
 }
 function applyLive(){
@@ -464,7 +492,7 @@ function applyLive(){
   for(var i=0;i<els.length;i++){
     var e=els[i],k=e.getAttribute('data-k'),v=o[k];if(!v)continue;
     if(k==='barw'){e.style.width=v[0];continue}
-    e.textContent=v[0];
+    e.innerHTML=v[0];
     e.className=(e.dataset.base||'')+(v[1]?' '+v[1]:'');
   }
 }
