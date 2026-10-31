@@ -180,19 +180,18 @@ var P = [
 
 var DEF_PLAN=[0,136,283,438,596,738,907,1033,1111,1238,1350];
 var DEF_STOP=[0,7,7,7,7,7,7,0,7,7,0];
-/* หลายแผน: A=Sub24 (ร่างเดิม เข้า 22:30), B/C ยืดเวลาตามสัดส่วน, D=ถึงแต่ละ CP ก่อน cut-off 45 นาที */
+/* หลายแผน: A/B/C = เข้าเส้นชัยที่ 23:59/26:59/29:59 ปรับสัดส่วนจากร่างเดิม (DEF_PLAN เข้า 22:30), D=ถึงแต่ละ CP ก่อน cut-off 45 นาที */
 var PIDS=['A','B','C','D'];
-var PINFO={A:{t:'Sub 24',goal:1440,tgt:1350,gl:'เป้า 24 ชม.'},B:{t:'Sub 27',goal:1620,tgt:1560,gl:'เป้า 27 ชม.'},C:{t:'Sub 30',goal:1800,tgt:1740,gl:'เป้า 30 ชม.'},D:{t:'จบให้ทัน',goal:1920,tgt:1860,gl:'cut-off 32 ชม.'}};
+var PINFO={A:{t:'Sub 24',goal:1440,tgt:1439,gl:'เป้า 24 ชม.'},B:{t:'Sub 27',goal:1620,tgt:1619,gl:'เป้า 27 ชม.'},C:{t:'Sub 30',goal:1800,tgt:1799,gl:'เป้า 30 ชม.'},D:{t:'จบให้ทัน',goal:1920,tgt:1860,gl:'cut-off 32 ชม.'}};
 var PC={};
 function genPlan(pid){
-  if(pid==='A')return {p:DEF_PLAN.slice(),s:DEF_STOP.slice()};
   var i,p=[0],st,s;
   if(pid==='D'){
     s=[0,10,10,10,10,10,10,0,10,10,0];
     for(i=1;i<=10;i++)p.push(i===10?P[10].cut-60:(i===7?1500:P[i].cut)-45);
     return {p:p,s:s};
   }
-  st=pid==='B'?10:12;s=[0,st,st,st,st,st,st,0,st,st,0];
+  st=pid==='A'?7:(pid==='B'?10:12);s=[0,st,st,st,st,st,st,0,st,st,0];
   var m=[],mt=0,ss=0;
   for(i=1;i<=10;i++){m[i]=DEF_PLAN[i]-DEF_PLAN[i-1]-DEF_STOP[i-1];mt+=m[i];ss+=s[i-1]}
   var k=(PINFO[pid].tgt-ss)/mt;
@@ -483,7 +482,7 @@ function viewSet(m){
     h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?'0:00':'<input class="s" id="pa'+i+'" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s" id="ps'+i+'" type="number" value="'+st[i]+'">')+'</td></tr>';
   }
   h+='</table><button class="btn alt" onclick="savePlan()">บันทึกแผน</button><button class="btn ghost" onclick="resetPlan()">คืนค่าแผน '+S.pid+' เดิม</button>'
-   +'<div class="small">A = ร่างเข้า 22:30 · B = 26:00 · C = 29:00 (พัก 10–12 นาที/จุด ยืดเวลาตามสัดส่วน) · D = ถึงแต่ละจุดก่อน cut-off 45 นาที (เข้า 31:00) ทุกแผนเป็นร่างจากแบบจำลอง ยังไม่ปรับตามข้อมูลซ้อมจริง แก้ได้แยกแต่ละแผน</div></div>';
+   +'<div class="small">A = เข้า 23:59 · B = 26:59 · C = 29:59 (ใช้เวลาเต็มเป้า พัก 7/10/12 นาทีต่อจุด ยืดเวลาตามรูปแบบแผนร่างเดิม) · D = ถึงแต่ละจุดก่อน cut-off 45 นาที (เข้า 31:00) ทุกแผนเป็นร่างจากแบบจำลอง ยังไม่ปรับตามข้อมูลซ้อมจริง แก้ได้แยกแต่ละแผน</div></div>';
   var sv=S.sim?new Date(now()+7*3600000).toISOString().slice(0,16):'';
   h+='<div class="card"><h2>ทดสอบก่อนแข่ง: จำลองเวลา</h2><input type="datetime-local" id="simv" value="'+sv+'" style="display:block;width:100%;max-width:100%;min-height:44px;-webkit-appearance:none">'
    +'<button class="btn ghost" onclick="setSim(document.getElementById(\'simv\').value)">ตั้งเวลาจำลอง (เวลาไทย)</button>'
