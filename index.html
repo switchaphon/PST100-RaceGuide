@@ -56,6 +56,7 @@ ul.chk li{padding:11px 10px;margin:6px 0;background:var(--card2);border-radius:1
 ul.chk li.done{opacity:.45;text-decoration:line-through}
 ul.chk li:before{content:"\2610";font-size:22px;line-height:1}
 ul.chk li.done:before{content:"\2611";color:var(--ok)}
+.wtr{margin-top:8px;padding:9px 10px;border-radius:10px;font-size:15px;background:var(--card2);border-left:4px solid #3b82f6}.wtr.lv1{border-left-color:#f59e0b}.wtr.lv2{border-left-color:#ef4444}
 .tip{background:var(--card2);border-radius:10px;padding:10px;margin-top:8px;font-size:16px}
 table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
 th,td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:right}
@@ -183,6 +184,25 @@ var P = [
   leg:'8.3 กม. สุดท้าย มีเนินปลาย ๆ อีก +268 ม. เหลืออีกนิดเดียว'},
  {id:'FIN',n:'CMECC เส้นชัย',km:105.8, cut:1920, crew:1,sup:[1,1,1,1,1,1,1],gain:0,loss:0,arrive:[],leg:''}
 ];
+
+/* น้ำ/เตรียมตัวพิเศษ ต่อช่วง (index = จุดออกตัวของช่วง) lv: 0 ปกติ, 1 สำคัญ, 2 วิกฤต. ปริมาณน้ำเป็นคำแนะนำ ปรับตามอากาศ (ภาชนะบังคับ >= 1.5 L) */
+var WATER=[
+ {lv:0,l:'1 L',t:'เช้ายังเย็น ขึ้นเขาต่อเนื่อง · ข้ามน้ำราว กม.5 (ลุยหรือไต่ขอนไม้) · เตรียมถุงเท้าสำรองไว้ A2'},
+ {lv:0,l:'1–1.5 L',t:'ไม่มีอาหารร้อนที่ A1 กินของที่พกมาให้พอ · ซัพพอร์ตเข้า A1 ไม่ได้'},
+ {lv:2,l:'1.5 L เต็ม + Pocari',t:'ลุยน้ำต่อเนื่อง ทรายกรวดเข้ารองเท้า → เคาะทรายทุกครั้งที่ปวด/ทาเทปกันพอง · ช่วงท้ายลูกรังแดดร้อนจัด · เปลี่ยนถุงเท้าที่ A2 ก่อนออก'},
+ {lv:1,l:'1.5 L เต็ม',t:'ไม่มีอาหารร้อนที่ A3 · เติมน้ำให้เต็มก่อนออก ช่วงถัดไปร้อนและยาวที่สุด'},
+ {lv:2,l:'1.5 L เต็ม + สำรอง',t:'ช่วงที่กินน้ำเยอะสุด (ร้อน หินลอยขึ้นยาว ปี 2025 นักวิ่งน้ำหมดสองถุงต้องซื้อระหว่างทาง) · ถ้ามีขวดนิ่มพกเพิ่ม · กินเกลือแร่ · A4 ตรวจเท้า/ทาเทป · เตรียมไฟฉายตัวที่ 1'},
+ {lv:1,l:'1–1.5 L',t:'ใกล้มืด ติดไฟฉายหัว · ลุยน้ำยาว ป่ารก · วางแผนของที่ใส่ Special Need Bag ให้ใช้ที่ A5 (ถุงเท้า เสื้อแห้ง ไฟฉาย/แบตสำรอง อาหารที่กินแล้วสบายท้อง คาเฟอีน)'},
+ {lv:2,l:'1.5 L เต็ม + Pocari',t:'A5 → A7 ซัพพอร์ตเข้าไม่ได้ (A6 และ W0) · ที่ A5: กินมื้อใหญ่ ตรวจอุปกรณ์บังคับ (ขาด = +15 นาที/ชิ้น) · เตรียมโพล ถุงมือ เสื้อกันหนาว ไฟฉายสำรอง · ขึ้น +1,117 ม. ขึ้นช้า ๆ'},
+ {lv:1,l:'1 L',t:'A6 คืออาหารร้อนสุดท้ายก่อน W0 → กินให้พอ · อากาศหนาว ใส่เสื้อกันหนาว · ง่วง: ใช้คาเฟอีนที่ A5 เตรียมไว้'},
+ {lv:1,l:'0.5–1 L',t:'W0 ไม่มีอาหารร้อนและไม่มีห้องน้ำ · ผ่านเร็ว เติมน้ำพอ · ลงชัน เตรียมโพล ก้าวสั้น'},
+ {lv:0,l:'1 L',t:'เช้าร้อนขึ้น เติม Pocari/เกลือแร่ที่ A7 · ห้องน้ำ/อาหารร้อนที่ A7'},
+ {lv:0,l:'0.5–1 L',t:'ช่วงสุดท้าย เนินชันก่อนเส้นชัย เติมพอถึง CMECC'}
+];
+function wtr(i){
+  var w=WATER[i];if(!w)return'';
+  return '<div class="wtr lv'+w.lv+'"><b>'+(w.lv?'⚠ ':'')+'น้ำ '+w.l+'</b> · '+w.t+'</div>';
+}
 
 var DEF_PLAN=[0,136,283,438,596,738,907,1033,1111,1238,1350];
 var DEF_STOP=[0,7,7,7,7,7,7,0,7,7,0];
@@ -402,7 +422,7 @@ function viewNow(m){
     if(early)h+='<div class="tip">ยังไม่ถึงวันแข่ง ปุ่มออกตัวจะใช้ได้ 1 hr ก่อนปล่อยตัว อยากลองใช้ตอนนี้ให้กด "ลองโหมดทดสอบ" (จำลองเวลาเป็น 05:00 วันแข่ง ปิดได้ในแท็บตั้งค่า)</div><button class="btn ghost" onclick="testStart()">ลองโหมดทดสอบ</button>';
     else h+='<button class="btn" onclick="act(\'dep\',0)">ออกตัวแล้ว</button>';
     h+=planBar(m);h+=nextStopCard(1,0,'จุดแรก');
-    h+='<div class="card"><h2>ช่วงแรก</h2><div class="tip" style="margin:0">'+P[0].leg+'</div></div>';
+    h+='<div class="card"><h2>ช่วงแรก</h2><div class="tip" style="margin:0">'+P[0].leg+wtr(0)+'</div></div>';
     return h;
   }
   if(m.mode==='done'){
@@ -420,7 +440,7 @@ function viewNow(m){
      +'<div class="small">ใช้ไป <b data-k="used">-</b> จากแผน '+tM(legPlan(L,to))+' · ช่วงนี้ '+(p.km-P[L].km).toFixed(1)+' กม. +'+P[L].gain+' ม.</div></div>';
     h+='<button class="btn" onclick="act(\'arr\','+to+')">ถึง '+p.id+' แล้ว</button>'+lastRec();
     h+=planBar(m);h+=nextStopCard(to,L,'จุดถัดไป');
-    h+='<div class="card"><h2>ช่วงที่กำลังวิ่ง</h2><div class="tip" style="margin:0">'+P[L].leg+'</div></div>';
+    h+='<div class="card"><h2>ช่วงที่กำลังวิ่ง</h2><div class="tip" style="margin:0">'+P[L].leg+wtr(L)+'</div></div>';
     h+=finCard();
     return h;
   }
@@ -435,7 +455,7 @@ function viewNow(m){
   h+=planBar(m);
   h+='<div class="card"><h2>ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
   h+=nextStopCard(L+1,L,'จุดถัดไป');
-  h+='<div class="card"><h2>ช่วงถัดไป</h2><div class="tip" style="margin:0">'+p.leg+'</div></div>';
+  h+='<div class="card"><h2>ช่วงถัดไป</h2><div class="tip" style="margin:0">'+p.leg+wtr(L)+'</div></div>';
   h+=finCard();
   return h;
 }
