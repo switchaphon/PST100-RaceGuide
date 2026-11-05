@@ -151,21 +151,21 @@ table.mx .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overf
 <body>
 <header>
   <div class="hrow">
-    <div><div class="sub"><svg class="ti c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Time of Day · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
-    <div class="right"><div class="sub"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>Race time</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
+    <div><div class="sub"><svg class="ti c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Clock · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
+    <div class="right"><div class="sub"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>Elapsed</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
   </div>
   <div class="strip">
-    <div><div class="sub" data-k="hdDeltaLab"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>เทียบแผน</div><div class="sv" data-k="hdDelta">—</div></div>
-    <div class="right"><div class="sub" data-k="hdCutLab">COT ถัดไป</div><div class="sv" data-k="hdCut">—</div></div>
+    <div><div class="sub" data-k="hdDeltaLab"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>vs plan</div><div class="sv" data-k="hdDelta">—</div></div>
+    <div class="right"><div class="sub" data-k="hdCutLab">Next COT</div><div class="sv" data-k="hdCut">—</div></div>
   </div>
-  <div class="cpbar-row"><div class="cpbar" data-k="cpProg"></div><button id="theme-toggle" class="theme-toggle" type="button" aria-label="โหมดกลางคืน" aria-pressed="true" onclick="toggleTheme()">Night</button></div>
+  <div class="cpbar-row"><div class="cpbar" data-k="cpProg"></div><button id="theme-toggle" class="theme-toggle" type="button" aria-label="Night mode" aria-pressed="true" onclick="toggleTheme()">Night</button></div>
 </header>
 <main id="main"></main>
 <nav>
-  <button id="t-now" onclick="setTab('now')">ตอนนี้</button>
-  <button id="t-map" onclick="setTab('map')">กราฟ/GPS</button>
-  <button id="t-all" onclick="setTab('all')">ทุกจุด</button>
-  <button id="t-set" onclick="setTab('set')">ตั้งค่า</button>
+  <button id="t-now" onclick="setTab('now')">Now</button>
+  <button id="t-map" onclick="setTab('map')">Profile</button>
+  <button id="t-all" onclick="setTab('all')">Stations</button>
+  <button id="t-set" onclick="setTab('set')">Settings</button>
 </nav>
 
 <script>
@@ -231,7 +231,7 @@ var DEF_PLAN=[0,136,283,438,596,738,907,1033,1111,1238,1350];
 var DEF_STOP=[0,7,7,7,7,7,7,0,7,7,0];
 /* หลายแผน: A/B/C = เข้าเส้นชัยที่ 23:59/26:59/29:59 ปรับสัดส่วนจากร่างเดิม (DEF_PLAN เข้า 22:30), D=ถึงแต่ละ CP ก่อน COT 45 m */
 var PIDS=['A','B','C','D'];
-var PINFO={A:{t:'Sub 24',goal:1440,tgt:1439,gl:'เป้า 24 hr'},B:{t:'Sub 27',goal:1620,tgt:1619,gl:'เป้า 27 hr'},C:{t:'Sub 30',goal:1800,tgt:1799,gl:'เป้า 30 hr'},D:{t:'จบให้ทัน',goal:1920,tgt:1860,gl:'COT 32 hr'}};
+var PINFO={A:{t:'Sub 24',goal:1440,tgt:1439,gl:'24 hr goal'},B:{t:'Sub 27',goal:1620,tgt:1619,gl:'27 hr goal'},C:{t:'Sub 30',goal:1800,tgt:1799,gl:'30 hr goal'},D:{t:'Finish',goal:1920,tgt:1860,gl:'COT 32 hr'}};
 var PC={};
 function genPlan(pid){
   var i,p=[0],st,s;
@@ -264,7 +264,7 @@ function applyTheme(){
   var b=document.getElementById('theme-toggle');
   b.textContent=S.theme==='night'?'☾ Night':'☀ Day';
   b.setAttribute('aria-pressed',String(S.theme==='night'));
-  b.title=S.theme==='night'?'เปลี่ยนเป็น Day mode':'เปลี่ยนเป็น Night mode';
+  b.title=S.theme==='night'?'Switch to Day':'Switch to Night';
   document.querySelector('meta[name="theme-color"]').setAttribute('content',S.theme==='night'?'#0b0f14':'#f4f7fb');
 }
 function toggleTheme(){S.theme=S.theme==='night'?'day':'night';applyTheme();save()}
@@ -279,27 +279,27 @@ function planDep(i){return plan()[i]+stp()[i]}
 
 /* ---------- FORMAT ---------- */
 function p2(n){return (n<10?'0':'')+n}
-function clock(ms){var d=new Date(ms+7*3600000);var h=d.getUTCHours(),m=d.getUTCMinutes();var day=d.getUTCDate();var t=p2(h)+':'+p2(m);return day===14?t:t+' (อา.)'}
+function clock(ms){var d=new Date(ms+7*3600000);var h=d.getUTCHours(),m=d.getUTCMinutes();var day=d.getUTCDate();var t=p2(h)+':'+p2(m);return day===14?t:t+' ('+WD[d.getUTCDay()]+')'}
 function clockS(ms){var d=new Date(ms+7*3600000);return p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+':'+p2(d.getUTCSeconds())}
 function dur(min){var neg=min<0;min=Math.abs(Math.round(min));var h=Math.floor(min/60),m=min%60;return (neg?'-':'')+h+':'+p2(m)}
 function mmss(ms){var neg=ms<0;var s=Math.floor(Math.abs(ms)/1000);var h=Math.floor(s/3600);var m=Math.floor(s%3600/60);return (neg?'-':'')+(h?h+':'+p2(m):m)+':'+p2(s%60)}
-function hm(min){var neg=min<0;min=Math.abs(Math.round(min));var h=Math.floor(min/60),m=min%60;return (neg?'-':'')+(h?h+' ชม. ':'')+m+' น.'}
+function hm(min){var neg=min<0;min=Math.abs(Math.round(min));var h=Math.floor(min/60),m=min%60;return (neg?'-':'')+(h?h+' hr ':'')+m+' min'}
 function deltaTxt(d){ // d minutes, positive = behind plan
-  if(d>0.5)return ['ช้ากว่าแผน '+hm(d),'warn'];
-  if(d<-0.5)return ['เร็วกว่าแผน '+hm(-d),'good'];
-  return ['ตรงแผน','good'];
+  if(d>0.5)return ['Behind '+hm(d),'warn'];
+  if(d<-0.5)return ['Ahead '+hm(-d),'good'];
+  return ['On plan','good'];
 }
-var WD=['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'],MN=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+var WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function dateTh(ms){var d=new Date(ms+7*3600000);return WD[d.getUTCDay()]+' '+d.getUTCDate()+' '+MN[d.getUTCMonth()]}
 function hms(ms){var s=Math.floor(Math.abs(ms)/1000);return p2(Math.floor(s/3600))+':'+p2(Math.floor(s%3600/60))+':'+p2(s%60)}
-function cdown(ms){var s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400);s-=d*86400;var h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (d?d+' วัน ':'')+p2(h)+':'+p2(m)+':'+p2(s%60)}
-function hmsShort(ms){var s=Math.floor(Math.abs(ms)/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>=24?Math.floor(h/24)+' วัน '+(h%24)+' ชม.':h+':'+p2(m)}
+function cdown(ms){var s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400);s-=d*86400;var h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (d?d+' d ':'')+p2(h)+':'+p2(m)+':'+p2(s%60)}
+function hmsShort(ms){var s=Math.floor(Math.abs(ms)/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>=24?Math.floor(h/24)+' d '+(h%24)+' hr':h+':'+p2(m)}
 var IC_CLK='<svg class="ti c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
 var IC_TMR='<svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>';
 function U(x){return '<u>'+x+'</u>'}
 /* tC = เวลานาฬิกา (นาฬิกา + "น."), tDur/tM = ระยะเวลา (นาฬิกาจับเวลา + ชม./น./วิ) */
 function tC(ms,o){o=o||{};var d=new Date(ms+7*3600000);var t=p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+(o.sec?':'+p2(d.getUTCSeconds()):'');
-  return '<span class="tc">'+(o.noicon?'':IC_CLK)+t+U('น.')+((!o.noday&&d.getUTCDate()!==14)?'<em>อา.</em>':'')+'</span>'}
+  return '<span class="tc">'+(o.noicon?'':IC_CLK)+t+((!o.noday&&d.getUTCDate()!==14)?'<em>'+WD[d.getUTCDay()]+'</em>':'')+'</span>'}
 function tDur(sec,o){o=o||{};var neg=sec<0;sec=Math.abs(Math.round(sec));var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60,out='',dd=0;
   if(o.days&&h>=24){dd=Math.floor(h/24);h%=24;out+=dd+U('d')+' '}
   var showH=h||dd||o.fh;if(showH)out+=h+U('hr')+' ';
@@ -308,9 +308,9 @@ function tDur(sec,o){o=o||{};var neg=sec<0;sec=Math.abs(Math.round(sec));var h=M
   return '<span class="td">'+(o.noicon?'':IC_TMR)+(neg?'−':'')+out+'</span>'}
 function tM(min,o){return tDur(min*60,o)}
 function deltaH(d){ // d นาที, + = ช้ากว่าแผน
-  if(d>0.5)return ['<span class="dl">ช้ากว่าแผน</span> '+tM(d),'warn'];
-  if(d<-0.5)return ['<span class="dl">เร็วกว่าแผน</span> '+tM(-d),'good'];
-  return ['ตรงแผน','good'];
+  if(d>0.5)return ['<span class="dl">Behind</span> '+tM(d),'warn'];
+  if(d<-0.5)return ['<span class="dl">Ahead</span> '+tM(-d),'good'];
+  return ['On plan','good'];
 }
 function parseHM(s){var m=/^(\d{1,2}):([0-5]\d)$/.exec((s||'').trim());return m?(+m[1])*60+(+m[2]):null}
 
@@ -339,8 +339,7 @@ function adjLast(min){var h=S.hist[S.hist.length-1];if(!h)return;var o=h[0]==='d
 function testStart(){S.sim=START-Date.now();S.dep[0]=START;S.hist=[['dep',0]];save();render()}
 function toggleChk(k){S.chk[k]=!S.chk[k];save();render()}
 function setTab(t){S.tab=t;save();render()}
-function resetAll(){if(confirm('ล้างบันทึกการแข่งขันและเลิกจำลองเวลา? (เก็บแผนที่แก้ไว้)')){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;S.sim=0;save();render()}}
-function setSim(v){if(!v){S.sim=0}else{var ms=Date.parse(v+':00+07:00');if(!isNaN(ms))S.sim=ms-Date.now()}save();render()}
+function resetAll(){if(confirm('Clear race records and exit preview? Saved plans are kept.')){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;S.sim=0;save();render()}}
 function savePlan(){
   var pl=[],st=[],errors=[];
   pl.push(0);st.push(0);
@@ -348,14 +347,14 @@ function savePlan(){
     var a=document.getElementById('pa'+i),s=document.getElementById('ps'+i);
     a.style.borderColor='';s.style.borderColor='';
     var v=parseHM(a.value),rest=Number(s.value);
-    if(v===null){errors.push(P[i].id+': เวลาถึงต้องเป็น hr:mm และนาทีอยู่ระหว่าง 00–59');a.style.borderColor='var(--bad)'}
-    if(!s.value.trim()||!Number.isFinite(rest)||rest<0){errors.push(P[i].id+': เวลาพักต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป');s.style.borderColor='var(--bad)'}
+    if(v===null){errors.push(P[i].id+': use h:mm, minutes 00–59');a.style.borderColor='var(--bad)'}
+    if(!s.value.trim()||!Number.isFinite(rest)||rest<0){errors.push(P[i].id+': rest must be a number ≥ 0');s.style.borderColor='var(--bad)'}
     pl.push(v);st.push(rest);
   }
   if(!errors.length){
     for(var j=1;j<=10;j++){
       if(pl[j]<=pl[j-1]+st[j-1]){
-        errors.push(P[j].id+': ต้องถึงหลังเวลาออกจาก '+P[j-1].id);
+        errors.push(P[j].id+': arrival must follow departure from '+P[j-1].id);
         document.getElementById('pa'+j).style.borderColor='var(--bad)';
         if(j>1)document.getElementById('ps'+(j-1)).style.borderColor='var(--bad)';
       }
@@ -369,13 +368,13 @@ function resetPlan(){delete S.plans[S.pid];save();render()}
 /* ---------- VIEWS ---------- */
 var ITEMS=[
  {l:'Pocari',c:'#4da3ff',p:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'},
- {l:'น้ำ',c:'#22d3ee',p:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>'},
- {l:'ผลไม้',c:'#a3e635',p:'<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>'},
- {l:'พยาบาล',c:'#f472b6',p:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'},
- {l:'ห้องน้ำ',c:'#c084fc',t:'WC'},
- {l:'อาหารร้อน',c:'#fb923c',p:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>'},
+ {l:'Water',c:'#22d3ee',p:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>'},
+ {l:'Fruit',c:'#a3e635',p:'<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>'},
+ {l:'Medical',c:'#f472b6',p:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'},
+ {l:'WC',c:'#c084fc',t:'WC'},
+ {l:'Hot food',c:'#fb923c',p:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>'},
  {l:'Dropped bag',c:'#fde047',bag:1,p:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'},
- {l:'ซัพพอร์ต',c:'#2dd4bf',p:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+ {l:'Crew',c:'#2dd4bf',p:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
 ];
 function svgIc(it,sz,col){
   if(it.t)return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-size="11.5" font-weight="800" fill="'+col+'" style="font-family:system-ui,sans-serif">'+it.t+'</text></svg>';
@@ -406,7 +405,7 @@ function icCell(i,k){
   return '<td><span class="ic yes supply-'+k+'">'+svgIc(it,20,'currentColor')+'</span></td>';
 }
 function matrix(){
-  var h='<div class="card" style="padding:10px 6px"><h2 style="padding-left:6px">ของที่มีในแต่ละจุด</h2><table class="mx"><tr><th></th>';
+  var h='<div class="card" style="padding:10px 6px"><h2 style="padding-left:6px">Station supplies</h2><table class="mx"><tr><th></th>';
   for(var k=0;k<8;k++){var it=ITEMS[k];h+='<th class="supply-'+k+'"><span class="ic sm '+(it.bag?'bag':'yes')+'">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l.replace('Dropped bag','Dropped<br>bag')+'</div></th>'}
   h+='</tr>';
   for(var i=0;i<=10;i++){
@@ -414,7 +413,7 @@ function matrix(){
     for(var k=0;k<8;k++)h+=icCell(i,k);
     h+='</tr>';
   }
-  return h+'</table><div class="small" style="padding:6px">✕ = ไม่มีที่จุดนั้น · · = ไม่มี/ไม่มีข้อมูล · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · เปิดที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00 · ซัพพอร์ต = ทีมซัพพอร์ตเข้าช่วยได้ที่จุดนั้น</div></div>';
+  return h+'</table><div class="small" style="padding:6px">× Unavailable · · Unknown · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · เปิดที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00 · Crew access</div></div>';
 }
 function checklist(i){
   var p=P[i];if(!p.arrive.length)return '';
@@ -425,21 +424,21 @@ function checklist(i){
 function lastRec(){
   var h=S.hist[S.hist.length-1];if(!h)return '';
   var t=h[0]==='dep'?S.dep[h[1]]:S.arr[h[1]];
-  var lab=h[0]==='dep'?(h[1]===0?'ออกตัว':'ออกจาก '+P[h[1]].id):'ถึง '+P[h[1]].id;
-  return '<div class="rec"><span>บันทึกล่าสุด: <b>'+lab+'</b> '+tC(t,{noday:1})+'</span>'
-   +'<span class="adj"><button onclick="adjLast(-5)">−5</button><button onclick="adjLast(-1)">−1</button><button onclick="adjLast(1)">+1</button><button onclick="adjLast(5)">+5</button><button onclick="undo()">ยกเลิก</button></span></div>';
+  var lab=h[0]==='dep'?(h[1]===0?'Started':'Departed '+P[h[1]].id):'Arrived '+P[h[1]].id;
+  return '<div class="rec"><span>Last: <b>'+lab+'</b> '+tC(t,{noday:1})+'</span>'
+   +'<span class="adj"><button onclick="adjLast(-5)">−5</button><button onclick="adjLast(-1)">−1</button><button onclick="adjLast(1)">+1</button><button onclick="adjLast(5)">+5</button><button onclick="undo()">Undo</button></span></div>';
 }
 function nextStopCard(j,from,title){
-  var p=P[j],pa=START+planArr(j)*60000,cutLab=j===7?'แนะนำ':'COT';
+  var p=P[j],pa=START+planArr(j)*60000,cutLab=j===7?'Advisory':'COT';
   var h='<div class="card ns"><h2>'+title+'</h2>'
    +'<div class="nsname">'+p.id+' · '+p.n+'</div>'
-   +'<div class="small">กม. '+p.km+' · ช่วงนี้ '+(p.km-P[from].km).toFixed(1)+' กม. · ไต่ +'+P[from].gain+' / ลง -'+P[from].loss+' ม.</div>'
-   +'<div class="g3"><div><div class="lab">แผนถึง</div><div class="v">'+tC(pa)+'</div></div>'
-   +'<div><div class="lab">คาดถึง</div><div class="v" data-k="nsEta">-</div></div>'
+   +'<div class="small">'+p.km+' km · Leg '+(p.km-P[from].km).toFixed(1)+' km · +'+P[from].gain+' / −'+P[from].loss+' m</div>'
+   +'<div class="g3"><div><div class="lab">Planned</div><div class="v">'+tC(pa)+'</div></div>'
+   +'<div><div class="lab">ETA</div><div class="v" data-k="nsEta">-</div></div>'
    +'<div><div class="lab">'+cutLab+'</div><div class="v">'+tC(START+p.cut*60000)+'</div></div></div>';
-  if(j<10)h+='<div class="small" style="margin-top:6px">แผนที่จุดนี้: พัก '+tM(stp()[j])+' · ออก '+tC(START+planDep(j)*60000)+'</div>';
+  if(j<10)h+='<div class="small" style="margin-top:6px">Rest '+tM(stp()[j])+' · Depart '+tC(START+planDep(j)*60000)+'</div>';
   h+='<div class="chips" style="margin-top:8px">'+chips(j)+'</div>';
-  if(p.arrive.length)h+='<div class="small" style="margin-top:10px">ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</div>'+checklist(j);
+  if(p.arrive.length)h+='<div class="small" style="margin-top:10px">'+p.id+' checklist</div>'+checklist(j);
   return h+'</div>';
 }
 function finFor(pid,m){
@@ -451,56 +450,55 @@ function finFor(pid,m){
   i=m.last;var dp=Math.max(n,S.arr[i]+X.s[i]*60000);return dp+(X.p[10]-X.p[i]-X.s[i])*60000;
 }
 function planBar(m){
-  var h='<div class="pbar">';
+  var h='<div class="small">Finish ETA by plan</div><div class="pbar">';
   PIDS.forEach(function(k){
     h+='<button class="'+(k===S.pid?'on':'')+'" onclick="setPlan(\''+k+'\')"><b>'+k+'</b><span>'+PINFO[k].t+'</span>'+(m.mode!=='done'?'<i data-k="plan'+k+'">-</i>':'')+'</button>';
   });
-  return h+'</div><div class="small" style="margin:-4px 2px 6px">เวลาใต้แผน = เข้าเส้นชัยถ้าเดินตามแผนนั้นต่อจากตอนนี้ (เขียว=ทันเป้า เหลือง=เกินเป้าแต่ยังทัน COT แดง=เลย COT)</div>';
+  return h+'</div>';
 }
-function finCard(){return '<div class="card"><div class="row"><div><div class="lab">คาดเข้าเส้นชัย</div><div class="mid" data-k="fin">-</div></div><div><div class="lab">เทียบ '+PINFO[S.pid].gl+'</div><div class="mid" data-k="fin24">-</div></div></div></div>'}
+function finCard(){return '<div class="card"><div class="row"><div><div class="lab">Finish ETA</div><div class="mid" data-k="fin">-</div></div><div><div class="lab">vs '+PINFO[S.pid].gl+'</div><div class="mid" data-k="fin24">-</div></div></div></div>'}
 
 function viewNow(m){
   var h='',p;
   if(m.mode==='pre'){
     var early=now()<START-60*60000;
-    h+='<div class="card hero"><div class="st">ก่อนแข่ง · รอปล่อยตัว ส. 14 พ.ย. 05:00</div><div class="big" data-k="toStart">-</div></div>';
-    if(early)h+='<div class="tip">ยังไม่ถึงวันแข่ง ปุ่มออกตัวจะใช้ได้ 1 hr ก่อนปล่อยตัว อยากลองใช้ตอนนี้ให้กด "ลองโหมดทดสอบ" (จำลองเวลาเป็น 05:00 วันแข่ง ปิดได้ในแท็บตั้งค่า)</div><button class="btn ghost" onclick="testStart()">ลองโหมดทดสอบ</button>';
-    else h+='<button class="btn" onclick="act(\'dep\',0)">ออกตัวแล้ว</button>';
-    h+=planBar(m);h+=nextStopCard(1,0,'จุดแรก');
-    h+='<div class="card"><h2>ช่วงแรก</h2><div class="tip" style="margin:0">'+P[0].leg+wtr(0)+'</div></div>';
+    h+='<div class="card hero"><div class="st">Start · Sat 14 Nov 05:00</div><div class="big" data-k="toStart">-</div></div>';
+    if(early)h+='<button class="btn ghost" onclick="testStart()">Preview race</button>';
+    else h+='<button class="btn" onclick="act(&quot;dep&quot;,0)">Start race</button>';
+    h+=planBar(m);h+=nextStopCard(1,0,'First CP');
+    h+='<div class="card"><h2>First leg</h2><div class="tip" style="margin:0">'+P[0].leg+wtr(0)+'</div></div>';
     return h;
   }
   if(m.mode==='done'){
     var fin=S.arr[10],el=(fin-START)/60000;
-    h+='<div class="card hero"><div class="st">เข้าเส้นชัยแล้ว</div><div class="big '+(el<=goalMin()?'good':'warn')+'">'+tM(el,{})+'</div>'
-     +'<div class="small">เข้าเส้นชัย '+tC(fin)+' · '+(el<=goalMin()?'ทันแผน '+S.pid+' ('+PINFO[S.pid].gl+') 🎉':(el<=1920?'เลยแผน '+S.pid+' แต่ยังอยู่ใน COT 32 hr':'เลย COT'))+'</div></div>'+lastRec();
+    h+='<div class="card hero"><div class="st">Finished</div><div class="big '+(el<=goalMin()?'good':'warn')+'">'+tM(el,{})+'</div>'
+     +'<div class="small">Finish '+tC(fin)+' · '+(el<=goalMin()?'Goal met · Plan '+S.pid:(el<=1920?'Over goal · Within COT':'Over COT'))+'</div></div>'+lastRec();
     return h;
   }
   var L=m.last;
   if(m.mode==='enroute'){
     var to=L+1;p=P[to];
-    h+='<div class="card hero"><div class="st">กำลังวิ่ง · '+P[L].id+' → '+p.id+'</div>'
-     +'<div class="lab">เหลือเวลาตามแผนถึง '+p.id+'</div><div class="big" data-k="legLeft">-</div>'
+    h+='<div class="card hero"><div class="st">Running · '+P[L].id+' → '+p.id+'</div>'
+     +'<div class="lab">Remaining to '+p.id+'</div><div class="big" data-k="legLeft">-</div>'
      +'<div class="bar"><i data-k="barw"></i></div>'
-     +'<div class="small">ใช้ไป <b data-k="used">-</b> จากแผน '+tM(legPlan(L,to))+' · ช่วงนี้ '+(p.km-P[L].km).toFixed(1)+' กม. +'+P[L].gain+' ม.</div></div>';
-    h+='<button class="btn" onclick="act(\'arr\','+to+')">ถึง '+p.id+' แล้ว</button>'+lastRec();
-    h+=planBar(m);h+=nextStopCard(to,L,'จุดถัดไป');
-    h+='<div class="card"><h2>ช่วงที่กำลังวิ่ง</h2><div class="tip" style="margin:0">'+P[L].leg+wtr(L)+'</div></div>';
+     +'<div class="small">Elapsed <b data-k="used">-</b> / Plan '+tM(legPlan(L,to))+' · '+(p.km-P[L].km).toFixed(1)+' km · +'+P[L].gain+' m</div></div>';
+    h+='<button class="btn" onclick="act(&quot;arr&quot;,'+to+')">'+(to===10?'Finish race':'Arrived '+p.id)+'</button>'+lastRec();
+    h+=planBar(m);h+=nextStopCard(to,L,'Next CP');
+    h+='<div class="card"><h2>This leg</h2><div class="tip" style="margin:0">'+P[L].leg+wtr(L)+'</div></div>';
     h+=finCard();
     return h;
   }
-  // at control point
   p=P[L];
-  h+='<div class="card hero"><div class="st">อยู่ที่ '+p.id+' · '+p.n+'</div>'
-   +'<div class="lab">พักได้อีก (แผน '+tM(stp()[L])+')</div><div class="big" data-k="stopLeft">-</div>'
-   +'<div class="g2"><div><div class="lab">ออกตามแผน</div><div class="v">'+tC(START+planDep(L)*60000)+'</div></div>'
-   +'<div><div class="lab">'+(L+1===7?'ออกช้าสุด (ถึง W0 ตามเวลาแนะนำ)':'ออกช้าสุด (ไม่ตก COT '+P[L+1].id+')')+'</div><div class="v" data-k="latest">-</div></div></div>'
+  h+='<div class="card hero"><div class="st">At '+p.id+' · '+p.n+'</div>'
+   +'<div class="lab">Rest left · '+tM(stp()[L])+'</div><div class="big" data-k="stopLeft">-</div>'
+   +'<div class="g2"><div><div class="lab">Planned out</div><div class="v">'+tC(START+planDep(L)*60000)+'</div></div>'
+   +'<div><div class="lab">Latest out · '+P[L+1].id+(L+1===7?' guide':' COT')+'</div><div class="v" data-k="latest">-</div></div></div>'
    +'<div class="small" data-k="arrDelta"></div></div>';
-  h+='<button class="btn alt" onclick="act(\'dep\','+L+')">ออกจาก '+p.id+' แล้ว</button>'+lastRec();
+  h+='<button class="btn alt" onclick="act(&quot;dep&quot;,'+L+')">Depart '+p.id+'</button>'+lastRec();
   h+=planBar(m);
-  h+='<div class="card"><h2>ที่ '+p.id+' ต้องทำ (แตะเพื่อติ๊ก)</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
-  h+=nextStopCard(L+1,L,'จุดถัดไป');
-  h+='<div class="card"><h2>ช่วงถัดไป</h2><div class="tip" style="margin:0">'+p.leg+wtr(L)+'</div></div>';
+  h+='<div class="card"><h2>'+p.id+' checklist</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
+  h+=nextStopCard(L+1,L,'Next CP');
+  h+='<div class="card"><h2>Next leg</h2><div class="tip" style="margin:0">'+p.leg+wtr(L)+'</div></div>';
   h+=finCard();
   return h;
 }
@@ -514,53 +512,46 @@ function icSpan(i,k){
 var SLOTS=[0,1,2,3,4,5,7];
 function setAv(v){S.av=v;save();render()}
 function viewAll(m){
-  var av=S.av||'time',star=function(x){return x.replace(' (อา.)','*')};
-  var h='<div class="seg"><button class="'+(av==='time'?'on':'')+'" onclick="setAv(\'time\')">เวลา</button><button class="'+(av==='sup'?'on':'')+'" onclick="setAv(\'sup\')">ของที่มี</button></div>';
+  var av=S.av||'time',star=function(x){return x.replace(' (Sun)','*')};
+  var h='<div class="seg"><button class="'+(av==='time'?'on':'')+'" onclick="setAv(\'time\')">Times</button><button class="'+(av==='sup'?'on':'')+'" onclick="setAv(\'sup\')">Supplies</button></div>';
   h+='<div class="card" style="padding:10px 8px">';
   if(av==='time'){
-    h+='<div class="r1 hd"><div>จุด</div><div>'+IC_CLK+'แผนถึง<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_CLK+'COT</div><div>'+IC_CLK+'จริง<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_TMR+'±</div></div>';
+    h+='<div class="r1 hd"><div>CP</div><div>'+IC_CLK+'Planned<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_CLK+'COT</div><div>'+IC_CLK+'Actual<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_TMR+'±</div></div>';
     for(var i=0;i<=10;i++){
       var p=P[i],cur=(m.mode==='enroute'&&i===m.last+1)||(m.mode==='atcp'&&i===m.last);
       var act_=i===0?S.dep[0]:S.arr[i],d='';
       if(act_!=null){var dd=(act_-(START+planArr(i)*60000))/60000;var t=deltaTxt(dd);d='<span class="'+t[1]+'">'+(dd>0.5?'+':(dd<-0.5?'−':''))+Math.abs(Math.round(dd))+U('m')+'</span>'}
-      h+='<div class="blk'+(cur?' cur':'')+'"><div class="r1"><div><b>'+p.id+'</b><div class="small">กม. '+p.km+'</div></div>'
+      h+='<div class="blk'+(cur?' cur':'')+'"><div class="r1"><div><b>'+p.id+'</b><div class="small">km '+p.km+'</div></div>'
         +'<div>'+(i===0?'05:00':star(clock(START+planArr(i)*60000)))+'<div class="small">'+tM(planArr(i))+'</div></div>'
-        +'<div>'+(i===0?'-':(i===7?'<span class="small">แนะนำ</span><br>':'')+star(clock(START+p.cut*60000)))+'</div>'
+        +'<div>'+(i===0?'-':(i===7?'<span class="small">Advisory</span><br>':'')+star(clock(START+p.cut*60000)))+'</div>'
         +'<div>'+(act_!=null?star(clock(act_))+'<div class="small">'+tM((act_-START)/60000)+'</div>':'-')+'</div>'
         +'<div>'+d+'</div></div></div>';
     }
-    h+='<div class="small" style="padding:8px 4px 2px">* = วันอาทิตย์ 15 พ.ย. · ± (+ ช้ากว่าแผน, − เร็วกว่าแผน) · W0 06:00 เป็นเวลาแนะนำ ไม่ใช่ COT</div><div class="lg"><span><b>แผน '+S.pid+' · '+PINFO[S.pid].t+'</b></span><span>'+IC_CLK+'เวลานาฬิกา (มี น.)</span><span>COT = Cut Off Time</span><span>'+IC_TMR+'ระยะเวลา (hr / m / s)</span></div>';
+    h+='<div class="small" style="padding:8px 4px 2px">* Sun 15 Nov · + Behind / − Ahead · W0 06:00 advisory only</div><div class="lg"><span><b>Plan '+S.pid+' · '+PINFO[S.pid].t+'</b></span></div>';
   } else {
     h+='<div class="r3 hd"><div></div>';
     SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div class="supply-'+k+'"><span class="ic sm yes">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l+'</div></div>'});
     h+='</div>';
     for(var j=0;j<=10;j++){
       var q=P[j],cur2=(m.mode==='enroute'&&j===m.last+1)||(m.mode==='atcp'&&j===m.last);
-      h+='<div class="blk'+(cur2?' cur':'')+'"><div class="r3"><div class="idc"><b>'+q.id+'</b><div class="small">กม. '+q.km+'</div>'+(j===5?'<div class="bagtag">'+svgIc(ITEMS[6],13,'currentColor')+' Dropped bag</div>':'')+'</div>';
+      h+='<div class="blk'+(cur2?' cur':'')+'"><div class="r3"><div class="idc"><b>'+q.id+'</b><div class="small">km '+q.km+'</div>'+(j===5?'<div class="bagtag">'+svgIc(ITEMS[6],13,'currentColor')+' Dropped bag</div>':'')+'</div>';
       SLOTS.forEach(function(k){h+='<div class="ctr">'+icSpan(j,k)+'</div>'});
       h+='</div></div>';
     }
-    h+='<div class="small" style="padding:8px 4px 2px">✕ = ไม่มีที่จุดนั้น · "·" = ไม่มีข้อมูล · ซัพพอร์ต = ทีมซัพพอร์ตเข้าช่วยได้ · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · รับที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00</div>';
+    h+='<div class="small" style="padding:8px 4px 2px">× Unavailable · · Unknown · Crew access · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · รับที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00</div>';
   }
   return h+'</div>';
 }
 
 function viewSet(m){
-  var h='<div class="card"><h2>แผนเวลา (แก้ได้ รูปแบบ hr:mm นับจากปล่อยตัว)</h2><div class="pbar">'+PIDS.map(function(k){return '<button class="'+(k===S.pid?'on':'')+'" onclick="setPlan(\''+k+'\')"><b>'+k+'</b><span>'+PINFO[k].t+'</span></button>'}).join('')+'</div><table><tr><th>จุด</th><th>ถึง (hr:mm)</th><th>พัก (m)</th></tr>';
+  var h='<div class="card"><h2>Plans · elapsed h:mm</h2><div class="pbar">'+PIDS.map(function(k){return '<button class="'+(k===S.pid?'on':'')+'" onclick="setPlan(&quot;'+k+'&quot;)"><b>'+k+'</b><span>'+PINFO[k].t+'</span></button>'}).join('')+'</div><table><tr><th>CP</th><th>Arrival (h:mm)</th><th>Rest (min)</th></tr>';
   var pl=plan(),st=stp();
   for(var i=0;i<=10;i++){
     var v=Math.floor(pl[i]/60)+':'+p2(pl[i]%60);
     h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?'0:00':'<input class="s" id="pa'+i+'" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s" id="ps'+i+'" type="number" value="'+st[i]+'">')+'</td></tr>';
   }
-  h+='</table><div id="planError" class="small bad" role="alert"></div><button class="btn alt" onclick="savePlan()">บันทึกแผน</button><button class="btn ghost" onclick="resetPlan()">คืนค่าแผน '+S.pid+' เดิม</button>'
-   +'<div class="small">A = เข้า 23:59 · B = 26:59 · C = 29:59 (ใช้เวลาเต็มเป้า พัก 7/10/12 m ต่อจุด ยืดเวลาตามรูปแบบแผนร่างเดิม) · D = ถึงแต่ละจุดก่อน COT 45 m (เข้า 31:00) ทุกแผนเป็นร่างจากแบบจำลอง ยังไม่ปรับตามข้อมูลซ้อมจริง แก้ได้แยกแต่ละแผน</div></div>';
-  var sv=S.sim?new Date(now()+7*3600000).toISOString().slice(0,16):'';
-  h+='<div class="card"><h2>ทดสอบก่อนแข่ง: จำลองเวลา</h2><input type="datetime-local" id="simv" value="'+sv+'" style="display:block;width:100%;max-width:100%;min-height:44px;-webkit-appearance:none">'
-   +'<button class="btn ghost" onclick="setSim(document.getElementById(\'simv\').value)">ตั้งเวลาจำลอง (เวลาไทย)</button>'
-   +'<button class="btn ghost" onclick="setSim(\'\')">เลิกจำลอง ใช้เวลาจริง</button>'
-   +'<div class="small">ใช้เล่นลองกดปุ่มดูว่าตัวเลขเปลี่ยนอย่างไร ทดสอบเสร็จกด "ล้างบันทึกและเลิกจำลองเวลา" ก่อนวันแข่งจริง</div></div>';
-  h+='<div class="card"><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">ล้างบันทึกและเลิกจำลองเวลา</button><div class="small">ล้างเวลาเข้า–ออก CP และเช็กลิสต์ กลับไปใช้เวลาจริง โดยเก็บแผนที่แก้ไว้</div>'
-   +'<div class="small">ข้อมูลเก็บในเครื่องนี้เท่านั้น ใช้งานออฟไลน์ได้ ไม่ต้องมีสัญญาณ อย่าลบข้อมูลเบราว์เซอร์ระหว่างแข่ง</div></div>';
+  h+='</table><div id="planError" class="small bad" role="alert"></div><button class="btn alt" onclick="savePlan()">Save plan</button><button class="btn ghost" onclick="resetPlan()">Reset plan '+S.pid+'</button></div>';
+  h+='<div class="card"><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">'+(S.sim?'Exit preview':'Clear records')+'</button></div>';
   return h;
 }
 
@@ -577,12 +568,12 @@ function live(){
   (function(){var cnt=0,nx=-1,i,d='';for(i=1;i<=9;i++){if(S.arr[i]!=null)cnt++;else if(nx<0)nx=i}
     for(i=1;i<=9;i++)d+='<i class="'+(S.arr[i]!=null?'on':(i===nx&&m.mode!=='pre'?'cur':''))+'"></i>';
     var fin=S.arr[10]!=null;
-    o.cpProg=['<span class="dots">'+d+'</span><span>CP <b>'+cnt+'</b>/9'+(fin?' · FIN ✓':(nx>0?' · ถัดไป '+P[nx].id:' · ถัดไป FIN'))+'</span>',''];
+    o.cpProg=['<span class="dots">'+d+'</span><span>CP <b>'+cnt+'</b>/9'+(fin?' · FIN ✓':(nx>0?' · Next '+P[nx].id:' · Next FIN'))+'</span>',''];
   })();
-  o.hdDeltaLab=[IC_TMR+'เทียบแผน '+S.pid+' · '+PINFO[S.pid].t,''];
-  o.sim=[S.sim?'โหมดจำลองเวลา':'',''];
+  o.hdDeltaLab=[IC_TMR+'Plan '+S.pid+' · '+PINFO[S.pid].t,''];
+  o.sim=[S.sim?'Preview':'',''];
   o.elapsed=[tDur(m.mode==='pre'?0:Math.floor(((m.mode==='done'?S.arr[10]:n)-START)/1000),{sec:1,noicon:1,fh:1}),''];
-  o.raceclk=[m.mode==='pre'?'ปล่อยตัวอีก '+tDur(Math.floor((START-n)/1000),{sec:1,days:1,noicon:1}):'หลังปล่อยตัว '+tC(START,{noicon:1,noday:1}),''];
+  o.raceclk=[m.mode==='pre'?'Starts in '+tDur(Math.floor((START-n)/1000),{sec:1,days:1,noicon:1}):'Start '+tC(START,{noicon:1,noday:1}),''];
   var delta=null,cj=null;
   if(m.mode==='pre'){o.toStart=[tDur(Math.max(0,Math.floor((START-n)/1000)),{sec:1,days:1}),''];cj=1}
   if(m.mode==='enroute'){
@@ -591,17 +582,17 @@ function live(){
     delta=(eta-(START+planArr(to)*60000))/60000;cj=nextCut(to);
     o.barw=[Math.min(100,used/pl*100)+'%',''];
     o.used=[tM(used),used>pl?'bad':''];
-    var lf=pl-used;o.legLeft=[lf>=0?tM(lf):'เกิน '+tM(-lf),lf>=0?'':'bad'];
+    var lf=pl-used;o.legLeft=[lf>=0?tM(lf):'Over '+tM(-lf),lf>=0?'':'bad'];
     o.nsEta=[tC(eta),delta>0.5?'warn':'good'];
   }
   if(m.mode==='atcp'){
     var i=m.last,ar=S.arr[i],dl2=(ar-(START+planArr(i)*60000))/60000,t2=deltaH(dl2);
     var left=stp()[i]*60000-(n-ar);
     o.stopLeft=[tDur(Math.floor(left/1000),{sec:1}),left>60000?'good':(left>0?'warn':'bad')];
-    o.arrDelta=['ถึง '+tC(ar,{noday:1})+' · '+t2[0],t2[1]];
+    o.arrDelta=['Arrived '+tC(ar,{noday:1})+' · '+t2[0],t2[1]];
     var nxt=i+1,lim2=nxt===7?1500:P[nxt].cut;
     var lat=START+(lim2-legPlan(i,nxt))*60000,latin=(lat-n)/60000;
-    o.latest=[tC(lat)+'<span class="sub2">'+(latin>=0?'อีก '+tM(latin):'เลยแล้ว')+'</span>',latin<10?'bad':(latin<30?'warn':'')];
+    o.latest=[tC(lat)+'<span class="sub2">'+(latin>=0?'In '+tM(latin):'Overdue')+'</span>',latin<10?'bad':(latin<30?'warn':'')];
     delta=dl2+Math.max(0,(n-ar)/60000-stp()[i]);cj=nextCut(nxt);
     var depEst=Math.max(n,ar+stp()[i]*60000);
     o.nsEta=[tC(depEst+legPlan(i,nxt)*60000),delta>0.5?'warn':'good'];
@@ -611,13 +602,13 @@ function live(){
     var ds=deltaH(delta);o.hdDelta=[ds[0],ds[1]];
     var fp=finishProj(delta),fm=(fp-START)/60000;
     o.fin=[tC(fp),fm<=goalMin()?'good':'warn'];
-    o.fin24=[fm<=goalMin()?'เหลือ '+tM(goalMin()-fm):'เกิน '+tM(fm-goalMin()),fm<=goalMin()?'good':'warn'];
+    o.fin24=[fm<=goalMin()?'Under '+tM(goalMin()-fm):'Over '+tM(fm-goalMin()),fm<=goalMin()?'good':'warn'];
   } else o.hdDelta=['—',''];
   if(cj!=null&&m.mode!=='done'){
     var cms=START+P[cj].cut*60000,cin=(cms-n)/60000;
-    o.hdCutLab=[IC_CLK+'COT ถัดไป · '+P[cj].id,''];
-    o.hdCut=[tC(cms)+'<span class="sub2">'+(cin>=0?(cin>=1440?'อีก '+Math.floor(cin/1440)+' วัน':'อีก '+tM(cin)):'เลยแล้ว')+'</span>',m.mode==='pre'?'':(cin<30?'bad':(cin<90?'warn':'good'))];
-  } else {o.hdCutLab=[IC_CLK+'COT ถัดไป',''];o.hdCut=['—','']}
+    o.hdCutLab=[IC_CLK+'Next COT · '+P[cj].id,''];
+    o.hdCut=[tC(cms)+'<span class="sub2">'+(cin>=0?(cin>=1440?'In '+Math.floor(cin/1440)+' d':'In '+tM(cin)):'Overdue')+'</span>',m.mode==='pre'?'':(cin<30?'bad':(cin<90?'warn':'good'))];
+  } else {o.hdCutLab=[IC_CLK+'Next COT',''];o.hdCut=['—','']}
   return o;
 }
 var renderedEarly=null;
@@ -677,12 +668,12 @@ function cpKm(i){return P[i].km}
 /* ---------- GPS ---------- */
 var G={on:false,id:null,pos:null,err:'',idx:null,km:null,off:null,t:0,acc:null};
 function gpsStart(){
-  if(!navigator.geolocation){G.err='เครื่องนี้ไม่รองรับ GPS ในเบราว์เซอร์';render();return}
-  G.err='กำลังรอสัญญาณ GPS...';G.on=true;render();
-  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){if(e.code!==1&&G.km!=null&&!G.demo){G.err='สัญญาณ GPS หายชั่วคราว กำลังหาใหม่ (แสดงตำแหน่งล่าสุด)';}else{G.err='GPS ใช้ไม่ได้: '+(e.code===1?'ยังไม่ได้อนุญาตตำแหน่ง':e.code===2?'หาตำแหน่งไม่เจอ (ลองออกที่โล่ง)':'หมดเวลา')+' ('+e.message+')';}render()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
+  if(!navigator.geolocation){G.err='GPS unavailable';render();return}
+  G.err='Acquiring GPS…';G.on=true;render();
+  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){if(e.code!==1&&G.km!=null){G.err='GPS lost · Last fix shown';}else{G.err=e.code===1?'GPS permission denied':e.code===2?'No GPS fix':'GPS timed out';}render()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
 }
 function gpsStop(){if(G.id!=null)navigator.geolocation.clearWatch(G.id);G.id=null;G.on=false;G.err='';render()}
-function gpsOk(pos){G.err='';G.demo=false;gpsFix(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);if(S.tab==='map')render()}
+function gpsOk(pos){G.err='';gpsFix(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);if(S.tab==='map')render()}
 function gpsFix(la,lo,acc){
   var p=RT.p,best=1e9,bi=0,bt=0,i,r=Math.PI/180,cl=Math.cos(la*r);
   var lo_i=0,hi_i=p.length-2;
@@ -699,14 +690,6 @@ function gpsFix(la,lo,acc){
   G.idx=bi;G.km=p[bi].k+(p[bi+1].k-p[bi].k)*bt;G.off=best*1000;G.acc=acc;G.t=now();G.pos=[la,lo];
 }
 
-function gpsDemo(km){var i=kmToIdx(km);G.demo=true;G.idx=i;G.km=km;G.off=0;G.acc=0;G.t=now();G.pos=[RT.p[i].la,RT.p[i].lo];render()}
-function gpsClear(){G.demo=false;G.km=null;G.idx=null;G.pos=null;render()}
-function gpsOnce(){
-  if(!navigator.geolocation){G.test='เครื่องนี้ไม่รองรับ GPS ในเบราว์เซอร์นี้';render();return}
-  G.test='กำลังอ่านตำแหน่ง... (ถ้ามีหน้าต่างขออนุญาต ให้กดอนุญาต)';render();
-  navigator.geolocation.getCurrentPosition(function(p){G.test='สำเร็จ: '+p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5)+' · ความแม่นยำ ±'+Math.round(p.coords.accuracy)+' ม. · ความสูง '+(p.coords.altitude!=null?Math.round(p.coords.altitude)+' ม.':'ไม่มีข้อมูล')+' · '+clockS(now());render()},function(e){G.test='ไม่สำเร็จ: '+(e.code===1?'ถูกปฏิเสธ/ยังไม่ได้อนุญาต':e.code===2?'หาตำแหน่งไม่ได้':'หมดเวลา')+' ('+e.message+')';render()},{enableHighAccuracy:true,timeout:30000,maximumAge:0});
-}
-try{if(navigator.permissions&&navigator.permissions.query)navigator.permissions.query({name:'geolocation'}).then(function(r){G.perm=r.state;r.onchange=function(){G.perm=r.state}})}catch(e){}
 function planKmAt(minElapsed){ // where the plan says you should be at this race time
   var pl=plan(),i;
   if(minElapsed<=0)return 0;
@@ -748,50 +731,35 @@ function profileSvg(x0,x1,cur){
 }
 
 function viewMap(m){
-  var h='';
-  var win=S.gz||'next';
+  var h='',win=S.gz||'next';
   var curKm=(G.km!=null)?G.km:null;
   var base=curKm!=null?curKm:(m.last!=null?cpKm(m.last):0);
   var x0=0,x1=105.8;
   if(win==='next'){x0=Math.max(0,base-3);x1=Math.min(105.8,x0+30);x0=Math.max(0,x1-30)}
-  h+='<div class="seg"><button class="'+(win==='next'?'on':'')+'" onclick="S.gz=\'next\';save();render()">ช่วงถัดไป 30 กม.</button><button class="'+(win==='all'?'on':'')+'" onclick="S.gz=\'all\';save();render()">ทั้งเส้นทาง</button></div>';
-  h+='<div class="card" style="padding:8px">'+profileSvg(x0,x1)+'<div class="small" style="padding:4px 6px">● แดง = ตำแหน่ง GPS · ○ วงกลมโปร่ง = ที่ควรอยู่ตามแผนเวลาตอนนี้ · ◆ เขียว = จุดที่บันทึกล่าสุด · ▲ = ยอด · เส้นเขียว = จุดที่ผ่านแล้ว</div></div>';
-  // GPS controls
+  h+='<div class="seg"><button class="'+(win==='next'?'on':'')+'" onclick="S.gz=&quot;next&quot;;save();render()">Next 30 km</button><button class="'+(win==='all'?'on':'')+'" onclick="S.gz=&quot;all&quot;;save();render()">Full route</button></div>';
+  h+='<div class="card" style="padding:8px">'+profileSvg(x0,x1)+'<div class="small" style="padding:4px 6px">● GPS · ○ Plan · ◆ Last CP · ▲ Peak</div></div>';
   h+='<div class="card"><h2>GPS</h2>';
-  if(!G.on)h+='<button class="btn alt" onclick="gpsStart()">เปิด GPS ติดตามตำแหน่ง</button><div class="small">GPS ในมือถือทำงานได้โดยไม่ต้องมีเน็ต แต่กินแบตเพิ่ม เปิดเฉพาะตอนอยากเช็กตำแหน่ง แล้วกดปิด</div>';
-  else h+='<button class="btn ghost" onclick="gpsStop()">ปิด GPS</button>';
+  if(!G.on)h+='<button class="btn alt" onclick="gpsStart()">Start GPS</button>';
+  else h+='<button class="btn ghost" onclick="gpsStop()">Stop GPS</button>';
   if(G.err)h+='<div class="tip warn">'+G.err+'</div>';
   var farOff=G.km!=null&&G.off>2000;
-  if(farOff){h+='<div class="tip">GPS ใช้งานได้ ✓ ความแม่นยำ ±'+Math.round(G.acc||0)+' ม. · แต่ตอนนี้คุณอยู่ห่างจากเส้นทาง '+(G.off/1000).toFixed(1)+' กม. จึงยังไม่แสดงระยะถึงจุดถัดไป (จะแสดงเมื่ออยู่ในสนาม)</div>';}
+  if(farOff)h+='<div class="tip warn">Off route · '+(G.off/1000).toFixed(1)+' km · ±'+Math.round(G.acc||0)+' m</div>';
   if(G.km!=null&&!farOff){
     var nx=null,i;for(i=1;i<=10;i++){if(cpKm(i)>G.km+0.05){nx=i;break}}
     var age=Math.round((now()-G.t)/1000);
-    h+='<div class="kv"><span>ตำแหน่งบนเส้นทาง</span><b>กม. '+G.km.toFixed(1)+' / 105.8</b></div>'
-     +'<div class="kv"><span>ความสูง (ประมาณ)</span><b>'+Math.round(eleAt(G.km))+' ม.</b></div>'
-     +'<div class="kv"><span>ห่างจากเส้นทาง</span><b class="'+(G.off>150?'bad':'good')+'">'+Math.round(G.off)+' ม.'+(G.off>150?' (หลงทาง?)':'')+'</b></div>'
-     +'<div class="kv"><span>ความแม่นยำ GPS · อัปเดตเมื่อ</span><b>±'+Math.round(G.acc||0)+' ม. · '+age+' วิ ที่แล้ว</b></div>';
+    h+='<div class="kv"><span>Position</span><b>'+G.km.toFixed(1)+' / 105.8 km</b></div>'
+     +'<div class="kv"><span>Elevation</span><b>'+Math.round(eleAt(G.km))+' m</b></div>'
+     +'<div class="kv"><span>Off route</span><b class="'+(G.off>150?'bad':'good')+'">'+Math.round(G.off)+' m</b></div>'
+     +'<div class="kv"><span>Accuracy / age</span><b>±'+Math.round(G.acc||0)+' m · '+age+' s ago</b></div>';
     if(nx){var gl=sumGL(G.km,cpKm(nx));
-      h+='<div class="kv"><span>ถึง '+P[nx].id+' '+P[nx].n+'</span><b>อีก '+(cpKm(nx)-G.km).toFixed(1)+' กม.</b></div>'
-       +'<div class="kv"><span>ไต่/ลง ที่เหลือถึง '+P[nx].id+'</span><b>+'+Math.round(gl[0])+' / -'+Math.round(gl[1])+' ม.</b></div>';}
+      h+='<div class="kv"><span>To '+P[nx].id+'</span><b>'+(cpKm(nx)-G.km).toFixed(1)+' km</b></div>'
+       +'<div class="kv"><span>Climb / descent</span><b>+'+Math.round(gl[0])+' / −'+Math.round(gl[1])+' m</b></div>';}
     var pk=null;for(i=0;i<PEAKS.length;i++){if(RT.p[PEAKS[i]].k>G.km+0.1){pk=RT.p[PEAKS[i]];break}}
-    if(pk){var g2=sumGL(G.km,pk.k);h+='<div class="kv"><span>ยอดถัดไป ▲'+Math.round(pk.e)+' ม.</span><b>อีก '+(pk.k-G.km).toFixed(1)+' กม. · ไต่อีก +'+Math.round(g2[0])+' ม.</b></div>'}
+    if(pk){var g2=sumGL(G.km,pk.k);h+='<div class="kv"><span>Next peak · '+Math.round(pk.e)+' m</span><b>'+(pk.k-G.km).toFixed(1)+' km · +'+Math.round(g2[0])+' m</b></div>'}
     var plk=planKmAt((now()-START)/60000),df=G.km-plk;
-    if(now()>=START)h+='<div class="kv"><span>เทียบแผนเวลา (ตอนนี้ควรอยู่ กม. '+plk.toFixed(1)+')</span><b class="'+(df>=0?'good':'warn')+'">'+(df>=0?'นำ ':'ตาม ')+Math.abs(df).toFixed(1)+' กม.</b></div>';
+    if(now()>=START)h+='<div class="kv"><span>Plan '+plk.toFixed(1)+' km</span><b class="'+(df>=0?'good':'warn')+'">'+(df>=0?'Ahead ':'Behind ')+Math.abs(df).toFixed(1)+' km</b></div>';
   }
-  h+='<div class="small" style="margin-top:8px">ตำแหน่ง CP และกราฟคำนวณจาก GPX ทางการ v1.0 (ผู้จัดอาจแก้เส้นทางภายหลัง ตรวจสอบเวอร์ชันล่าสุดก่อนแข่ง) GPS บนมือถือคลาดเคลื่อนได้ ใช้เป็นแนวทาง ไม่ใช่ตัวตัดสิน COT</div></div>';
-  // --- test tools ---
-  h+='<div class="card"><h2>ทดสอบ (ก่อนวันแข่ง)</h2>'
-   +'<div class="kv"><span>เปิดไฟล์แบบ</span><b>'+location.protocol+'</b></div>'
-   +'<div class="kv"><span>Secure context</span><b class="'+(window.isSecureContext?'good':'bad')+'">'+(window.isSecureContext?'ใช่':'ไม่')+'</b></div>'
-   +'<div class="kv"><span>GPS รองรับ</span><b class="'+(navigator.geolocation?'good':'bad')+'">'+(navigator.geolocation?'ใช่':'ไม่')+'</b></div>'
-   +'<div class="kv"><span>สิทธิ์ตำแหน่ง</span><b>'+(G.perm||'ไม่ทราบ')+'</b></div>';
-  h+='<button class="btn ghost" onclick="gpsOnce()">ทดสอบ GPS 1 ครั้ง (ไม่เทียบเส้นทาง)</button>';
-  if(G.test)h+='<div class="tip">'+G.test+'</div>';
-  h+='<div class="small" style="margin-top:10px">ทดสอบกราฟโดยไม่ใช้ GPS: เลื่อนตำแหน่งจำลองบนเส้นทาง (ปล่อยนิ้วแล้วกราฟจะย้ายจุด)</div>'
-   +'<input type="range" min="0" max="105.8" step="0.1" value="'+(G.demo&&G.km!=null?G.km:0)+'" style="width:100%;margin-top:8px" onchange="gpsDemo(+this.value)">'
-   +(G.demo?'<button class="btn ghost" onclick="gpsClear()">ล้างตำแหน่งจำลอง</button>':'')
-   +'<div class="small" style="margin-top:8px">เคล็ดลับทดสอบ GPS จริง: เดินออกไปที่โล่งนอกอาคาร 5 นาที กด "เปิด GPS" จะต้องเห็นค่าความแม่นยำ ±10–20 ม. (ระยะห่างจากเส้นทางจะเป็นพันเมตรเพราะไม่ได้อยู่บนสนาม ซึ่งเป็นเรื่องปกติ) ทดสอบแบบโหมดเครื่องบินด้วยก็ได้ GPS ยังทำงาน</div></div>';
-  return h;
+  return h+'<div class="small" style="margin-top:8px">GPX v1.0 · 105.8 km</div></div>';
 }
 
 render();

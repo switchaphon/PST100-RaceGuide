@@ -38,10 +38,25 @@ need checking against the latest published material before race day.
 ## Reset and storage
 
 - Race records, checklist, simulation offset and custom plans persist locally.
-- “ล้างบันทึกและเลิกจำลองเวลา” clears arrivals, departures, history, checklist,
+- “Clear records” (or “Exit preview” during a preview) clears arrivals, departures, history, checklist,
   backdating and simulation; it preserves custom plans and UI preferences.
 - After reset and reload, the next race uses real time. Resetting a plan is a
   separate action affecting only the selected plan.
+
+## Compact interface language
+
+- Navigation, controls, headings, time/status labels, dates and supply names use
+  concise English. Proper station names, per-leg descriptions, water advice and
+  station checklists remain in Thai.
+- Time-of-day values use HH:mm (or HH:mm:ss), with an English day badge after
+  midnight. Elapsed durations retain readable hr/m/s units. COT and W0 advisory
+  times, bag logistics and GPS fix age/accuracy remain visible.
+- Pre-race **Preview race** and Settings **Exit preview** remain available. The
+  manual simulation-date editor, GPS diagnostics, one-shot GPS test and simulated
+  position slider are removed. Live GPS tracking and route projection are retained.
+- Plan formulas, color-legend tutorials, installation/storage guidance and GPS
+  usage tips are documented outside the running interface rather than filling
+  race-day cards. Plan-button times are labelled **Finish ETA by plan**.
 
 ## Day and Night display
 

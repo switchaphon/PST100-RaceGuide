@@ -6,9 +6,11 @@ Install on iPhone: open the GitHub Pages URL in Safari → Share → Add to Home
 
 Data: aid-station table and supplies graphic attributed to the organizer. The embedded route is labelled official GPX v1.0 in the repository history, with distances anchored to the station table (105.8 km). The original GPX is not included; verify the latest course and rules before race day. Plan times and water/preparation advice are drafts.
 
+Labels and controls use concise English; station names, course descriptions and practical race advice remain in Thai. GPS diagnostics and usage tutorials are not shown in the planner.
+
 Behavior and acceptance criteria: [docs/race-behavior.md](docs/race-behavior.md).
 
-After rehearsal, use “ล้างบันทึกและเลิกจำลองเวลา” in Settings. This clears race records and simulation while preserving custom plans.
+Before race day, use **Preview race** to try the planner. Use **Exit preview** in Settings to clear sample records and return to real time while keeping custom plans.
 
 Use the Day/Night button beside CP progress to switch display colors. Your choice is saved on this device; switching keeps race records and unsaved plan edits intact.
 

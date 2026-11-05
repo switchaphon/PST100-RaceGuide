@@ -47,9 +47,9 @@ test('reset after rehearsal returns to real time and persists an empty race', ()
 test('start button unlocks as the live clock crosses one hour before start', () => {
   const a = app();
   a.run('now=()=>START-61*60000;render()');
-  assert.doesNotMatch(a.node('main').innerHTML, /ออกตัวแล้ว/);
+  assert.doesNotMatch(a.node('main').innerHTML, /Start race/);
   a.run('now=()=>START-59*60000;applyLive()');
-  assert.match(a.node('main').innerHTML, /ออกตัวแล้ว/);
+  assert.match(a.node('main').innerHTML, /Start race/);
 });
 
 test('each plan ETA is exposed to live updates and tracks an overdue leg', () => {
@@ -160,4 +160,37 @@ test('theme switching preserves race data and unsaved form edits without rerende
 test('a corrupt saved theme falls back to the device preference', () => {
   const a = app({ state: { theme: 'unknown' }, prefersDark: true });
   assert.equal(a.run('S.theme'), 'night');
+});
+
+test('running screen uses compact English controls while retaining Thai course advice', () => {
+  const a = app();
+  a.run('S.dep[0]=START;now=()=>START+60*60000;render()');
+  const html = a.node('main').innerHTML;
+  assert.match(html, />Arrived A1<\/button>/);
+  assert.match(html, />Remaining to A1<\/div>/);
+  assert.match(html, />ETA<\/div>/);
+  assert.ok(html.includes(a.run('P[0].leg')));
+  assert.ok(html.includes(a.run('P[1].arrive[0]')));
+  assert.doesNotMatch(html, /เวลาใต้แผน|แตะเพื่อติ๊ก/);
+});
+
+test('profile keeps live course position without GPS diagnostics and demo controls', () => {
+  const a = app();
+  a.run('gpsFix(RT.p[CPI[6]].la,RT.p[CPI[6]].lo,10);setTab("map")');
+  const html = a.node('main').innerHTML;
+  assert.match(html, /72\.0 \/ 105\.8 km/);
+  assert.match(html, />Start GPS<\/button>/);
+  assert.doesNotMatch(html, /Secure context|location\.protocol|type="range"|gpsOnce\(|gpsDemo\(/);
+});
+
+test('preview can be exited from settings without a manual simulation editor', () => {
+  const a = app();
+  a.run('testStart();setTab("set")');
+  const html = a.node('main').innerHTML;
+  assert.match(html, />Save plan<\/button>/);
+  assert.match(html, />Exit preview<\/button>/);
+  assert.doesNotMatch(html, /id="simv"|datetime-local|Secure context|ใช้เล่นลองกด/);
+  a.run('resetAll()');
+  assert.equal(a.run('S.sim'), 0);
+  assert.equal(a.run('model().mode'), 'pre');
 });
