@@ -1,0 +1,778 @@
+<!-- Original-layout preview. Open directly; fixture records stay in memory. -->
+<!doctype html>
+<html lang="th" data-theme="night">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>PST100 — Planner preview (sample data)</title>
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PST100">
+<style>
+:root{color-scheme:dark;--bg:#0b0f14;--card:#151c25;--card2:#1c2531;--tx:#eef2f7;--mut:#8fa0b3;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5a5f;--acc:#4da3ff;--line:#26313f;--unit:#a9b8ca;--focus:#eef2f7;--focus-bg:#14283d;--button:#3ddc84;--button-tx:#06120b;--selected:#4da3ff;--selected-tx:#04101e;--selected-warn:#3d2800;--selected-bad:#5c131c;--negative-bg:#3a1519;--bag:#fde047;--bag-tx:#1a1400;--bag-glow:#fde04766;--graph:#1f5fa8;--clock-icon:#6ec1ff;--timer-icon:#c9a6ff;--s0:#4da3ff;--s1:#22d3ee;--s2:#a3e635;--s3:#f472b6;--s4:#c084fc;--s5:#fb923c;--s6:#fde047;--s7:#2dd4bf;}
+:root[data-theme="day"]{color-scheme:light;--bg:#f4f7fb;--card:#ffffff;--card2:#e9eff7;--tx:#152333;--mut:#4d6076;--ok:#167344;--warn:#8f5700;--bad:#b52b34;--acc:#165da8;--line:#bdcbdc;--unit:#495e75;--focus:#152333;--focus-bg:#e2edfb;--button:#3ddc84;--button-tx:#06120b;--selected:#4da3ff;--selected-tx:#04101e;--selected-warn:#3d2800;--selected-bad:#5c131c;--negative-bg:#fce8eb;--bag:#fde047;--bag-tx:#1a1400;--bag-glow:#00000000;--graph:#c7ddf5;--clock-icon:#165da8;--timer-icon:#7044a4;--s0:#165aa0;--s1:#00677a;--s2:#496d0b;--s3:#983768;--s4:#7044a4;--s5:#914b10;--s6:#725409;--s7:#006957;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Thai","Sarabun",sans-serif}
+body{padding:0 12px calc(86px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;font-size:18px;line-height:1.5}
+header{position:sticky;top:0;background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) 0 8px;border-bottom:1px solid var(--line);z-index:5}
+.hrow{display:flex;justify-content:space-between;align-items:flex-end;gap:8px}.hrow>div,.strip>div{min-width:0}
+.strip{display:flex;justify-content:space-between;align-items:flex-end;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.sv{font-size:clamp(16px,4.6vw,20px);font-weight:800;font-variant-numeric:tabular-nums}
+.clock{font-size:clamp(24px,7vw,31px);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.sub{color:var(--mut);font-size:14px;font-weight:500;line-height:1.45}
+.ti{width:.78em;height:.78em;vertical-align:-.06em;margin-right:.22em;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ti.c{stroke:var(--clock-icon)}.ti.d{stroke:var(--timer-icon)}
+.tc,.td{white-space:nowrap}
+u{text-decoration:none;font-size:clamp(13px,.6em,20px);font-weight:600;color:var(--unit);margin:0 .16em 0 .08em;letter-spacing:0;vertical-align:baseline}
+.tc em{font-style:normal;font-size:13px;font-weight:700;color:var(--selected-tx);background:var(--selected);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:.25em}
+.g3 .tc em{display:block;width:max-content;margin:2px 0 0}
+.sub2{display:block;font-size:15px;font-weight:600;color:var(--mut);margin-top:1px}
+.sub2 .ti{width:.95em;height:.95em}
+.dl{font-size:15px;font-weight:600;color:inherit}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:15px;color:var(--mut);margin:6px 2px 0}
+.lg .ti{width:1.1em;height:1.1em}
+.right{text-align:right}
+.card{background:var(--card);border-radius:14px;padding:14px;margin:12px 0}
+.card h2{margin:0 0 6px;font-size:16px;color:var(--mut);font-weight:600;text-transform:none}
+.big{font-size:clamp(32px,10vw,44px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.05}
+.mid{font-size:clamp(19px,5.6vw,26px);font-weight:700;font-variant-numeric:tabular-nums}
+.row{display:flex;gap:10px}
+.row>div{flex:1;background:var(--card2);border-radius:10px;padding:10px}
+.row .lab{font-size:15px;font-weight:600;color:var(--mut)}
+.good{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}.acc{color:var(--acc)}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:18px;font-size:22px;font-weight:800;color:var(--button-tx);background:var(--button);margin:10px 0}
+.btn.alt{background:var(--selected);color:var(--selected-tx)}
+.btn.ghost{background:var(--card2);color:var(--tx);font-size:16px;padding:12px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{font-size:15px;font-weight:500;padding:4px 9px;border-radius:99px;background:var(--card2)}
+.chip.y{background:var(--focus-bg);color:var(--ok)}.chip.n{background:var(--negative-bg);color:var(--bad);text-decoration:line-through}
+.chip.available{background:var(--card2);background:color-mix(in srgb,var(--supply) 15%,var(--card));color:var(--supply);border:1px solid var(--line);border-color:color-mix(in srgb,var(--supply) 45%,var(--card))}
+.bar{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin:8px 0 2px}
+.bar>i{display:block;height:100%;background:var(--acc);width:0}
+ul.chk{list-style:none;margin:6px 0 0;padding:0}
+ul.chk li{padding:11px 10px;margin:6px 0;background:var(--card2);border-radius:10px;font-size:18px;font-weight:500;line-height:1.5;display:flex;gap:10px;align-items:flex-start}
+ul.chk li.done{opacity:.45;text-decoration:line-through}
+ul.chk li:before{content:"\2610";font-size:22px;line-height:1}
+ul.chk li.done:before{content:"\2611";color:var(--ok)}
+.wtr{margin-top:8px;padding:9px 10px;border-radius:10px;font-size:16px;font-weight:500;line-height:1.55;background:var(--card2);border-left:4px solid var(--acc)}.wtr.lv1{border-left-color:var(--warn)}.wtr.lv2{border-left-color:var(--bad)}
+.tip{background:var(--card2);border-radius:10px;padding:10px;margin-top:8px;font-size:17px;line-height:1.55}
+table{width:100%;border-collapse:collapse;font-size:16px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mut);font-weight:600;font-size:15px}
+tr.cur td{background:var(--focus-bg)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--mut);padding:14px 4px;font-size:17px;font-weight:600}
+nav button.on{color:var(--acc);border-top:3px solid var(--acc);padding-top:11px}
+select,input{background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:16px}
+input.s{width:80px;text-align:center}
+.small{font-size:15px;font-weight:500;line-height:1.5;color:var(--mut)}
+svg text{font-family:inherit}
+.cpbar{display:flex;align-items:center;gap:10px;margin-top:7px;font-size:14px;font-weight:500;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cpbar .dots{display:flex;gap:2px;flex:1;min-width:0}
+.cpbar .dots i{flex:1;height:7px;border-radius:4px;background:var(--line)}
+.cpbar .dots i.on{background:var(--ok)}.cpbar .dots i.cur{background:var(--acc)}
+.cpbar b{color:var(--tx);font-size:15px}
+.cpbar-row{display:flex;align-items:center;gap:8px;margin-top:7px}.cpbar-row .cpbar{flex:1;min-width:0;margin-top:0}
+.theme-toggle{flex:none;width:78px;min-height:44px;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--card2);color:var(--tx);font:600 14px system-ui,sans-serif;touch-action:manipulation}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:3px}
+.pbar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.pbar button{border:1px solid var(--line);background:var(--card2);color:var(--tx);border-radius:12px;padding:7px 2px;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:14px;min-width:0}
+.pbar button b{font-size:22px;line-height:1}
+.pbar button>span{color:var(--mut);font-size:14px;font-weight:500;white-space:normal}
+.pbar button i{font-style:normal;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.pbar button i em{display:block;margin:1px auto 0;width:max-content}
+.pbar button.on{background:var(--selected);color:var(--selected-tx);border-color:var(--acc)}
+.pbar button.on>span{color:var(--selected-tx)}
+.pbar button.on i{color:var(--selected-tx)!important}
+.pbar button.on i u{color:var(--selected-tx)}
+.pbar button.on i.warn{color:var(--selected-warn)!important}.pbar button.on i.bad{color:var(--selected-bad)!important}
+.seg{display:flex;gap:8px;margin:8px 0}
+.seg button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--tx);font-size:15px;font-weight:700}
+.seg button.on{background:var(--selected);color:var(--selected-tx);border-color:var(--acc)}
+.kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:16px}
+.kv:last-child{border:0}.kv b{font-variant-numeric:tabular-nums}
+.chip{display:inline-flex;align-items:center;gap:5px}
+.chip.bag{background:var(--bag);color:var(--bag-tx);font-weight:800;border:1px solid var(--bag-tx);box-shadow:0 0 10px var(--bag-glow)}
+.ic{display:inline-flex;width:34px;height:34px;border-radius:10px;align-items:center;justify-content:center;border:1px solid transparent}
+.ic.sm{width:26px;height:26px;border-radius:8px}
+.ic.no{background:var(--negative-bg);border-color:var(--bad);color:var(--bad);font-weight:800;font-size:15px}
+.ic.un{color:var(--mut)}
+.ic.yes{background:var(--card2);background:color-mix(in srgb,var(--supply) 17%,var(--card));border-color:var(--line);border-color:color-mix(in srgb,var(--supply) 50%,var(--card));color:var(--supply)}
+.ic.bag{background:var(--bag);border-color:var(--bag-tx);color:var(--bag-tx);box-shadow:0 0 10px var(--bag-glow)}
+.ml{color:var(--supply,var(--mut))}
+.supply-0{--supply:var(--s0)}.supply-1{--supply:var(--s1)}.supply-2{--supply:var(--s2)}.supply-3{--supply:var(--s3)}.supply-4{--supply:var(--s4)}.supply-5{--supply:var(--s5)}.supply-6{--supply:var(--s6)}.supply-7{--supply:var(--s7)}
+table.mx td,table.mx th{text-align:center;padding:4px 1px}
+table.mx td.mid-id{text-align:left;padding-left:6px;font-size:14px}
+table.mx .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overflow-wrap:anywhere}
+.blk{border-top:1px solid var(--line);padding:6px 0 4px}
+.blk.cur{background:var(--focus-bg);border-radius:8px}
+.r1{display:grid;grid-template-columns:68px 1fr 1fr 1fr 40px;gap:2px;align-items:start;font-size:16px;font-variant-numeric:tabular-nums;text-align:center}
+.r1>div:first-child{text-align:left;padding-left:4px}
+.r1.hd{font-size:14px;color:var(--mut);font-weight:600;padding-bottom:6px;line-height:1.45}
+.r2{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-top:5px}
+.r2.hd{border-bottom:1px solid var(--line);padding-bottom:6px}
+.r2.hd .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overflow-wrap:anywhere}
+.bagtag{max-width:64px;line-height:1.1;white-space:normal;display:inline-flex;align-items:center;gap:3px;background:var(--bag);color:var(--bag-tx);font-weight:700;font-size:13px;border-radius:6px;padding:2px 5px;margin-top:3px}
+.r3{display:grid;grid-template-columns:68px repeat(7,minmax(0,1fr));align-items:center;text-align:center}
+.r3 .idc{text-align:left;padding-left:4px}
+.r3.hd{border-bottom:1px solid var(--line);padding-bottom:6px;align-items:start}
+.r3.hd .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overflow-wrap:anywhere}
+.ctr{padding:3px 0}
+.hero .st{font-size:17px;font-weight:700;color:var(--acc);margin-bottom:6px}
+.hero .lab{font-size:16px;font-weight:600;color:var(--mut)}
+.ns .lab,.g2 .lab,.g3 .lab{font-size:15px;font-weight:600;color:var(--mut)}
+.g2,.g3{display:grid;gap:8px;margin-top:10px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
+.g2>div,.g3>div{background:var(--card2);border-radius:10px;padding:8px 6px}
+.g2 .v,.g3 .v{font-size:clamp(20px,6vw,24px);font-weight:800;font-variant-numeric:tabular-nums}
+.nsname{font-size:24px;font-weight:800;margin:2px 0}
+.rec{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;font-size:15px;font-weight:500;color:var(--mut);margin:-2px 2px 8px}
+.adj{display:flex;gap:4px}
+.adj button{background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:15px;font-weight:600}
+/* Keep the original card layout; small reading surfaces have explicit size floors. */
+.g3 .v .ti{display:none}
+.r1 .small{font-size:14px}
+.r1 .ti{display:none}
+.r1 .td{white-space:normal}
+.r3>div{min-width:0}
+.r3 .ic{max-width:100%}
+.hero{box-shadow:none}
+.hero .big:not(.bad):not(.warn):not(.good){color:var(--focus)}
+.nsname{color:var(--focus)}
+.clock.acc{color:var(--acc)}
+[data-k="hdCut"].bad,[data-k="hdCut"].warn{background:var(--negative-bg)}
+[data-k="hdCut"] .sub2{color:inherit}
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <div><div class="sub"><svg class="ti c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Clock · <span data-k="date"></span></div><div class="clock" data-k="clock">--:--:--</div><div class="sub" data-k="sim"></div></div>
+    <div class="right"><div class="sub"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>Elapsed</div><div class="clock acc" data-k="elapsed">-</div><div class="sub" data-k="raceclk"></div></div>
+  </div>
+  <div class="strip">
+    <div><div class="sub" data-k="hdDeltaLab"><svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>vs plan</div><div class="sv" data-k="hdDelta">—</div></div>
+    <div class="right"><div class="sub" data-k="hdCutLab">Next COT</div><div class="sv" data-k="hdCut">—</div></div>
+  </div>
+  <div class="cpbar-row"><div class="cpbar" data-k="cpProg"></div><button id="theme-toggle" class="theme-toggle" type="button" aria-label="Night mode" aria-pressed="true" onclick="toggleTheme()">Night</button></div>
+</header>
+<main id="main"></main>
+<nav>
+  <button id="t-now" onclick="setTab('now')">Now</button>
+  <button id="t-map" onclick="setTab('map')">Profile</button>
+  <button id="t-all" onclick="setTab('all')">Stations</button>
+  <button id="t-set" onclick="setTab('set')">Settings</button>
+</nav>
+
+<script>
+"use strict";
+/* ---------- DATA (source: pst.mytrails.run official table + official aid-station graphic) ---------- */
+var START = Date.parse('2026-11-14T05:00:00+07:00');
+var H24 = 24*60;
+// index: 0 START,1 A1,2 A2,3 A3,4 A4,5 A5,6 A6,7 W0,8 A7,9 A8,10 FINISH
+var P = [
+ {id:'START',n:'วัดวิมุตติการาม',km:0,   cut:0,   crew:1,sup:[0,0,0,0,0,0,0],gain:750,loss:179,
+  arrive:[],
+  leg:'ช่วงเปิดตัว: ขึ้นเขาต่อเนื่อง +750 ม. ใน 12.4 กม. ออกช้า ๆ อย่าเร่ง ใจเย็นช่วง 2 ชม.แรก'},
+ {id:'A1',n:'ปางมะโอ',km:12.4, cut:230, crew:0,sup:[1,1,1,1,1,0,0],gain:576,loss:607,
+  arrive:['เติมน้ำเต็มขวด + Pocari','กินเจล/ขนมที่พกมา (ไม่มีอาหารร้อนที่นี่)','ซัพพอร์ตเข้าไม่ได้ ใช้ของที่พกเอง'],
+  leg:'ลูกคลื่นขึ้นลงพอ ๆ กัน 12.3 กม. รักษาจังหวะ ไม่ต้องรีบ'},
+ {id:'A2',n:'วัดหลวงขุนวิน',km:24.7, cut:460, crew:1,sup:[1,1,1,1,1,1,0],gain:277,loss:904,
+  arrive:['กินมื้อจริง (อาหารร้อน)','เติมน้ำ + Pocari เต็ม','ซัพพอร์ต: เปลี่ยนถุงเท้า/เติมของ ถ้ามี','ถัดไป A3 ไม่มีอาหารร้อน กินให้พอก่อนออก'],
+  leg:'ลงยาว -904 ม. ใน 13.8 กม. อย่าเร่งจนต้นขาพัง เก็บแรงไว้ช่วงกลางคืน'},
+ {id:'A3',n:'สันปูเลย',km:38.5, cut:645, crew:1,sup:[1,1,1,1,1,0,0],gain:508,loss:429,
+  arrive:['เติมน้ำ + Pocari','ผลไม้/ขนม ไม่มีอาหารร้อน','ซัพพอร์ต: เติมเจล/เกลือแร่'],
+  leg:'ขึ้นลงปานกลาง 13.3 กม. ช่วงบ่ายอาจร้อน ดื่มน้ำสม่ำเสมอ'},
+ {id:'A4',n:'วัดนิลประภา',km:51.8, cut:870, crew:1,sup:[1,1,1,1,1,1,0],gain:594,loss:634,
+  arrive:['กินอาหารร้อน','เติมน้ำเต็ม','เตรียมไฟฉายตัวที่ 1 ไว้ใช้ได้ทันที (ใกล้มืด)','ซัพพอร์ต: เสื้อ/แบตสำรองสำหรับกลางคืน'],
+  leg:'9.9 กม. +594/-634 ถึง A5 ราวเริ่มมืด ไฟฉายติดหัวได้เลย'},
+ {id:'A5',n:'บ้านปง (Dropped bag)',km:61.7, cut:1055, crew:1,sup:[1,1,1,1,1,1,1],gain:1117,loss:207,
+  arrive:['รับ Dropped bag (Special Need Bag) ที่ฝากไว้ตอนสตาร์ท','กินมื้อใหญ่ (อาหารร้อน)','เปลี่ยนเสื้อแห้ง/ถุงเท้า','ไฟฉาย + แบตสำรอง เช็คว่าติด','เติมน้ำเต็ม + อาหารพอไป A7 (~25 กม. ไม่มีซัพพอร์ต)','นี่คือจุดซัพพอร์ตจุดสุดท้ายก่อน A7'],
+  leg:'ช่วงโหด +1,117 ม. ใน 10.3 กม. ขึ้นช้า ๆ ใช้โพล/ถุงมือ ระวังงู ไปเป็นกลุ่มถ้าทำได้'},
+ {id:'A6',n:'บ้านม้งดอยปุย',km:72.0, cut:1330, crew:0,sup:[1,1,1,1,1,1,0],gain:450,loss:483,
+  arrive:['กินอาหารร้อนให้พอ (ถัดไป W0 ไม่มีอาหาร)','เติมน้ำเต็ม','ซัพพอร์ตเข้าไม่ได้','ใส่เสื้อกันหนาวถ้าเย็น (พื้นที่สูง)'],
+  leg:'กลางคืน บนพื้นที่สูง +450/-483 ถึง W0 ระวังหลงทาง ตามริบบิ้นสะท้อนแสง'},
+ {id:'W0',n:'ทางแยก (Crossroads)',km:80.8, cut:1500, crew:0,sup:[1,1,1,1,0,0,0],gain:41,loss:758,
+  arrive:['06:00 คือ "เวลาแนะนำ" ไม่ใช่ COT','เติมน้ำ/Pocari ผ่านเร็ว ไม่มีห้องน้ำ ไม่มีอาหารร้อน','ซัพพอร์ตเข้าไม่ได้','เตรียมโพล/ปรับสายเป้ ก่อนลงชัน'],
+  leg:'ลงชัน -758 ม. ใน 5.9 กม. (ชันสุดของสนาม) ถนอมเข่า/ต้นขา ก้าวสั้น ใช้โพล'},
+ {id:'A7',n:'แม่แมะ',km:86.7, cut:1595, crew:1,sup:[1,1,1,1,1,1,0],gain:151,loss:335,
+  arrive:['กินอาหารร้อน','ห้องน้ำ','เติมน้ำ + Pocari','ซัพพอร์ต: เปลี่ยนรองเท้า/ถุงเท้า ถ้าจำเป็น'],
+  leg:'10.8 กม. +151/-335 ทางเรียบกว่าแล้ว ฝึกจังหวะให้คงที่'},
+ {id:'A8',n:'ห้วยตึงเฒ่า',km:97.5, cut:1770, crew:1,sup:[1,1,1,1,1,1,0],gain:268,loss:283,
+  arrive:['กินอาหารร้อนเบา ๆ','เติมน้ำพอถึงเส้นชัย','ซัพพอร์ตเข้าได้'],
+  leg:'8.3 กม. สุดท้าย มีเนินปลาย ๆ อีก +268 ม. เหลืออีกนิดเดียว'},
+ {id:'FIN',n:'CMECC เส้นชัย',km:105.8, cut:1920, crew:1,sup:[1,1,1,1,1,1,1],gain:0,loss:0,arrive:[],leg:''}
+];
+
+/* น้ำ/เตรียมตัวพิเศษ ผูกด้วยจุดต้นทาง>ปลายทาง เพื่อไม่ให้คำแนะนำเลื่อนผิดช่วง
+   lv: 0 ปกติ, 1 สำคัญ, 2 วิกฤต. ปริมาณน้ำเป็นคำแนะนำ ปรับตามอากาศ (ภาชนะบังคับ >= 1.5 L) */
+var WATER={
+ 'START>A1':{lv:0,l:'1 L',t:'เช้ายังเย็น ขึ้นเขาต่อเนื่อง · ข้ามน้ำราว กม.5 (ลุยหรือไต่ขอนไม้) · เตรียมถุงเท้าสำรองไว้ A2'},
+ 'A1>A2':{lv:0,l:'1–1.5 L',t:'ไม่มีอาหารร้อนที่ A1 กินของที่พกมาให้พอ · ซัพพอร์ตเข้า A1 ไม่ได้'},
+ 'A2>A3':{lv:2,l:'1.5 L เต็ม + Pocari',t:'ลุยน้ำต่อเนื่อง ทรายกรวดเข้ารองเท้า → เคาะทรายทุกครั้งที่ปวด/ทาเทปกันพอง · ช่วงท้ายลูกรังแดดร้อนจัด · เปลี่ยนถุงเท้าที่ A2 ก่อนออก'},
+ 'A3>A4':{lv:2,l:'1.5 L เต็ม + สำรอง',t:'ไม่มีอาหารร้อนที่ A3 · เติมน้ำให้เต็มก่อนออก ช่วงถัดไปร้อนและยาว · ถ้ามีขวดนิ่มพกเพิ่ม · กินเกลือแร่ · เมื่อถึง A4 ตรวจเท้า/ทาเทป และเตรียมไฟฉายตัวที่ 1'},
+ 'A4>A5':{lv:1,l:'1–1.5 L',t:'ใกล้มืด ติดไฟฉายหัว · ลุยน้ำยาว ป่ารก · เตรียมรับ Special Need Bag ที่ A5 (ถุงเท้า เสื้อแห้ง ไฟฉาย/แบตสำรอง อาหารที่กินแล้วสบายท้อง คาเฟอีน)'},
+ 'A5>A6':{lv:2,l:'1.5 L เต็ม + Pocari',t:'A5 → A7 ซัพพอร์ตเข้าไม่ได้ (A6 และ W0) · ที่ A5: กินมื้อใหญ่ ตรวจอุปกรณ์บังคับ (ขาด = +15 นาที/ชิ้น) · เตรียมโพล ถุงมือ เสื้อกันหนาว ไฟฉายสำรอง · ขึ้น +1,117 ม. ขึ้นช้า ๆ'},
+ 'A6>W0':{lv:1,l:'1 L',t:'A6 คืออาหารร้อนสุดท้ายก่อน W0 → กินให้พอ · อากาศหนาว ใส่เสื้อกันหนาว · ง่วง: ใช้คาเฟอีนที่ A5 เตรียมไว้'},
+ 'W0>A7':{lv:1,l:'0.5–1 L',t:'W0 ไม่มีอาหารร้อนและไม่มีห้องน้ำ · ผ่านเร็ว เติมน้ำพอ · ลงชัน เตรียมโพล ก้าวสั้น'},
+ 'A7>A8':{lv:0,l:'1 L',t:'เช้าร้อนขึ้น เติม Pocari/เกลือแร่ที่ A7 · ห้องน้ำ/อาหารร้อนที่ A7'},
+ 'A8>FIN':{lv:0,l:'0.5–1 L',t:'ช่วงสุดท้าย เนินชันก่อนเส้นชัย เติมพอถึง CMECC'}
+};
+function wtr(i){
+  var w=P[i]&&P[i+1]&&WATER[P[i].id+'>'+P[i+1].id];if(!w)return'';
+  return '<div class="wtr lv'+w.lv+'"><b>'+(w.lv?'⚠ ':'')+'น้ำ '+w.l+'</b> · '+w.t+'</div>';
+}
+
+var DEF_PLAN=[0,136,283,438,596,738,907,1033,1111,1238,1350];
+var DEF_STOP=[0,7,7,7,7,7,7,0,7,7,0];
+/* หลายแผน: A/B/C = เข้าเส้นชัยที่ 23:59/26:59/29:59 ปรับสัดส่วนจากร่างเดิม (DEF_PLAN เข้า 22:30), D=ถึงแต่ละ CP ก่อน COT 45 m */
+var PIDS=['A','B','C','D'];
+var PINFO={A:{t:'Sub 24',goal:1440,tgt:1439,gl:'24 hr goal'},B:{t:'Sub 27',goal:1620,tgt:1619,gl:'27 hr goal'},C:{t:'Sub 30',goal:1800,tgt:1799,gl:'30 hr goal'},D:{t:'Finish',goal:1920,tgt:1860,gl:'COT 32 hr'}};
+var PC={};
+function genPlan(pid){
+  var i,p=[0],st,s;
+  if(pid==='D'){
+    s=[0,10,10,10,10,10,10,0,10,10,0];
+    for(i=1;i<=10;i++)p.push(i===10?P[10].cut-60:(i===7?1500:P[i].cut)-45);
+    return {p:p,s:s};
+  }
+  st=pid==='A'?7:(pid==='B'?10:12);s=[0,st,st,st,st,st,st,0,st,st,0];
+  var m=[],mt=0,ss=0;
+  for(i=1;i<=10;i++){m[i]=DEF_PLAN[i]-DEF_PLAN[i-1]-DEF_STOP[i-1];mt+=m[i];ss+=s[i-1]}
+  var k=(PINFO[pid].tgt-ss)/mt;
+  for(i=1;i<=10;i++)p[i]=Math.round(p[i-1]+s[i-1]+m[i]*k);
+  p[10]=PINFO[pid].tgt;
+  return {p:p,s:s};
+}
+function planOf(pid){var c=S.plans&&S.plans[pid];return c||(PC[pid]||(PC[pid]=genPlan(pid)))}
+
+/* ---------- STATE ---------- */
+var S={arr:{},dep:{},hist:[],sim:0,plan:null,stop:null,plans:{},pid:'A',chk:{},tab:'now',back:0};
+try{var raw=null;if(raw){var o=JSON.parse(raw);for(var k in o)S[k]=o[k];}}catch(e){}
+try{if(S.plan){S.plans=S.plans||{};S.plans.A={p:S.plan,s:S.stop||DEF_STOP};S.plan=null;S.stop=null}}catch(e){}
+if(!S.plans)S.plans={};if(PIDS.indexOf(S.pid)<0)S.pid='A';
+// records made long before race day without test mode were accidental taps: clear them
+try{if(S.dep&&S.dep[0]!=null&&!S.sim&&S.dep[0]<START-2*3600000){S.arr={};S.dep={};S.hist=[];S.chk={}}}catch(e){}
+function save(){try{localStorage.setItem('pst100_v1',JSON.stringify(S));}catch(e){}}
+if(S.theme!=='day'&&S.theme!=='night')S.theme=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'night':'day';
+function applyTheme(){
+  document.documentElement.dataset.theme=S.theme;
+  var b=document.getElementById('theme-toggle');
+  b.textContent=S.theme==='night'?'☾ Night':'☀ Day';
+  b.setAttribute('aria-pressed',String(S.theme==='night'));
+  b.title=S.theme==='night'?'Switch to Day':'Switch to Night';
+  document.querySelector('meta[name="theme-color"]').setAttribute('content',S.theme==='night'?'#0b0f14':'#f4f7fb');
+}
+function toggleTheme(){S.theme=S.theme==='night'?'day':'night';applyTheme();save()}
+applyTheme();
+function plan(){return planOf(S.pid).p}
+function stp(){return planOf(S.pid).s}
+function goalMin(){return PINFO[S.pid].goal}
+function setPlan(k){S.pid=k;save();render()}
+function now(){return Date.now()+(S.sim||0)}
+function planArr(i){return plan()[i]}
+function planDep(i){return plan()[i]+stp()[i]}
+
+/* ---------- FORMAT ---------- */
+function p2(n){return (n<10?'0':'')+n}
+function clock(ms){var d=new Date(ms+7*3600000);var h=d.getUTCHours(),m=d.getUTCMinutes();var day=d.getUTCDate();var t=p2(h)+':'+p2(m);return day===14?t:t+' ('+WD[d.getUTCDay()]+')'}
+function clockS(ms){var d=new Date(ms+7*3600000);return p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+':'+p2(d.getUTCSeconds())}
+function dur(min){var neg=min<0;min=Math.abs(Math.round(min));var h=Math.floor(min/60),m=min%60;return (neg?'-':'')+h+':'+p2(m)}
+function mmss(ms){var neg=ms<0;var s=Math.floor(Math.abs(ms)/1000);var h=Math.floor(s/3600);var m=Math.floor(s%3600/60);return (neg?'-':'')+(h?h+':'+p2(m):m)+':'+p2(s%60)}
+function hm(min){var neg=min<0;min=Math.abs(Math.round(min));var h=Math.floor(min/60),m=min%60;return (neg?'-':'')+(h?h+' hr ':'')+m+' min'}
+function deltaTxt(d){ // d minutes, positive = behind plan
+  if(d>0.5)return ['Behind '+hm(d),'warn'];
+  if(d<-0.5)return ['Ahead '+hm(-d),'good'];
+  return ['On plan','good'];
+}
+var WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function dateTh(ms){var d=new Date(ms+7*3600000);return WD[d.getUTCDay()]+' '+d.getUTCDate()+' '+MN[d.getUTCMonth()]}
+function hms(ms){var s=Math.floor(Math.abs(ms)/1000);return p2(Math.floor(s/3600))+':'+p2(Math.floor(s%3600/60))+':'+p2(s%60)}
+function cdown(ms){var s=Math.max(0,Math.floor(ms/1000)),d=Math.floor(s/86400);s-=d*86400;var h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (d?d+' d ':'')+p2(h)+':'+p2(m)+':'+p2(s%60)}
+function hmsShort(ms){var s=Math.floor(Math.abs(ms)/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h>=24?Math.floor(h/24)+' d '+(h%24)+' hr':h+':'+p2(m)}
+var IC_CLK='<svg class="ti c" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+var IC_TMR='<svg class="ti d" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></svg>';
+function U(x){return '<u>'+x+'</u>'}
+/* tC = เวลานาฬิกา (นาฬิกา + "น."), tDur/tM = ระยะเวลา (นาฬิกาจับเวลา + ชม./น./วิ) */
+function tC(ms,o){o=o||{};var d=new Date(ms+7*3600000);var t=p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+(o.sec?':'+p2(d.getUTCSeconds()):'');
+  return '<span class="tc">'+(o.noicon?'':IC_CLK)+t+((!o.noday&&d.getUTCDate()!==14)?'<em>'+WD[d.getUTCDay()]+'</em>':'')+'</span>'}
+function tDur(sec,o){o=o||{};var neg=sec<0;sec=Math.abs(Math.round(sec));var h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60,out='',dd=0;
+  if(o.days&&h>=24){dd=Math.floor(h/24);h%=24;out+=dd+U('d')+' '}
+  var showH=h||dd||o.fh;if(showH)out+=h+U('hr')+' ';
+  out+=(showH?p2(m):m)+U('m');
+  if(o.sec)out+=' '+p2(s)+U('s');
+  return '<span class="td">'+(o.noicon?'':IC_TMR)+(neg?'−':'')+out+'</span>'}
+function tM(min,o){return tDur(min*60,o)}
+function deltaH(d){ // d นาที, + = ช้ากว่าแผน
+  if(d>0.5)return ['<span class="dl">Behind</span> '+tM(d),'warn'];
+  if(d<-0.5)return ['<span class="dl">Ahead</span> '+tM(-d),'good'];
+  return ['On plan','good'];
+}
+function parseHM(s){var m=/^(\d{1,2}):([0-5]\d)$/.exec((s||'').trim());return m?(+m[1])*60+(+m[2]):null}
+
+/* ---------- MODEL ---------- */
+function model(){
+  var n=now(),m={now:n},last=0,i;
+  if(S.dep[0]==null){m.mode='pre';m.toStart=START-n;return m}
+  for(i=1;i<=10;i++){if(S.arr[i]!=null)last=i}
+  m.last=last;
+  if(last===10){m.mode='done';return m}
+  if(last>=1&&S.dep[last]==null){m.mode='atcp'}else{m.mode='enroute'}
+  return m;
+}
+function legPlan(from,to){return planArr(to)-planDep(from)}
+function finishProj(deltaMin){return START+(planArr(10)+deltaMin)*60000}
+
+/* ---------- ACTIONS ---------- */
+function backMs(){return (S.back||0)*60000}
+function act(kind,i){
+  var t=now();
+  if(kind==='dep'){S.dep[i]=t}else{S.arr[i]=t}
+  S.hist.push([kind,i]);S.back=0;save();render();
+}
+function undo(){var h=S.hist.pop();if(!h)return;if(h[0]==='dep')delete S.dep[h[1]];else delete S.arr[h[1]];save();render()}
+function adjLast(min){var h=S.hist[S.hist.length-1];if(!h)return;var o=h[0]==='dep'?S.dep:S.arr;o[h[1]]+=min*60000;save();render()}
+function testStart(){S.sim=START-Date.now();S.dep[0]=START;S.hist=[['dep',0]];save();render()}
+function toggleChk(k){S.chk[k]=!S.chk[k];save();render()}
+function setTab(t){S.tab=t;save();render()}
+function resetAll(){if(confirm('Clear race records and exit preview? Saved plans are kept.')){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;S.sim=0;save();render()}}
+function savePlan(){
+  var pl=[],st=[],errors=[];
+  pl.push(0);st.push(0);
+  for(var i=1;i<=10;i++){
+    var a=document.getElementById('pa'+i),s=document.getElementById('ps'+i);
+    a.style.borderColor='';s.style.borderColor='';
+    var v=parseHM(a.value),rest=Number(s.value);
+    if(v===null){errors.push(P[i].id+': use h:mm, minutes 00–59');a.style.borderColor='var(--bad)'}
+    if(!s.value.trim()||!Number.isFinite(rest)||rest<0){errors.push(P[i].id+': rest must be a number ≥ 0');s.style.borderColor='var(--bad)'}
+    pl.push(v);st.push(rest);
+  }
+  if(!errors.length){
+    for(var j=1;j<=10;j++){
+      if(pl[j]<=pl[j-1]+st[j-1]){
+        errors.push(P[j].id+': arrival must follow departure from '+P[j-1].id);
+        document.getElementById('pa'+j).style.borderColor='var(--bad)';
+        if(j>1)document.getElementById('ps'+(j-1)).style.borderColor='var(--bad)';
+      }
+    }
+  }
+  document.getElementById('planError').textContent=errors.join(' · ');
+  if(errors.length)return;S.plans[S.pid]={p:pl,s:st};save();render();
+}
+function resetPlan(){delete S.plans[S.pid];save();render()}
+
+/* ---------- VIEWS ---------- */
+var ITEMS=[
+ {l:'Pocari',c:'#4da3ff',p:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'},
+ {l:'Water',c:'#22d3ee',p:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>'},
+ {l:'Fruit',c:'#a3e635',p:'<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>'},
+ {l:'Medical',c:'#f472b6',p:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'},
+ {l:'WC',c:'#c084fc',t:'WC'},
+ {l:'Hot food',c:'#fb923c',p:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>'},
+ {l:'Dropped bag',c:'#fde047',bag:1,p:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'},
+ {l:'Crew',c:'#2dd4bf',p:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
+];
+function svgIc(it,sz,col){
+  if(it.t)return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24"><text x="12" y="16.5" text-anchor="middle" font-size="11.5" font-weight="800" fill="'+col+'" style="font-family:system-ui,sans-serif">'+it.t+'</text></svg>';
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="none" stroke="'+col+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+it.p+'</svg>';
+}
+function supVal(i,k){ // 1 yes, 0 no, null unknown
+  if(k===7)return P[i].crew;
+  if(i===0)return k===6?1:null;
+  return P[i].sup[k];
+}
+function chips(i){
+  var h='';
+  for(var k=0;k<8;k++){
+    var it=ITEMS[k],v=supVal(i,k);
+    if(v==null)continue;
+    if(k===6&&!v)continue;
+    if(!v){h+='<span class="chip n">'+it.l+'</span>';continue}
+    if(it.bag)h+='<span class="chip bag">'+svgIc(it,16,'currentColor')+' '+it.l+'</span>';
+    else h+='<span class="chip available supply-'+k+'">'+svgIc(it,16,'currentColor')+' '+it.l+'</span>';
+  }
+  return h;
+}
+function icCell(i,k){
+  var it=ITEMS[k],v=supVal(i,k);
+  if(v==null)return '<td><span class="ic un">·</span></td>';
+  if(!v)return k===6?'<td><span class="ic un">·</span></td>':'<td><span class="ic no">✕</span></td>';
+  if(it.bag)return '<td><span class="ic bag">'+svgIc(it,22,'currentColor')+'</span></td>';
+  return '<td><span class="ic yes supply-'+k+'">'+svgIc(it,20,'currentColor')+'</span></td>';
+}
+function matrix(){
+  var h='<div class="card" style="padding:10px 6px"><h2 style="padding-left:6px">Station supplies</h2><table class="mx"><tr><th></th>';
+  for(var k=0;k<8;k++){var it=ITEMS[k];h+='<th class="supply-'+k+'"><span class="ic sm '+(it.bag?'bag':'yes')+'">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l.replace('Dropped bag','Dropped<br>bag')+'</div></th>'}
+  h+='</tr>';
+  for(var i=0;i<=10;i++){
+    h+='<tr><td class="mid-id"><b>'+P[i].id+'</b></td>';
+    for(var k=0;k<8;k++)h+=icCell(i,k);
+    h+='</tr>';
+  }
+  return h+'</table><div class="small" style="padding:6px">× Unavailable · · Unknown · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · เปิดที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00 · Crew access</div></div>';
+}
+function checklist(i){
+  var p=P[i];if(!p.arrive.length)return '';
+  var h='<ul class="chk">';
+  p.arrive.forEach(function(t,j){var k=i+':'+j;h+='<li class="'+(S.chk[k]?'done':'')+'" onclick="toggleChk(\''+k+'\')">'+t+'</li>'});
+  return h+'</ul>';
+}
+function lastRec(){
+  var h=S.hist[S.hist.length-1];if(!h)return '';
+  var t=h[0]==='dep'?S.dep[h[1]]:S.arr[h[1]];
+  var lab=h[0]==='dep'?(h[1]===0?'Started':'Departed '+P[h[1]].id):'Arrived '+P[h[1]].id;
+  return '<div class="rec"><span>Last: <b>'+lab+'</b> '+tC(t,{noday:1})+'</span>'
+   +'<span class="adj"><button onclick="adjLast(-5)">−5</button><button onclick="adjLast(-1)">−1</button><button onclick="adjLast(1)">+1</button><button onclick="adjLast(5)">+5</button><button onclick="undo()">Undo</button></span></div>';
+}
+function nextStopCard(j,from,title){
+  var p=P[j],pa=START+planArr(j)*60000,cutLab=j===7?'Advisory':'COT';
+  var h='<div class="card ns"><h2>'+title+'</h2>'
+   +'<div class="nsname">'+p.id+' · '+p.n+'</div>'
+   +'<div class="small">'+p.km+' km · Leg '+(p.km-P[from].km).toFixed(1)+' km · +'+P[from].gain+' / −'+P[from].loss+' m</div>'
+   +'<div class="g3"><div><div class="lab">Planned</div><div class="v">'+tC(pa)+'</div></div>'
+   +'<div><div class="lab">ETA</div><div class="v" data-k="nsEta">-</div></div>'
+   +'<div><div class="lab">'+cutLab+'</div><div class="v">'+tC(START+p.cut*60000)+'</div></div></div>';
+  if(j<10)h+='<div class="small" style="margin-top:6px">Rest '+tM(stp()[j])+' · Depart '+tC(START+planDep(j)*60000)+'</div>';
+  h+='<div class="chips" style="margin-top:8px">'+chips(j)+'</div>';
+  if(p.arrive.length)h+='<div class="small" style="margin-top:10px">'+p.id+' checklist</div>'+checklist(j);
+  return h+'</div>';
+}
+function finFor(pid,m){
+  var X=planOf(pid),n=m.now,L,to,i;
+  if(m.mode==='pre')return START+X.p[10]*60000;
+  if(m.mode==='done')return null;
+  if(m.mode==='enroute'){L=m.last;to=L+1;
+    var e0=Math.max(S.dep[L]+(X.p[to]-X.p[L]-X.s[L])*60000,n);return e0+(X.p[10]-X.p[to])*60000}
+  i=m.last;var dp=Math.max(n,S.arr[i]+X.s[i]*60000);return dp+(X.p[10]-X.p[i]-X.s[i])*60000;
+}
+function planBar(m){
+  var h='<div class="small">Finish ETA by plan</div><div class="pbar">';
+  PIDS.forEach(function(k){
+    h+='<button class="'+(k===S.pid?'on':'')+'" onclick="setPlan(\''+k+'\')"><b>'+k+'</b><span>'+PINFO[k].t+'</span>'+(m.mode!=='done'?'<i data-k="plan'+k+'">-</i>':'')+'</button>';
+  });
+  return h+'</div>';
+}
+function finCard(){return '<div class="card"><div class="row"><div><div class="lab">Finish ETA</div><div class="mid" data-k="fin">-</div></div><div><div class="lab">vs '+PINFO[S.pid].gl+'</div><div class="mid" data-k="fin24">-</div></div></div></div>'}
+
+function viewNow(m){
+  var h='',p;
+  if(m.mode==='pre'){
+    var early=now()<START-60*60000;
+    h+='<div class="card hero"><div class="st">Start · Sat 14 Nov 05:00</div><div class="big" data-k="toStart">-</div></div>';
+    if(early)h+='<button class="btn ghost" onclick="testStart()">Preview race</button>';
+    else h+='<button class="btn" onclick="act(&quot;dep&quot;,0)">Start race</button>';
+    h+=planBar(m);h+=nextStopCard(1,0,'First CP');
+    h+='<div class="card"><h2>First leg</h2><div class="tip" style="margin:0">'+P[0].leg+wtr(0)+'</div></div>';
+    return h;
+  }
+  if(m.mode==='done'){
+    var fin=S.arr[10],el=(fin-START)/60000;
+    h+='<div class="card hero"><div class="st">Finished</div><div class="big '+(el<=goalMin()?'good':'warn')+'">'+tM(el,{})+'</div>'
+     +'<div class="small">Finish '+tC(fin)+' · '+(el<=goalMin()?'Goal met · Plan '+S.pid:(el<=1920?'Over goal · Within COT':'Over COT'))+'</div></div>'+lastRec();
+    return h;
+  }
+  var L=m.last;
+  if(m.mode==='enroute'){
+    var to=L+1;p=P[to];
+    h+='<div class="card hero"><div class="st">Running · '+P[L].id+' → '+p.id+'</div>'
+     +'<div class="lab">Remaining to '+p.id+'</div><div class="big" data-k="legLeft">-</div>'
+     +'<div class="bar"><i data-k="barw"></i></div>'
+     +'<div class="small">Elapsed <b data-k="used">-</b> / Plan '+tM(legPlan(L,to))+' · '+(p.km-P[L].km).toFixed(1)+' km · +'+P[L].gain+' m</div></div>';
+    h+='<button class="btn" onclick="act(&quot;arr&quot;,'+to+')">'+(to===10?'Finish race':'Arrived '+p.id)+'</button>'+lastRec();
+    h+=planBar(m);h+=nextStopCard(to,L,'Next CP');
+    h+='<div class="card"><h2>This leg</h2><div class="tip" style="margin:0">'+P[L].leg+wtr(L)+'</div></div>';
+    h+=finCard();
+    return h;
+  }
+  p=P[L];
+  h+='<div class="card hero"><div class="st">At '+p.id+' · '+p.n+'</div>'
+   +'<div class="lab">Rest left · '+tM(stp()[L])+'</div><div class="big" data-k="stopLeft">-</div>'
+   +'<div class="g2"><div><div class="lab">Planned out</div><div class="v">'+tC(START+planDep(L)*60000)+'</div></div>'
+   +'<div><div class="lab">Latest out · '+P[L+1].id+(L+1===7?' guide':' COT')+'</div><div class="v" data-k="latest">-</div></div></div>'
+   +'<div class="small" data-k="arrDelta"></div></div>';
+  h+='<button class="btn alt" onclick="act(&quot;dep&quot;,'+L+')">Depart '+p.id+'</button>'+lastRec();
+  h+=planBar(m);
+  h+='<div class="card"><h2>'+p.id+' checklist</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
+  h+=nextStopCard(L+1,L,'Next CP');
+  h+='<div class="card"><h2>Next leg</h2><div class="tip" style="margin:0">'+p.leg+wtr(L)+'</div></div>';
+  h+=finCard();
+  return h;
+}
+
+function icSpan(i,k){
+  var it=ITEMS[k],v=supVal(i,k);
+  if(v==null)return '<span class="ic un">·</span>';
+  if(!v)return '<span class="ic no">✕</span>';
+  return '<span class="ic yes supply-'+k+'">'+svgIc(it,19,'currentColor')+'</span>';
+}
+var SLOTS=[0,1,2,3,4,5,7];
+function setAv(v){S.av=v;save();render()}
+function viewAll(m){
+  var av=S.av||'time',star=function(x){return x.replace(' (Sun)','*')};
+  var h='<div class="seg"><button class="'+(av==='time'?'on':'')+'" onclick="setAv(\'time\')">Times</button><button class="'+(av==='sup'?'on':'')+'" onclick="setAv(\'sup\')">Supplies</button></div>';
+  h+='<div class="card" style="padding:10px 8px">';
+  if(av==='time'){
+    h+='<div class="r1 hd"><div>CP</div><div>'+IC_CLK+'Planned<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_CLK+'COT</div><div>'+IC_CLK+'Actual<br><span class="small">'+IC_TMR+'Race time</span></div><div>'+IC_TMR+'±</div></div>';
+    for(var i=0;i<=10;i++){
+      var p=P[i],cur=(m.mode==='enroute'&&i===m.last+1)||(m.mode==='atcp'&&i===m.last);
+      var act_=i===0?S.dep[0]:S.arr[i],d='';
+      if(act_!=null){var dd=(act_-(START+planArr(i)*60000))/60000;var t=deltaTxt(dd);d='<span class="'+t[1]+'">'+(dd>0.5?'+':(dd<-0.5?'−':''))+Math.abs(Math.round(dd))+U('m')+'</span>'}
+      h+='<div class="blk'+(cur?' cur':'')+'"><div class="r1"><div><b>'+p.id+'</b><div class="small">km '+p.km+'</div></div>'
+        +'<div>'+(i===0?'05:00':star(clock(START+planArr(i)*60000)))+'<div class="small">'+tM(planArr(i))+'</div></div>'
+        +'<div>'+(i===0?'-':(i===7?'<span class="small">Advisory</span><br>':'')+star(clock(START+p.cut*60000)))+'</div>'
+        +'<div>'+(act_!=null?star(clock(act_))+'<div class="small">'+tM((act_-START)/60000)+'</div>':'-')+'</div>'
+        +'<div>'+d+'</div></div></div>';
+    }
+    h+='<div class="small" style="padding:8px 4px 2px">* Sun 15 Nov · + Behind / − Ahead · W0 06:00 advisory only</div><div class="lg"><span><b>Plan '+S.pid+' · '+PINFO[S.pid].t+'</b></span></div>';
+  } else {
+    h+='<div class="r3 hd"><div></div>';
+    SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div class="supply-'+k+'"><span class="ic sm yes">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l+'</div></div>'});
+    h+='</div>';
+    for(var j=0;j<=10;j++){
+      var q=P[j],cur2=(m.mode==='enroute'&&j===m.last+1)||(m.mode==='atcp'&&j===m.last);
+      h+='<div class="blk'+(cur2?' cur':'')+'"><div class="r3"><div class="idc"><b>'+q.id+'</b><div class="small">km '+q.km+'</div>'+(j===5?'<div class="bagtag">'+svgIc(ITEMS[6],13,'currentColor')+' Dropped bag</div>':'')+'</div>';
+      SLOTS.forEach(function(k){h+='<div class="ctr">'+icSpan(j,k)+'</div>'});
+      h+='</div></div>';
+    }
+    h+='<div class="small" style="padding:8px 4px 2px">× Unavailable · · Unknown · Crew access · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · รับที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00</div>';
+  }
+  return h+'</div>';
+}
+
+function viewSet(m){
+  var h='<div class="card"><h2>Plans · elapsed h:mm</h2><div class="pbar">'+PIDS.map(function(k){return '<button class="'+(k===S.pid?'on':'')+'" onclick="setPlan(&quot;'+k+'&quot;)"><b>'+k+'</b><span>'+PINFO[k].t+'</span></button>'}).join('')+'</div><table><tr><th>CP</th><th>Arrival (h:mm)</th><th>Rest (min)</th></tr>';
+  var pl=plan(),st=stp();
+  for(var i=0;i<=10;i++){
+    var v=Math.floor(pl[i]/60)+':'+p2(pl[i]%60);
+    h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?'0:00':'<input class="s" id="pa'+i+'" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s" id="ps'+i+'" type="number" value="'+st[i]+'">')+'</td></tr>';
+  }
+  h+='</table><div id="planError" class="small bad" role="alert"></div><button class="btn alt" onclick="savePlan()">Save plan</button><button class="btn ghost" onclick="resetPlan()">Reset plan '+S.pid+'</button></div>';
+  h+='<div class="card"><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">'+(S.sim?'Exit preview':'Clear records')+'</button></div>';
+  return h;
+}
+
+/* ---------- LIVE VALUES ---------- */
+function nextCut(j){if(j===7)j=8;return j>10?null:j}
+function live(){
+  var m=model(),n=now(),o={};
+  PIDS.forEach(function(k){
+    var f=finFor(k,m),em=f==null?null:(f-START)/60000;
+    o['plan'+k]=f==null?['—','']:[tC(f,{noicon:1}),em<=PINFO[k].goal?'good':(em<=P[10].cut?'warn':'bad')];
+  });
+  o.clock=[tC(n,{sec:1,noicon:1,noday:1}),''];
+  o.date=[dateTh(n),''];
+  (function(){var cnt=0,nx=-1,i,d='';for(i=1;i<=9;i++){if(S.arr[i]!=null)cnt++;else if(nx<0)nx=i}
+    for(i=1;i<=9;i++)d+='<i class="'+(S.arr[i]!=null?'on':(i===nx&&m.mode!=='pre'?'cur':''))+'"></i>';
+    var fin=S.arr[10]!=null;
+    o.cpProg=['<span class="dots">'+d+'</span><span>CP <b>'+cnt+'</b>/9'+(fin?' · FIN ✓':(nx>0?' · Next '+P[nx].id:' · Next FIN'))+'</span>',''];
+  })();
+  o.hdDeltaLab=[IC_TMR+'Plan '+S.pid+' · '+PINFO[S.pid].t,''];
+  o.sim=['Preview · sample data',''];
+  o.elapsed=[tDur(m.mode==='pre'?0:Math.floor(((m.mode==='done'?S.arr[10]:n)-START)/1000),{sec:1,noicon:1,fh:1}),''];
+  o.raceclk=[m.mode==='pre'?'Starts in '+tDur(Math.floor((START-n)/1000),{sec:1,days:1,noicon:1}):'Start '+tC(START,{noicon:1,noday:1}),''];
+  var delta=null,cj=null;
+  if(m.mode==='pre'){o.toStart=[tDur(Math.max(0,Math.floor((START-n)/1000)),{sec:1,days:1}),''];cj=1}
+  if(m.mode==='enroute'){
+    var L=m.last,to=L+1,dep=S.dep[L],used=(n-dep)/60000,pl=legPlan(L,to);
+    var eta=Math.max(dep+pl*60000,n);
+    delta=(eta-(START+planArr(to)*60000))/60000;cj=nextCut(to);
+    o.barw=[Math.min(100,used/pl*100)+'%',''];
+    o.used=[tM(used),used>pl?'bad':''];
+    var lf=pl-used;o.legLeft=[lf>=0?tM(lf):'Over '+tM(-lf),lf>=0?'':'bad'];
+    o.nsEta=[tC(eta),delta>0.5?'warn':'good'];
+  }
+  if(m.mode==='atcp'){
+    var i=m.last,ar=S.arr[i],dl2=(ar-(START+planArr(i)*60000))/60000,t2=deltaH(dl2);
+    var left=stp()[i]*60000-(n-ar);
+    o.stopLeft=[tDur(Math.floor(left/1000),{sec:1}),left>60000?'good':(left>0?'warn':'bad')];
+    o.arrDelta=['Arrived '+tC(ar,{noday:1})+' · '+t2[0],t2[1]];
+    var nxt=i+1,lim2=nxt===7?1500:P[nxt].cut;
+    var lat=START+(lim2-legPlan(i,nxt))*60000,latin=(lat-n)/60000;
+    o.latest=[tC(lat)+'<span class="sub2">'+(latin>=0?'In '+tM(latin):'Overdue')+'</span>',latin<10?'bad':(latin<30?'warn':'')];
+    delta=dl2+Math.max(0,(n-ar)/60000-stp()[i]);cj=nextCut(nxt);
+    var depEst=Math.max(n,ar+stp()[i]*60000);
+    o.nsEta=[tC(depEst+legPlan(i,nxt)*60000),delta>0.5?'warn':'good'];
+  }
+  if(m.mode==='done'){delta=(S.arr[10]-(START+planArr(10)*60000))/60000}
+  if(delta!=null){
+    var ds=deltaH(delta);o.hdDelta=[ds[0],ds[1]];
+    var fp=finishProj(delta),fm=(fp-START)/60000;
+    o.fin=[tC(fp),fm<=goalMin()?'good':'warn'];
+    o.fin24=[fm<=goalMin()?'Under '+tM(goalMin()-fm):'Over '+tM(fm-goalMin()),fm<=goalMin()?'good':'warn'];
+  } else o.hdDelta=['—',''];
+  if(cj!=null&&m.mode!=='done'){
+    var cms=START+P[cj].cut*60000,cin=(cms-n)/60000;
+    o.hdCutLab=[IC_CLK+'Next COT · '+P[cj].id,''];
+    o.hdCut=[tC(cms)+'<span class="sub2">'+(cin>=0?(cin>=1440?'In '+Math.floor(cin/1440)+' d':'In '+tM(cin)):'Overdue')+'</span>',m.mode==='pre'?'':(cin<30?'bad':(cin<90?'warn':'good'))];
+  } else {o.hdCutLab=[IC_CLK+'Next COT',''];o.hdCut=['—','']}
+  return o;
+}
+var renderedEarly=null;
+function applyLive(){
+  if(S.tab==='now'&&model().mode==='pre'&&renderedEarly!==(now()<START-60*60000)){render();return}
+  var o=live(),els=document.querySelectorAll('[data-k]');
+  for(var i=0;i<els.length;i++){
+    var e=els[i],k=e.getAttribute('data-k'),v=o[k];if(!v)continue;
+    if(k==='barw'){e.style.width=v[0];continue}
+    e.innerHTML=v[0];
+    e.className=(e.dataset.base||'')+(v[1]?' '+v[1]:'');
+  }
+}
+function render(){
+  var m=model(),h='';
+  renderedEarly=S.tab==='now'&&m.mode==='pre'?(now()<START-60*60000):null;
+  if(S.tab==='now')h=viewNow(m);else if(S.tab==='map')h=viewMap(m);else if(S.tab==='all')h=viewAll(m);else h=viewSet(m);
+  document.getElementById('main').innerHTML=h;
+  ['now','map','all','set'].forEach(function(t){document.getElementById('t-'+t).className=(S.tab===t?'on':'')});
+  var els=document.querySelectorAll('[data-k]');
+  for(var i=0;i<els.length;i++){if(els[i].dataset.base==null)els[i].dataset.base=els[i].className}
+  applyLive();
+}
+
+/* ---------- ROUTE (labelled official GPX v1.0 in commit 788db7a; CP km anchored to station table) ---------- */
+var TRACK_RAW="1867049,9865657,419;55,-52,416;84,-29,416;84,-25,419;85,-21,425;83,-16,431;10,-92,432;15,-90,431;24,-81,431;84,17,438;88,12,443;85,7,454;86,-3,469;72,-42,477;67,18,492;62,-32,510;36,-84,525;64,-53,540;45,-73,551;23,-88,563;21,-89,583;46,-74,593;59,-69,597;61,-65,597;37,-81,611;46,-62,640;70,-49,656;51,-70,666;-18,-88,672;4,-92,665;-13,-92,663;63,-41,670;77,11,675;76,-7,681;53,-67,690;73,-37,675;69,-13,681;74,-32,696;82,-14,710;70,-46,726;78,-44,729;67,-44,730;57,-52,730;74,44,729;85,0,735;83,1,733;69,-54,736;77,-29,739;83,-8,739;63,-49,740;10,-82,745;55,-58,751;84,6,772;81,-16,790;81,-15,810;75,-38,819;80,-20,835;48,-69,834;63,-59,827;72,-39,827;82,-15,851;53,71,862;41,-38,877;37,-64,892;85,-5,911;79,36,924;85,10,931;87,15,931;65,-32,932;70,-55,930;77,-43,933;84,-24,945;86,14,949;79,-31,944;27,-87,948;34,-75,945;-6,-90,945;77,-33,948;85,-19,957;76,-46,959;54,-71,964;49,-77,970;66,-58,968;80,-39,977;78,-30,986;28,67,975;60,65,962;85,19,953;75,-41,949;71,-11,956;35,73,957;6,93,959;-2,92,950;14,91,950;15,89,946;38,80,941;-48,77,938;-80,38,932;-14,50,916;77,34,907;10,22,900;-38,79,906;-54,72,908;-83,28,915;-68,44,920;2,92,927;-51,74,918;-38,83,897;-21,87,880;-20,89,885;-6,92,878;-53,73,866;-46,57,879;25,90,896;25,82,913;18,84,926;3,81,941;41,76,938;-6,88,941;-33,83,956;55,57,954;81,39,947;87,11,951;74,44,954;17,88,952;4,91,957;57,67,972;53,75,991;20,89,1008;35,80,1021;31,86,1025;38,82,1026;24,91,1029;16,88,1056;-14,91,1065;30,88,1068;6,88,1070;-52,70,1077;-68,-46,1079;-57,35,1085;-61,62,1093;-20,88,1100;-23,86,1111;-20,88,1119;-59,56,1125;-56,67,1130;-73,41,1132;-67,53,1134;-52,65,1135;32,67,1138;19,81,1130;-9,69,1125;-31,83,1102;-78,33,1076;-85,-14,1063;-50,68,1051;-24,76,1032;-62,59,1015;-61,63,1012;1,81,1003;20,92,997;11,93,985;-8,88,983;-11,88,999;13,91,1000;7,93,1006;5,90,1010;-40,82,1008;16,82,1011;25,87,1005;27,87,1004;22,88,1008;23,81,1013;68,60,1013;40,69,1014;-61,67,1010;28,87,1006;50,73,1001;87,-9,984;84,30,972;76,-30,966;55,62,963;32,84,978;82,24,988;85,-14,1003;78,33,1016;74,44,1025;75,29,1027;-8,94,1011;3,87,1003;73,38,988;87,9,992;84,21,999;85,18,1005;78,23,1026;74,47,1043;83,29,1051;85,22,1056;75,7,1061;56,72,1059;56,72,1058;55,69,1061;-67,54,1053;-69,55,1048;11,88,1041;-38,80,1040;-59,65,1052;-81,19,1061;-86,-11,1074;-73,36,1065;-73,10,1046;-38,65,1029;-87,-17,1015;-85,-29,1010;-87,1,1014;-27,86,1027;-78,-1,1043;-59,55,1066;-69,17,1095;28,79,1102;-3,51,1117;-60,58,1143;-83,30,1142;-62,63,1132;-65,48,1114;-85,22,1090;-81,-1,1074;-82,19,1070;-39,82,1069;-66,45,1061;-86,-20,1059;-88,-3,1055;-87,-10,1055;-79,44,1054;-84,27,1050;-77,42,1049;-64,61,1052;-85,24,1051;-86,-5,1039;-85,26,1019;-47,52,1003;12,92,993;28,87,982;6,93,969;36,85,956;74,-4,956;81,13,962;63,54,956;-67,-47,961;-87,-16,955;-76,-15,960;-36,-86,968;-69,-43,961;-79,27,939;-44,57,929;-58,71,910;-63,66,902;-52,73,900;-50,76,909;-33,84,912;-61,67,921;-50,73,935;-72,55,937;-46,67,936;86,-11,924;71,19,892;39,84,879;35,85,873;71,47,874;59,71,866;43,81,858;29,89,846;60,70,834;6,85,817;-2,93,803;-59,68,787;-39,81,785;8,92,781;-1,92,772;22,90,741;30,87,712;33,83,695;65,52,681;30,85,677;51,75,675;72,49,660;30,87,649;19,91,647;67,52,641;16,72,641;55,63,632;-50,62,639;-9,85,631;27,81,610;-8,84,599;5,84,588;80,30,573;89,-6,564;71,33,567;65,60,560;-15,85,551;-15,90,549;-29,82,559;-1,86,568;15,82,559;-16,91,535;-39,80,527;-41,80,527;-33,82,525;-11,92,518;-3,93,514;3,86,502;27,81,497;52,49,491;25,77,494;18,90,483;-55,57,468;-82,13,457;-87,14,436;-68,49,433;-45,79,430;-9,93,433;-32,88,421;-26,86,420;-88,11,415;-76,46,415;-76,47,411;-34,85,408;-28,89,401;-16,85,404;-20,86,399;-22,90,397;-55,70,400;-59,65,402;-68,59,397;-62,63,395;39,81,403;12,90,407;-30,83,403;-53,75,395;-30,89,391;-57,64,395;-84,34,395;-69,57,392;-65,61,390;-70,56,392;-80,36,384;-67,54,384;-42,82,383;-45,79,384;-66,62,381;-45,80,377;-34,87,373;-69,55,377;-79,42,378;-83,26,382;-87,-12,379;-85,26,370;-84,29,364;-73,52,361;-46,80,362;-52,74,362;-52,74,363;-45,76,360;26,89,358;10,92,354;-7,92,353;-12,93,352;-2,94,352;-19,91,350;2,92,351;36,85,350;25,88,349;10,91,348;3,92,345;9,93,345;31,88,342;18,91,336;-20,89,335;-11,90,342;27,88,335;-14,92,333;-43,76,334;-14,91,340;27,63,338;25,82,334;-30,87,330;-27,89,331;9,89,331;81,29,327;86,26,327;81,38,329;87,20,331;35,59,338;-5,94,345;-41,84,347;-80,38,342;-61,66,343;-87,12,343;30,79,345;78,43,345;18,71,354;-49,63,364;-7,84,367;-9,79,374;-74,49,374;-75,10,386;-8,85,389;37,83,391;41,72,394;40,73,392;72,54,389;65,54,395;29,74,398;55,71,405;71,39,427;69,53,445;43,61,450;-5,92,449;25,86,466;-5,89,490;22,83,529;61,51,554;10,88,570;9,88,592;73,35,572;75,45,562;56,56,556;62,66,546;21,88,553;33,71,568;24,80,588;31,75,606;46,69,595;59,-61,566;75,24,547;29,85,542;22,85,535;22,89,529;81,33,519;86,-19,510;75,36,503;71,52,517;54,-19,525;56,24,525;83,17,521;65,-20,539;29,47,547;77,27,544;85,0,531;79,6,541;49,51,540;30,80,532;37,77,510;84,29,495;80,40,481;57,70,464;80,18,457;67,-44,457;85,1,444;-16,-62,446;-83,-30,446;-4,-84,446;54,-73,447;73,-53,443;80,-39,440;66,-63,431;59,-70,421;46,-81,419;30,-87,408;19,-86,397;-1,-93,392;44,-80,385;23,-91,378;42,-78,365;82,-34,361;88,-11,362;85,-14,357;67,56,372;84,18,364;81,25,369;74,48,364;58,-61,356;45,-79,360;40,-84,363;68,-58,372;35,-82,367;58,-59,371;49,-67,374;81,-36,378;71,-55,376;72,-47,378;82,3,378;83,-29,378;83,-28,384;88,0,384;72,-50,384;77,-43,383;76,-47,390;84,-16,384;85,-20,380;72,-53,386;81,16,388;68,56,392;36,84,393;83,-3,393;86,-2,392;66,-59,404;68,-43,403;87,15,392;83,-14,398;87,21,396;75,44,403;53,66,397;-82,14,391;-88,-3,394;-56,49,397;60,67,405;86,-7,412;60,29,427;65,56,444;75,50,454;75,45,469;46,77,483;9,87,507;12,85,524;49,77,541;52,74,543;2,92,562;-5,90,591;20,88,617;-36,81,609;-13,86,593;21,89,568;36,80,545;43,73,520;-5,84,521;-12,82,515;-7,84,508;-64,50,509;-42,79,508;-9,80,505;-49,76,503;-45,79,497;-29,88,495;4,93,504;7,85,510;-25,67,516;-33,79,516;47,64,545;-12,75,535;-3,82,542;-36,86,544;-3,93,544;-31,86,547;-23,91,550;-30,83,544;-83,9,543;-77,43,527;-88,5,518;-75,50,500;-35,72,497;45,81,496;28,84,497;46,80,506;38,66,509;-53,74,498;-67,59,488;-77,46,492;-67,56,492;67,28,479;87,21,461;60,37,454;59,45,456;-20,69,473;-63,42,487;-68,53,509;-53,71,532;-66,52,549;-43,79,568;19,66,567;79,34,535;88,3,515;82,29,515;56,72,504;53,74,500;61,67,494;77,39,500;55,53,508;-13,92,504;-4,89,502;-16,90,510;-16,79,510;57,67,505;26,84,496;27,86,482;-37,0,474;-58,-67,473;-45,-75,478;-77,3,474;-66,48,465;-64,54,450;57,67,438;-7,58,417;71,-50,415;16,26,399;-35,88,392;-27,85,371;0,94,366;36,82,355;54,67,351;22,61,350;-18,92,350;40,69,352;-30,76,352;65,63,353;71,44,358;52,41,367;-46,78,368;-6,89,382;-9,56,389;-59,-57,383;-67,53,389;-35,81,395;39,79,407;9,85,412;-1,88,419;27,86,427;48,44,430;26,-77,446;19,-88,460;84,-7,463;80,39,464;78,42,462;83,2,465;86,3,470;85,-3,480;81,-14,501;64,-53,505;86,-21,498;86,2,499;84,14,524;64,57,545;82,-17,562;60,-64,573;84,-26,593;62,-50,589;36,-82,599;56,-70,605;76,-48,608;75,-48,628;71,-46,644;73,-38,641;78,-24,645;86,-14,645;87,0,655;80,28,655;84,4,667;82,3,706;77,39,721;65,64,730;85,14,737;87,15,746;88,-10,752;84,-27,759;80,-35,762;89,2,767;68,57,770;86,27,773;87,14,782;67,59,790;78,16,796;85,-14,804;84,6,820;85,-21,833;65,-57,856;69,-54,877;77,-17,904;82,-27,927;87,-8,938;75,46,946;80,36,947;73,46,963;63,47,994;80,19,1033;82,-17,1066;74,-48,1093;85,1,1117;81,-20,1143;80,-18,1164;89,2,1175;85,23,1191;87,10,1204;86,-8,1215;81,29,1234;80,37,1258;65,-29,1269;72,12,1293;82,27,1328;76,29,1350;81,34,1375;85,0,1397;85,-18,1425;47,-59,1424;51,-78,1421;55,-28,1417;46,-77,1407;48,-79,1390;57,-69,1388;-27,-86,1370;-35,-86,1349;24,-85,1331;67,-57,1322;50,-46,1313;21,-90,1293;76,-38,1281;45,-35,1286;28,-85,1278;52,-75,1281;59,-46,1279;50,77,1286;65,35,1263;86,10,1267;75,44,1275;64,55,1292;71,-28,1290;66,-64,1286;83,-20,1292;77,-32,1290;86,18,1296;40,-48,1290;-18,-87,1290;29,-87,1280;49,-24,1276;77,-21,1280;66,-51,1283;57,-53,1287;44,-81,1283;37,-83,1286;17,-87,1291;13,-85,1288;51,-70,1285;85,-13,1292;79,12,1298;48,-31,1299;71,5,1322;66,-57,1320;79,-6,1327;46,67,1327;55,-66,1319;80,-22,1328;85,-29,1335;74,-48,1335;-2,-33,1348;-70,-50,1360;54,-65,1367;23,-88,1372;60,-69,1381;50,-72,1413;-47,-69,1428;-22,-72,1436;51,-71,1444;38,-25,1449;84,21,1477;84,15,1495;84,-16,1521;77,-35,1507;45,-49,1499;56,-50,1485;68,-59,1486;81,-36,1500;76,-45,1496;84,-28,1494;86,-3,1484;88,-4,1460;87,-15,1445;74,-48,1441;60,-65,1438;87,-18,1433;87,-4,1437;89,-8,1452;86,-5,1473;83,-24,1491;74,16,1501;71,55,1498;77,44,1495;84,27,1488;62,66,1473;64,65,1468;66,61,1460;85,-15,1449;87,-14,1443;87,-3,1428;87,18,1423;78,38,1427;85,22,1429;88,13,1435;56,61,1433;47,71,1424;70,56,1411;61,68,1402;59,65,1392;37,74,1375;-35,86,1343;-5,93,1309;37,80,1277;42,67,1261;83,-14,1259;70,-54,1246;74,-24,1222;64,62,1180;65,60,1145;60,21,1130;75,46,1125;65,61,1118;9,7,1117;85,11,1104;88,-4,1089;83,24,1078;83,31,1067;88,6,1064;69,58,1063;4,90,1039;7,92,1005;24,84,978;31,74,949;-26,88,927;-16,86,911;29,85,907;48,79,897;80,1,862;84,26,838;64,54,812;79,29,796;31,-68,775;79,13,759;77,39,743;59,70,729;61,65,719;62,45,707;82,-20,676;72,48,651;62,-41,643;78,-3,645;71,-47,648;58,62,650;80,32,653;57,-69,648;80,-12,654;78,36,659;80,32,653;78,30,643;80,-31,629;37,-82,607;69,-45,586;40,-54,570;58,-43,555;54,57,550;80,21,540;58,14,542;80,38,541;82,-23,537;36,-84,529;21,-91,527;22,-29,526;-29,87,527;-30,88,534;-67,52,537;17,39,533;76,33,533;34,86,536;-49,56,541;-68,61,545;-70,56,556;-60,68,571;10,85,572;-42,80,562;-42,81,559;-73,35,565;-84,1,569;-43,66,565;-72,55,554;-46,75,543;-47,53,553;-45,64,558;-77,37,550;-73,50,543;7,87,536;-49,77,526;-36,85,513;-41,81,499;-37,66,490;38,73,487;-50,71,505;-50,62,515;1,72,514;31,83,513;61,35,503;65,57,486;30,78,488;43,68,494;32,80,505;22,86,506;-36,82,499;-62,66,481;-40,77,465;-12,89,464;19,90,463;-17,85,456;68,58,445;41,76,427;-1,85,404;73,49,388;71,33,383;88,-6,382;22,22,385;-30,80,389;-9,64,396;-85,18,398;-87,18,403;-85,8,409;-48,-66,407;-73,-42,410;-73,-19,419;-80,20,422;-83,32,418;-61,64,412;-58,68,408;-72,53,403;-74,53,399;-59,69,392;-27,87,385;-67,53,383;-38,75,383;-69,9,389;-56,64,390;-66,60,386;-56,66,379;-69,57,374;-78,11,376;-72,49,373;-79,32,375;-62,61,374;-33,84,372;-53,47,370;-9,66,367;-13,26,367;-72,-17,373;-70,40,378;-43,55,379;-59,60,384;-72,43,389;-55,51,385;40,78,380;-84,13,374;-16,82,370;-42,60,371;-61,66,367;-6,91,360;58,68,359;-9,82,358;-67,-13,361;-7,-77,361;-84,-20,367;-55,-65,373;-71,27,376;-12,84,376;-86,17,377;-59,67,373;-59,71,369;-28,85,362;-25,79,359;-53,63,357;-76,47,356;-86,-18,358;-22,87,356;-55,67,362;-86,0,365;-41,64,365;-11,88,360;-44,78,353;-65,62,350;-59,69,348;-50,77,348;-58,66,346;-56,67,344;-27,79,345;-84,3,345;-89,-1,344;-52,68,345;-85,24,347;-81,34,345;-83,1,347;-83,17,348;-17,-76,360;-16,-90,369;-16,-86,376;-43,-80,386;-26,-83,402;1,-87,429;-50,-74,455;-61,-63,476;-57,-65,501;-49,-70,522;-60,-53,551;-70,-50,576;-57,-59,607;-63,35,610;-61,61,594;-83,-7,598;-81,27,594;-80,22,591;-66,58,594;-15,86,584;-30,81,573;-69,58,564;-76,-2,553;-63,61,539;-38,80,511;-59,66,487;-45,74,477;-50,70,468;-50,73,449;-62,63,429;-59,69,408;-81,26,396;-73,43,391;-83,22,383;-62,61,372;-77,34,360;-51,45,358;-35,79,354;-61,58,352;-86,-19,345;-44,75,339;-63,46,341;58,35,337;52,74,333;18,93,333;12,93,334;59,43,334;56,36,331;9,81,334;14,55,338;-26,88,335;-26,88,332;-27,85,331;-26,89,330;-70,-1,326;-83,-29,322;-84,-26,327;-83,-30,331;-85,-24,333;-64,-42,330;5,-15,330";
+var CPI=[0, 123, 247, 384, 516, 615, 719, 805, 864, 972, 1054];
+var RT=(function(){
+  var q=TRACK_RAW.split(';').map(function(r){return r.split(',').map(Number)});
+  var lat=q[0][0],lon=q[0][1],a=[],i;
+  a.push({la:lat/1e5,lo:lon/1e5,e:q[0][2],d:0});
+  for(i=1;i<q.length;i++){lat+=q[i][0];lon+=q[i][1];a.push({la:lat/1e5,lo:lon/1e5,e:q[i][2],d:0})}
+  for(i=1;i<a.length;i++){a[i].d=a[i-1].d+hav(a[i-1],a[i])}
+  var tot=a[a.length-1].d,SC=105.8/tot,c,j;
+  // km ทางการ: ผูกตำแหน่ง CP จาก GPX กับ km ตามตาราง แล้วเทียบสัดส่วนระหว่างจุด
+  for(c=0;c<CPI.length-1;c++){var d0=a[CPI[c]].d,d1=a[CPI[c+1]].d,k0=P[c].km,k1=P[c+1].km;
+    for(j=CPI[c];j<=CPI[c+1];j++)a[j].k=k0+(a[j].d-d0)/(d1-d0)*(k1-k0)}
+  var g=0,l=0;for(i=1;i<a.length;i++){var de=a[i].e-a[i-1].e;if(de>0)g+=de;else l-=de;a[i].g=g;a[i].l=l}
+  return {p:a,tot:tot,SC:SC,gs:4732/g,ls:4819/l};
+})();
+function hav(a,b){var R=6371,r=Math.PI/180,x=(b.lo-a.lo)*r*Math.cos(a.la*r),y=(b.la-a.la)*r;return Math.sqrt(x*x+y*y)*R}
+function kmToIdx(km){var p=RT.p,lo=0,hi=p.length-1;while(hi-lo>1){var m=(lo+hi)>>1;if(p[m].k<=km)lo=m;else hi=m}return lo}
+function eleAt(km){var p=RT.p,i=kmToIdx(km),j=Math.min(i+1,p.length-1),t=p[j].k>p[i].k?(km-p[i].k)/(p[j].k-p[i].k):0;return p[i].e+(p[j].e-p[i].e)*Math.max(0,Math.min(1,t))}
+// peaks (prominence >= 120 m)
+var PEAKS=(function(){var p=RT.p,out=[],i;
+  for(i=2;i<p.length-2;i++){
+    if(p[i].e>=p[i-1].e&&p[i].e>=p[i+1].e&&p[i].e>p[i-2].e&&p[i].e>p[i+2].e){
+      var lm=p[i].e,j;for(j=i;j>=0;j--){lm=Math.min(lm,p[j].e);if(p[j].e>p[i].e+0.5)break}
+      var rm=p[i].e;for(j=i;j<p.length;j++){rm=Math.min(rm,p[j].e);if(p[j].e>p[i].e+0.5)break}
+      var prom=p[i].e-Math.max(lm,rm);
+      if(prom>=120)out.push(i);
+    }}
+  return out;})();
+/* CP positions on the route (by official km) */
+function cpKm(i){return P[i].km}
+
+/* ---------- GPS ---------- */
+var G={on:false,id:null,pos:null,err:'',idx:null,km:null,off:null,t:0,acc:null};
+function gpsStart(){
+  if(!navigator.geolocation){G.err='GPS unavailable';render();return}
+  G.err='Acquiring GPS…';G.on=true;render();
+  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){if(e.code!==1&&G.km!=null){G.err='GPS lost · Last fix shown';}else{G.err=e.code===1?'GPS permission denied':e.code===2?'No GPS fix':'GPS timed out';}render()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
+}
+function gpsStop(){if(G.id!=null)navigator.geolocation.clearWatch(G.id);G.id=null;G.on=false;G.err='';render()}
+function gpsOk(pos){G.err='';gpsFix(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);if(S.tab==='map')render()}
+function gpsFix(la,lo,acc){
+  var p=RT.p,best=1e9,bi=0,bt=0,i,r=Math.PI/180,cl=Math.cos(la*r);
+  var lo_i=0,hi_i=p.length-2;
+  if(G.idx!=null){lo_i=Math.max(0,G.idx-25);hi_i=Math.min(p.length-2,G.idx+120)} // keep to nearby part of route
+  function scan(a,b){
+    for(i=a;i<=b;i++){
+      var ax=(p[i].lo-lo)*r*cl*6371,ay=(p[i].la-la)*r*6371,bx=(p[i+1].lo-lo)*r*cl*6371,by=(p[i+1].la-la)*r*6371;
+      var dx=bx-ax,dy=by-ay,L=dx*dx+dy*dy,t=L>0?Math.max(0,Math.min(1,-(ax*dx+ay*dy)/L)):0;
+      var px=ax+dx*t,py=ay+dy*t,d=Math.sqrt(px*px+py*py);
+      if(d<best){best=d;bi=i;bt=t}
+    }}
+  scan(lo_i,hi_i);
+  if(best>0.4&&(lo_i>0||hi_i<p.length-2)){best=1e9;scan(0,p.length-2)} // lost: search whole route
+  G.idx=bi;G.km=p[bi].k+(p[bi+1].k-p[bi].k)*bt;G.off=best*1000;G.acc=acc;G.t=now();G.pos=[la,lo];
+}
+
+function planKmAt(minElapsed){ // where the plan says you should be at this race time
+  var pl=plan(),i;
+  if(minElapsed<=0)return 0;
+  for(i=1;i<=10;i++){
+    var dep0=planDep(i-1),arr1=planArr(i);
+    if(minElapsed<=arr1){var f=(minElapsed-dep0)/Math.max(1,arr1-dep0);return P[i-1].km+(P[i].km-P[i-1].km)*Math.max(0,Math.min(1,f))}
+    if(i<10&&minElapsed<=planDep(i))return P[i].km; // resting at CP i
+  }
+  return P[10].km;
+}
+function sumGL(k0,k1){var p=RT.p,i0=kmToIdx(k0),i1=kmToIdx(k1),g=0,l=0,i;for(i=i0+1;i<=i1;i++){var d=p[i].e-p[i-1].e;if(d>0)g+=d;else l-=d}return [g*RT.gs,l*RT.ls]}
+
+/* ---------- PROFILE GRAPH ---------- */
+function profileSvg(x0,x1,cur){
+  var W=640,H=250,L=40,R=8,T=14,B=26,p=RT.p,i;
+  var ymin=300,ymax=1550;
+  function X(k){return L+(k-x0)/(x1-x0)*(W-L-R)}
+  function Y(e){return T+(1-(e-ymin)/(ymax-ymin))*(H-T-B)}
+  var pts=[],d='';
+  for(i=0;i<p.length;i++){if(p[i].k<x0-1||p[i].k>x1+1)continue;pts.push(X(p[i].k).toFixed(1)+','+Y(p[i].e).toFixed(1))}
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">';
+  [400,600,800,1000,1200,1400].forEach(function(e){svg+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(e)+'" y2="'+Y(e)+'" stroke="var(--line)"/><text x="'+(L-4)+'" y="'+(Y(e)+4)+'" fill="var(--mut)" font-size="11" text-anchor="end">'+e+'</text>'});
+  if(pts.length)svg+='<polygon points="'+X(Math.max(x0,0))+','+Y(ymin)+' '+pts.join(' ')+' '+X(Math.min(x1,105.8))+','+Y(ymin)+'" fill="var(--graph)" opacity=".85"/><polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--acc)" stroke-width="1.5"/>';
+  // CPs
+  for(i=1;i<=10;i++){var k=cpKm(i);if(k<x0-0.5||k>x1+0.5)continue;
+    var done=(i===0)?true:S.arr[i]!=null;
+    svg+='<line x1="'+X(k)+'" x2="'+X(k)+'" y1="'+T+'" y2="'+(H-B)+'" stroke="'+(done?'var(--ok)':'var(--mut)')+'" stroke-dasharray="3 3" opacity=".8"/>'
+       +'<text x="'+X(k)+'" y="'+(H-B+13)+'" fill="'+(done?'var(--ok)':'var(--tx)')+'" font-size="11" font-weight="700" text-anchor="middle">'+P[i].id+'</text>';}
+  // peaks
+  PEAKS.forEach(function(ix){var k=p[ix].k;if(k<x0||k>x1)return;svg+='<text x="'+X(k)+'" y="'+(Y(p[ix].e)-5)+'" fill="var(--warn)" font-size="11" text-anchor="middle">▲'+Math.round(p[ix].e)+'</text>'});
+  // plan-time position
+  var m=model();
+  if(m.mode!=='pre'&&m.mode!=='done'){var pk=planKmAt((now()-START)/60000);if(pk>=x0&&pk<=x1)svg+='<circle cx="'+X(pk)+'" cy="'+Y(eleAt(pk))+'" r="6" fill="none" stroke="var(--tx)" stroke-width="2"/>'}
+  // last recorded CP
+  if(m.mode==='atcp'||m.mode==='enroute'){var lk=cpKm(m.last);if(lk>=x0&&lk<=x1)svg+='<rect x="'+(X(lk)-5)+'" y="'+(Y(eleAt(lk))-5)+'" width="10" height="10" fill="var(--ok)" transform="rotate(45 '+X(lk)+' '+Y(eleAt(lk))+')"/>'}
+  // gps
+  if(G.km!=null&&G.off<=2000&&G.km>=x0&&G.km<=x1)svg+='<circle cx="'+X(G.km)+'" cy="'+Y(eleAt(G.km))+'" r="8" fill="var(--bad)" stroke="var(--tx)" stroke-width="2"/>';
+  return svg+'</svg>';
+}
+
+function viewMap(m){
+  var h='',win=S.gz||'next';
+  var curKm=(G.km!=null)?G.km:null;
+  var base=curKm!=null?curKm:(m.last!=null?cpKm(m.last):0);
+  var x0=0,x1=105.8;
+  if(win==='next'){x0=Math.max(0,base-3);x1=Math.min(105.8,x0+30);x0=Math.max(0,x1-30)}
+  h+='<div class="seg"><button class="'+(win==='next'?'on':'')+'" onclick="S.gz=&quot;next&quot;;save();render()">Next 30 km</button><button class="'+(win==='all'?'on':'')+'" onclick="S.gz=&quot;all&quot;;save();render()">Full route</button></div>';
+  h+='<div class="card" style="padding:8px">'+profileSvg(x0,x1)+'<div class="small" style="padding:4px 6px">● GPS · ○ Plan · ◆ Last CP · ▲ Peak</div></div>';
+  h+='<div class="card"><h2>GPS</h2>';
+  if(!G.on)h+='<button class="btn alt" onclick="gpsStart()">Start GPS</button>';
+  else h+='<button class="btn ghost" onclick="gpsStop()">Stop GPS</button>';
+  if(G.err)h+='<div class="tip warn">'+G.err+'</div>';
+  var farOff=G.km!=null&&G.off>2000;
+  if(farOff)h+='<div class="tip warn">Off route · '+(G.off/1000).toFixed(1)+' km · ±'+Math.round(G.acc||0)+' m</div>';
+  if(G.km!=null&&!farOff){
+    var nx=null,i;for(i=1;i<=10;i++){if(cpKm(i)>G.km+0.05){nx=i;break}}
+    var age=Math.round((now()-G.t)/1000);
+    h+='<div class="kv"><span>Position</span><b>'+G.km.toFixed(1)+' / 105.8 km</b></div>'
+     +'<div class="kv"><span>Elevation</span><b>'+Math.round(eleAt(G.km))+' m</b></div>'
+     +'<div class="kv"><span>Off route</span><b class="'+(G.off>150?'bad':'good')+'">'+Math.round(G.off)+' m</b></div>'
+     +'<div class="kv"><span>Accuracy / age</span><b>±'+Math.round(G.acc||0)+' m · '+age+' s ago</b></div>';
+    if(nx){var gl=sumGL(G.km,cpKm(nx));
+      h+='<div class="kv"><span>To '+P[nx].id+'</span><b>'+(cpKm(nx)-G.km).toFixed(1)+' km</b></div>'
+       +'<div class="kv"><span>Climb / descent</span><b>+'+Math.round(gl[0])+' / −'+Math.round(gl[1])+' m</b></div>';}
+    var pk=null;for(i=0;i<PEAKS.length;i++){if(RT.p[PEAKS[i]].k>G.km+0.1){pk=RT.p[PEAKS[i]];break}}
+    if(pk){var g2=sumGL(G.km,pk.k);h+='<div class="kv"><span>Next peak · '+Math.round(pk.e)+' m</span><b>'+(pk.k-G.km).toFixed(1)+' km · +'+Math.round(g2[0])+' m</b></div>'}
+    var plk=planKmAt((now()-START)/60000),df=G.km-plk;
+    if(now()>=START)h+='<div class="kv"><span>Plan '+plk.toFixed(1)+' km</span><b class="'+(df>=0?'good':'warn')+'">'+(df>=0?'Ahead ':'Behind ')+Math.abs(df).toFixed(1)+' km</b></div>';
+  }
+  return h+'<div class="small" style="margin-top:8px">GPX v1.0 · 105.8 km</div></div>';
+}
+
+// Preview fixture: memory only; never read or write real race records.
+S.arr={1:START+145*60000,2:START+302*60000,3:START+467*60000};
+S.dep={0:START,1:START+152*60000,2:START+309*60000,3:START+474*60000};
+S.hist=[['dep',3]];S.pid='B';S.tab='now';S.sim=0;
+now=function(){return START+560*60000};save=function(){};
+S.theme='night';applyTheme();
+
+render();
+setInterval(applyLive,1000);
+setInterval(function(){if(S.tab==='map'&&G.on)render()},15000);
+</script>
+</body>
+</html>
