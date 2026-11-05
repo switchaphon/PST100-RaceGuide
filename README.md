@@ -10,6 +10,8 @@ Behavior and acceptance criteria: [docs/race-behavior.md](docs/race-behavior.md)
 
 After rehearsal, use “ล้างบันทึกและเลิกจำลองเวลา” in Settings. This clears race records and simulation while preserving custom plans.
 
+Use the Day/Night button beside CP progress to switch display colors. Your choice is saved on this device; switching keeps race records and unsaved plan edits intact.
+
 Regression tests (Node.js 22+, no dependencies): `node --test tests/*.test.cjs`.
 Optional mobile-browser smoke tests: install Python Playwright, run `python -m playwright install chromium webkit`, then `python tests/browser_smoke.py`.
 

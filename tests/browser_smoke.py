@@ -28,13 +28,26 @@ class RaceServer(SimpleHTTPRequestHandler):
 def exercise(browser_type, url):
     browser = browser_type.launch(headless=True)
     context = browser.new_context(viewport={'width': 390, 'height': 844},
-                                  is_mobile=True, has_touch=True, timezone_id='Asia/Bangkok')
+                                  is_mobile=True, has_touch=True, timezone_id='Asia/Bangkok', color_scheme='light')
     page = context.new_page()
     errors = []
     page.on('pageerror', lambda error: errors.append(str(error)))
     page.goto(url, wait_until='networkidle')
     page.evaluate('navigator.serviceWorker.ready')
     page.wait_for_function('navigator.serviceWorker.controller !== null')
+
+    theme_toggle = page.get_by_role('button', name='โหมดกลางคืน', exact=True)
+    expect(theme_toggle).to_be_visible(timeout=2000)
+    expect(page.locator('html')).to_have_attribute('data-theme', 'day')
+    theme_toggle.click()
+    expect(page.locator('html')).to_have_attribute('data-theme', 'night')
+    page.reload(wait_until='networkidle')
+    expect(page.locator('html')).to_have_attribute('data-theme', 'night')
+    page.get_by_role('button', name='ตั้งค่า', exact=True).click()
+    page.locator('#pa10').fill('23:57')
+    theme_toggle.click()
+    expect(page.locator('#pa10')).to_have_value('23:57')
+    page.get_by_role('button', name='ตอนนี้', exact=True).click()
 
     # UI unlocks on a timer tick without navigating away.
     page.evaluate('now=()=>START-61*60000;render()')
@@ -65,6 +78,20 @@ def exercise(browser_type, url):
     page.evaluate('now=()=>START+300*60000;applyLive()')
     assert page.locator('[data-k="planA"]').inner_text() != eta
     assert page.locator('[data-k="planA"]').inner_html() == page.evaluate("tC(finFor('A',model()),{noicon:1})")
+    # Switching colors must not move the existing content or change race records.
+    positions = page.locator('.hero, .pbar, .ns, #t-now').evaluate_all('(els)=>els.map(e=>{let r=e.getBoundingClientRect();return [r.x,r.y,r.width,r.height]})')
+    records = page.evaluate('JSON.stringify([S.arr,S.dep,S.hist,S.chk,S.pid])')
+    theme_toggle.click()
+    assert page.locator('.hero, .pbar, .ns, #t-now').evaluate_all('(els)=>els.map(e=>{let r=e.getBoundingClientRect();return [r.x,r.y,r.width,r.height]})') == positions
+    assert page.evaluate('JSON.stringify([S.arr,S.dep,S.hist,S.chk,S.pid])') == records
+
+    # Highlight colors must recover when the race state changes after a tab render.
+    page.evaluate('now=()=>START+(P[1].cut-10)*60000;render()')
+    expect(page.locator('[data-k="hdCut"]')).to_have_class('sv bad')
+    page.get_by_role('button', name='ทุกจุด', exact=True).click()
+    page.evaluate('now=()=>START+10*60000')
+    page.get_by_role('button', name='ตอนนี้', exact=True).click()
+    expect(page.locator('[data-k="hdCut"]')).to_have_class('sv good')
     page.evaluate('S.arr[10]=START+1439*60000;now=()=>START+1500*60000;render()')
     elapsed = page.locator('[data-k="elapsed"]').inner_text()
     page.evaluate('now=()=>START+1560*60000;applyLive()')
@@ -93,7 +120,7 @@ def exercise(browser_type, url):
     RaceServer.fail_pages = True
     page.reload(wait_until='networkidle')
     expect(page).to_have_title('PST100 Race Day')
-    assert page.evaluate("caches.open('pst100-v10').then(c=>c.match(location.href)).then(r=>r.status)") == 200
+    assert page.evaluate("navigator.serviceWorker.controller.scriptURL && caches.keys().then(keys=>keys.filter(k=>k.startsWith('pst100-'))).then(keys=>caches.open(keys[0])).then(c=>c.match(location.href)).then(r=>r.status)") == 200
     RaceServer.fail_pages = False
     context.set_offline(True)
     page.reload(wait_until='networkidle')

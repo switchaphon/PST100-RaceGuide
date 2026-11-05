@@ -5,19 +5,20 @@ const vm = require('node:vm');
 const path = require('node:path');
 
 // Run the actual page script. Only browser APIs are substituted; race logic is real.
-function app() {
+function app({ state, prefersDark = false } = {}) {
   const nodes = new Map();
   const storage = new Map();
+  if (state) storage.set('pst100_v1', JSON.stringify(state));
   const node = id => {
-    if (!nodes.has(id)) nodes.set(id, { innerHTML: '', textContent: '', className: '', style: {}, dataset: {}, value: '' });
+    if (!nodes.has(id)) nodes.set(id, { innerHTML: '', textContent: '', className: '', style: {}, dataset: {}, value: '', setAttribute(k,v) { this[k] = String(v); } });
     return nodes.get(id);
   };
   const context = vm.createContext({
-    console, Date, Math, JSON, navigator: {}, window: {},
+    console, Date, Math, JSON, navigator: {}, window: { matchMedia: () => ({ matches: prefersDark }) },
     location: { protocol: 'file:', hostname: '' }, confirm: () => true,
     setInterval: () => 0,
     localStorage: { getItem: k => storage.get(k) ?? null, setItem: (k, v) => storage.set(k, v) },
-    document: { getElementById: node, querySelectorAll: () => [] }
+    document: { documentElement: node('html'), getElementById: node, querySelector: () => node('theme-meta'), querySelectorAll: () => [] }
   });
   const html = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
   vm.runInContext(html.match(/<script>([\s\S]*?)<\/script>/)[1], context);
@@ -127,4 +128,36 @@ test('built-in plans retain positive legs, target finishes and COT buffers', () 
     assert.equal(a.run(`planOf('${pid}').p.every((t,i)=>!i||t>planOf('${pid}').p[i-1]+planOf('${pid}').s[i-1])`), true);
     assert.equal(a.run(`planOf('${pid}').p.every((t,i)=>!i||i===7||t<P[i].cut)`), true);
   }
+});
+
+test('theme follows the device preference before a manual choice', () => {
+  assert.equal(app().run('S.theme'), 'day');
+  assert.equal(app({ prefersDark: true }).run('S.theme'), 'night');
+});
+
+test('saved Day/Night choice takes precedence over the device preference', () => {
+  const a = app({ state: { theme: 'day' }, prefersDark: true });
+  assert.equal(a.node('html').dataset.theme, 'day');
+  a.run('toggleTheme()');
+  const state = JSON.parse(a.storage.get('pst100_v1'));
+  assert.equal(state.theme, 'night');
+  assert.equal(a.node('theme-toggle')['aria-pressed'], 'true');
+  const b = app({ state, prefersDark: false });
+  assert.equal(b.run('S.theme'), 'night');
+  assert.equal(b.node('html').dataset.theme, 'night');
+});
+
+test('theme switching preserves race data and unsaved form edits without rerendering', () => {
+  const a = app();
+  a.run('testStart();S.arr[1]=START+120*60000;S.chk["1:0"]=true;S.pid="B"');
+  const before = a.run('JSON.stringify({arr:S.arr,dep:S.dep,hist:S.hist,chk:S.chk,pid:S.pid,sim:S.sim,plans:S.plans})');
+  a.node('pa10').value = '26:40';
+  a.run('render=()=>{throw new Error("theme must not replace the current view")};toggleTheme()');
+  assert.equal(a.node('pa10').value, '26:40');
+  assert.equal(a.run('JSON.stringify({arr:S.arr,dep:S.dep,hist:S.hist,chk:S.chk,pid:S.pid,sim:S.sim,plans:S.plans})'), before);
+});
+
+test('a corrupt saved theme falls back to the device preference', () => {
+  const a = app({ state: { theme: 'unknown' }, prefersDark: true });
+  assert.equal(a.run('S.theme'), 'night');
 });

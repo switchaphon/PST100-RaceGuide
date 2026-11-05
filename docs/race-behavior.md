@@ -43,6 +43,27 @@ need checking against the latest published material before race day.
 - After reset and reload, the next race uses real time. Resetting a plan is a
   separate action affecting only the selected plan.
 
+## Day and Night display
+
+- The original card layout and ordering of race information are retained.
+  A Day/Night button sits beside the CP progress bar and is available on every tab.
+- Main labels use 15–16 px and supporting text 15 px. Time units and day badges
+  have a 13 px floor rather than proportional superscripts shrinking to 6–9 px.
+  Primary numbers remain bold; supporting text uses medium weight. Compact
+  three-column time values are 20–24 px; plan-button times are 16 px.
+- On narrow screens, supporting rows can wrap and supply labels break across
+  lines rather than shrinking the text. The existing card/group order stays intact.
+- First use follows the device's light/dark preference. The selected theme is
+  saved locally with app state and restored on reopening, including offline.
+- Toggling changes colors in place: it does not rebuild the current screen,
+  move content, change race records, restart GPS or discard unsaved plan edits.
+- Day uses a light background and dark text; Night uses dark grey and warm text.
+  The current-leg countdown and next CP receive focus colors. Supplies use neutral
+  icons, with a separate bag highlight. Status green/amber/red retains its meaning.
+- Map labels, markers, units, selected plans, form controls and browser theme color
+  all adapt to the selected mode. Warning colors must not remain after the
+  underlying race status changes during a tab switch.
+
 ## Route and preparation notes
 
 - Each outgoing leg has one preparation note keyed by source and destination CP.
