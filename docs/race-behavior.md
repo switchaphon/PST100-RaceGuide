@@ -57,9 +57,11 @@ need checking against the latest published material before race day.
   saved locally with app state and restored on reopening, including offline.
 - Toggling changes colors in place: it does not rebuild the current screen,
   move content, change race records, restart GPS or discard unsaved plan edits.
-- Day uses a light background and dark text; Night uses dark grey and warm text.
-  The current-leg countdown and next CP receive focus colors. Supplies use neutral
-  icons, with a separate bag highlight. Status green/amber/red retains its meaning.
+- Night restores the original navy background, blue accents, green primary button
+  and blue/purple clock icons. Day uses the same blue/green identity on a light
+  background, with darker status and supply colors for readable text. Both modes
+  retain the enlarged typography. Supplies keep distinct colors and icons; the
+  dropped bag is yellow. Status green/amber/red retains its meaning.
 - Map labels, markers, units, selected plans, form controls and browser theme color
   all adapt to the selected mode. Warning colors must not remain after the
   underlying race status changes during a tab switch.

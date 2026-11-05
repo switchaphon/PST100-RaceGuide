@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101415">
+<meta name="theme-color" content="#0b0f14">
 <title>PST100 Race Day</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -13,8 +13,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PST100">
 <style>
-:root{color-scheme:dark;--bg:#101415;--card:#1a2123;--card2:#252e30;--tx:#e8e6dd;--mut:#b0bab7;--ok:#a2c3ad;--warn:#e7bf79;--bad:#f0a49b;--acc:#a4c3ce;--line:#485452;--unit:#bdc5c1;--focus:#f0d8a3;--focus-bg:#27302e;--button:#b1caba;--button-tx:#13251c;--selected:#a9c4ce;--selected-tx:#14272d;--selected-warn:#593c0f;--selected-bad:#722b24;--negative-bg:#382725;--bag:#d5c48f;--bag-tx:#282315;--graph:#344e56}
-:root[data-theme="day"]{color-scheme:light;--bg:#f2f5f2;--card:#ffffff;--card2:#e9efeb;--tx:#1b2a25;--mut:#50635b;--ok:#286047;--warn:#80500c;--bad:#a23029;--acc:#285c70;--line:#b6c6bd;--unit:#4e6158;--focus:#214f60;--focus-bg:#e0ece6;--button:#285c47;--button-tx:#ffffff;--selected:#d9e9e2;--selected-tx:#1d4838;--selected-warn:#80500c;--selected-bad:#a23029;--negative-bg:#f7e8e4;--bag:#e9d9a6;--bag-tx:#4c3d15;--graph:#c5d9d1}
+:root{color-scheme:dark;--bg:#0b0f14;--card:#151c25;--card2:#1c2531;--tx:#eef2f7;--mut:#8fa0b3;--ok:#3ddc84;--warn:#ffb020;--bad:#ff5a5f;--acc:#4da3ff;--line:#26313f;--unit:#a9b8ca;--focus:#eef2f7;--focus-bg:#14283d;--button:#3ddc84;--button-tx:#06120b;--selected:#4da3ff;--selected-tx:#04101e;--selected-warn:#3d2800;--selected-bad:#5c131c;--negative-bg:#3a1519;--bag:#fde047;--bag-tx:#1a1400;--bag-glow:#fde04766;--graph:#1f5fa8;--clock-icon:#6ec1ff;--timer-icon:#c9a6ff;--s0:#4da3ff;--s1:#22d3ee;--s2:#a3e635;--s3:#f472b6;--s4:#c084fc;--s5:#fb923c;--s6:#fde047;--s7:#2dd4bf;}
+:root[data-theme="day"]{color-scheme:light;--bg:#f4f7fb;--card:#ffffff;--card2:#e9eff7;--tx:#152333;--mut:#4d6076;--ok:#167344;--warn:#8f5700;--bad:#b52b34;--acc:#165da8;--line:#bdcbdc;--unit:#495e75;--focus:#152333;--focus-bg:#e2edfb;--button:#3ddc84;--button-tx:#06120b;--selected:#4da3ff;--selected-tx:#04101e;--selected-warn:#3d2800;--selected-bad:#5c131c;--negative-bg:#fce8eb;--bag:#fde047;--bag-tx:#1a1400;--bag-glow:#00000000;--graph:#c7ddf5;--clock-icon:#165da8;--timer-icon:#7044a4;--s0:#165aa0;--s1:#00677a;--s2:#496d0b;--s3:#983768;--s4:#7044a4;--s5:#914b10;--s6:#725409;--s7:#006957;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI","Noto Sans Thai","Sarabun",sans-serif}
 body{padding:0 12px calc(86px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;font-size:18px;line-height:1.5}
@@ -25,7 +25,7 @@ header{position:sticky;top:0;background:var(--bg);padding:calc(10px + env(safe-a
 .clock{font-size:clamp(24px,7vw,31px);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.5px}
 .sub{color:var(--mut);font-size:14px;font-weight:500;line-height:1.45}
 .ti{width:.78em;height:.78em;vertical-align:-.06em;margin-right:.22em;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
-.ti.c,.ti.d{stroke:currentColor}
+.ti.c{stroke:var(--clock-icon)}.ti.d{stroke:var(--timer-icon)}
 .tc,.td{white-space:nowrap}
 u{text-decoration:none;font-size:clamp(13px,.6em,20px);font-weight:600;color:var(--unit);margin:0 .16em 0 .08em;letter-spacing:0;vertical-align:baseline}
 .tc em{font-style:normal;font-size:13px;font-weight:700;color:var(--selected-tx);background:var(--selected);border-radius:4px;padding:0 4px;margin-left:4px;vertical-align:.25em}
@@ -50,7 +50,7 @@ u{text-decoration:none;font-size:clamp(13px,.6em,20px);font-weight:600;color:var
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .chip{font-size:15px;font-weight:500;padding:4px 9px;border-radius:99px;background:var(--card2)}
 .chip.y{background:var(--focus-bg);color:var(--ok)}.chip.n{background:var(--negative-bg);color:var(--bad);text-decoration:line-through}
-.chip.available{background:var(--card2);color:var(--mut);border:1px solid var(--line)}
+.chip.available{background:var(--card2);background:color-mix(in srgb,var(--supply) 15%,var(--card));color:var(--supply);border:1px solid var(--line);border-color:color-mix(in srgb,var(--supply) 45%,var(--card))}
 .bar{height:10px;background:var(--card2);border-radius:99px;overflow:hidden;margin:8px 0 2px}
 .bar>i{display:block;height:100%;background:var(--acc);width:0}
 ul.chk{list-style:none;margin:6px 0 0;padding:0}
@@ -97,14 +97,15 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .kv{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:16px}
 .kv:last-child{border:0}.kv b{font-variant-numeric:tabular-nums}
 .chip{display:inline-flex;align-items:center;gap:5px}
-.chip.bag{background:var(--bag);color:var(--bag-tx);font-weight:800;border:1px solid var(--bag-tx)}
+.chip.bag{background:var(--bag);color:var(--bag-tx);font-weight:800;border:1px solid var(--bag-tx);box-shadow:0 0 10px var(--bag-glow)}
 .ic{display:inline-flex;width:34px;height:34px;border-radius:10px;align-items:center;justify-content:center;border:1px solid transparent}
 .ic.sm{width:26px;height:26px;border-radius:8px}
 .ic.no{background:var(--negative-bg);border-color:var(--bad);color:var(--bad);font-weight:800;font-size:15px}
 .ic.un{color:var(--mut)}
-.ic.yes{background:var(--card2);border-color:var(--line);color:var(--mut)}
-.ic.bag{background:var(--bag);border-color:var(--bag-tx);color:var(--bag-tx)}
-.ml{color:var(--mut)}
+.ic.yes{background:var(--card2);background:color-mix(in srgb,var(--supply) 17%,var(--card));border-color:var(--line);border-color:color-mix(in srgb,var(--supply) 50%,var(--card));color:var(--supply)}
+.ic.bag{background:var(--bag);border-color:var(--bag-tx);color:var(--bag-tx);box-shadow:0 0 10px var(--bag-glow)}
+.ml{color:var(--supply,var(--mut))}
+.supply-0{--supply:var(--s0)}.supply-1{--supply:var(--s1)}.supply-2{--supply:var(--s2)}.supply-3{--supply:var(--s3)}.supply-4{--supply:var(--s4)}.supply-5{--supply:var(--s5)}.supply-6{--supply:var(--s6)}.supply-7{--supply:var(--s7)}
 table.mx td,table.mx th{text-align:center;padding:4px 1px}
 table.mx td.mid-id{text-align:left;padding-left:6px;font-size:14px}
 table.mx .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overflow-wrap:anywhere}
@@ -139,10 +140,10 @@ table.mx .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overf
 .r1 .td{white-space:normal}
 .r3>div{min-width:0}
 .r3 .ic{max-width:100%}
-.hero{box-shadow:inset 3px 0 var(--focus)}
+.hero{box-shadow:none}
 .hero .big:not(.bad):not(.warn):not(.good){color:var(--focus)}
 .nsname{color:var(--focus)}
-.clock.acc{color:var(--tx)}
+.clock.acc{color:var(--acc)}
 [data-k="hdCut"].bad,[data-k="hdCut"].warn{background:var(--negative-bg)}
 [data-k="hdCut"] .sub2{color:inherit}
 </style>
@@ -264,7 +265,7 @@ function applyTheme(){
   b.textContent=S.theme==='night'?'☾ Night':'☀ Day';
   b.setAttribute('aria-pressed',String(S.theme==='night'));
   b.title=S.theme==='night'?'เปลี่ยนเป็น Day mode':'เปลี่ยนเป็น Night mode';
-  document.querySelector('meta[name="theme-color"]').setAttribute('content',S.theme==='night'?'#101415':'#f2f5f2');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content',S.theme==='night'?'#0b0f14':'#f4f7fb');
 }
 function toggleTheme(){S.theme=S.theme==='night'?'day':'night';applyTheme();save()}
 applyTheme();
@@ -393,7 +394,7 @@ function chips(i){
     if(k===6&&!v)continue;
     if(!v){h+='<span class="chip n">'+it.l+'</span>';continue}
     if(it.bag)h+='<span class="chip bag">'+svgIc(it,16,'currentColor')+' '+it.l+'</span>';
-    else h+='<span class="chip available">'+svgIc(it,16,'currentColor')+' '+it.l+'</span>';
+    else h+='<span class="chip available supply-'+k+'">'+svgIc(it,16,'currentColor')+' '+it.l+'</span>';
   }
   return h;
 }
@@ -402,11 +403,11 @@ function icCell(i,k){
   if(v==null)return '<td><span class="ic un">·</span></td>';
   if(!v)return k===6?'<td><span class="ic un">·</span></td>':'<td><span class="ic no">✕</span></td>';
   if(it.bag)return '<td><span class="ic bag">'+svgIc(it,22,'currentColor')+'</span></td>';
-  return '<td><span class="ic yes">'+svgIc(it,20,'currentColor')+'</span></td>';
+  return '<td><span class="ic yes supply-'+k+'">'+svgIc(it,20,'currentColor')+'</span></td>';
 }
 function matrix(){
   var h='<div class="card" style="padding:10px 6px"><h2 style="padding-left:6px">ของที่มีในแต่ละจุด</h2><table class="mx"><tr><th></th>';
-  for(var k=0;k<8;k++){var it=ITEMS[k];h+='<th><span class="ic sm '+(it.bag?'bag':'yes')+'">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l.replace('Dropped bag','Dropped<br>bag')+'</div></th>'}
+  for(var k=0;k<8;k++){var it=ITEMS[k];h+='<th class="supply-'+k+'"><span class="ic sm '+(it.bag?'bag':'yes')+'">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l.replace('Dropped bag','Dropped<br>bag')+'</div></th>'}
   h+='</tr>';
   for(var i=0;i<=10;i++){
     h+='<tr><td class="mid-id"><b>'+P[i].id+'</b></td>';
@@ -508,7 +509,7 @@ function icSpan(i,k){
   var it=ITEMS[k],v=supVal(i,k);
   if(v==null)return '<span class="ic un">·</span>';
   if(!v)return '<span class="ic no">✕</span>';
-  return '<span class="ic yes">'+svgIc(it,19,'currentColor')+'</span>';
+  return '<span class="ic yes supply-'+k+'">'+svgIc(it,19,'currentColor')+'</span>';
 }
 var SLOTS=[0,1,2,3,4,5,7];
 function setAv(v){S.av=v;save();render()}
@@ -531,7 +532,7 @@ function viewAll(m){
     h+='<div class="small" style="padding:8px 4px 2px">* = วันอาทิตย์ 15 พ.ย. · ± (+ ช้ากว่าแผน, − เร็วกว่าแผน) · W0 06:00 เป็นเวลาแนะนำ ไม่ใช่ COT</div><div class="lg"><span><b>แผน '+S.pid+' · '+PINFO[S.pid].t+'</b></span><span>'+IC_CLK+'เวลานาฬิกา (มี น.)</span><span>COT = Cut Off Time</span><span>'+IC_TMR+'ระยะเวลา (hr / m / s)</span></div>';
   } else {
     h+='<div class="r3 hd"><div></div>';
-    SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div><span class="ic sm yes">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l+'</div></div>'});
+    SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div class="supply-'+k+'"><span class="ic sm yes">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l+'</div></div>'});
     h+='</div>';
     for(var j=0;j<=10;j++){
       var q=P[j],cur2=(m.mode==='enroute'&&j===m.last+1)||(m.mode==='atcp'&&j===m.last);
