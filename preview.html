@@ -146,6 +146,9 @@ table.mx .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overf
 .gps-row .warn{color:var(--warn)}.gps-row .bad{color:var(--bad)}
 .gps-button{flex:none;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card2);color:var(--tx);font:600 14px system-ui,sans-serif;touch-action:manipulation}
 .route-position{margin-top:6px}
+.aid-order{margin-top:10px;border-top:1px solid var(--line)}
+.aid-order summary{padding:12px 0;cursor:pointer;font-size:15px;font-weight:600;color:var(--mut);line-height:1.5;min-height:44px;box-sizing:border-box}
+.aid-order .small{padding-bottom:8px}
 .hero{box-shadow:none}
 .hero .big:not(.bad):not(.warn):not(.good){color:var(--focus)}
 .nsname{color:var(--focus)}
@@ -372,6 +375,8 @@ function savePlan(){
 function resetPlan(){delete S.plans[S.pid];save();render()}
 
 /* ---------- VIEWS ---------- */
+// Organizer's aid-station order graphic supplied 10 Nov 2026; not per-CP availability.
+var AID_ORDER='<details class="aid-order"><summary>Aid order · Pocari first</summary><div class="small">1 Pocari → 2 Water → 3 Soft drinks → 4 Fruit / snacks → 5 Food</div><div class="small">Availability varies by CP. See station supplies.</div></details>';
 var ITEMS=[
  {l:'Pocari',c:'#4da3ff',p:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'},
  {l:'Water',c:'#22d3ee',p:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>'},
@@ -450,6 +455,7 @@ function nextStopCard(j,from,title){
    +'<div><div class="lab">'+cutLab+'</div><div class="v">'+tC(START+p.cut*60000)+'</div></div></div>';
   if(j<10)h+='<div class="small" style="margin-top:6px">Rest '+tM(stp()[j])+' · Depart '+tC(START+planDep(j)*60000)+'</div>';
   h+='<div class="chips" style="margin-top:8px">'+chips(j)+'</div>';
+  if(j<10&&model().mode!=='atcp')h+=AID_ORDER;
   if(p.arrive.length)h+='<div class="small" style="margin-top:10px">'+p.id+' checklist</div>'+checklist(j);
   return h+'</div>';
 }
@@ -508,7 +514,7 @@ function viewNow(m){
    +'<div class="small" data-k="arrDelta"></div></div>';
   h+='<button class="btn alt" onclick="act(&quot;dep&quot;,'+L+')">Depart '+p.id+'</button>'+lastRec();
   h+=planBar(m);
-  h+='<div class="card"><h2>'+p.id+' checklist</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
+  h+='<div class="card"><h2>'+p.id+' checklist</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+AID_ORDER+checklist(L)+'</div>';
   h+=nextStopCard(L+1,L,'Next CP');
   h+='<div class="card"><h2>Next leg</h2><div class="tip" style="margin:0">'+p.leg+wtr(L)+'</div></div>';
   h+=finCard();
@@ -541,6 +547,7 @@ function viewAll(m){
     }
     h+='<div class="small" style="padding:8px 4px 2px">* Sun 15 Nov · + Behind / − Ahead · W0 06:00 advisory only</div><div class="lg"><span><b>Plan '+S.pid+' · '+PINFO[S.pid].t+'</b></span></div>';
   } else {
+    h+=AID_ORDER;
     h+='<div class="r3 hd"><div></div>';
     SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div class="supply-'+k+'"><span class="ic sm yes">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l+'</div></div>'});
     h+='</div>';
