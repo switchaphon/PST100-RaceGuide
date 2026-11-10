@@ -83,6 +83,28 @@ need checking against the latest published material before race day.
 
 ## Route and preparation notes
 
+- The aid-station graphic supplied on 10 November 2026 lists Pocari, Water,
+  Soft drinks, Fruit/snacks and Food. Treat its numbers as item labels, without
+  inferring a service sequence or priority, as clarified by the user. A compact
+  expandable **Drinks & food** reference appears beside station supplies on Now
+  and Stations/Supplies. Per-CP availability, including hot food, remains based
+  on the station table. Soft-drink availability by CP is still unspecified.
+- Now shows course km, distance to the pending CP and finish, and remaining
+  ascent/descent to that CP. Profile also shows distance to finish. GPS starts
+  only when requested; neither a fix nor passing a CP records an arrival.
+- Without a fix, Now uses the last recorded CP and labels the source **From CP**.
+  A stopped fix, a fix older than 60 seconds or an error retains the last position
+  with a **Last fix** label, age and accuracy. Fix age uses real device time even
+  during a rehearsal. Fixes over 2 km off route or more than 150 m before the
+  recorded CP fall back to CP values; lesser off-route/poor accuracy warns.
+- If GPS passes the pending CP by over 50 m, Now shows **Check record** and leaves
+  that CP's remaining distance/ascent/descent blank until records are corrected.
+  The pending CP and plan-based ETA do not silently advance. GPS updates preserve
+  the active checklist and unsaved Settings edits.
+- Course km is projected progress along the embedded route, not distance actually
+  travelled. Remaining ascent/descent uses the profile's elevation changes,
+  interpolating partial segments and scaling each leg to the station table's
+  ascent/descent totals. Full-leg values therefore agree with the CP card.
 - Each outgoing leg has one preparation note keyed by source and destination CP.
   FIN has no outgoing note. A5→A6 carries the +1,117 m climb advice; A6→W0 carries
   the last-hot-food-before-W0 advice; W0→A7 carries the descent advice.

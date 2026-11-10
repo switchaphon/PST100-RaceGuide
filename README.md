@@ -14,6 +14,8 @@ Before race day, use **Preview race** to try the planner. Use **Exit preview** i
 
 Use the Day/Night button beside CP progress to switch display colors. Your choice is saved on this device; switching keeps race records and unsaved plan edits intact.
 
+The Now screen shows course position, distance to the next CP and finish, and climb/descent remaining to the next CP. Start GPS there or on Profile. Without a fix, values start from the last recorded CP; a stopped or old fix is labelled with its age and accuracy. These are distances along the embedded course, not a GPS odometer. **ETA (plan)** continues to use your plan and CP records, not GPS speed.
+
 Regression tests (Node.js 22+, no dependencies): `node --test tests/*.test.cjs`.
 Optional mobile-browser smoke tests: install Python Playwright, run `python -m playwright install chromium webkit`, then `python tests/browser_smoke.py`.
 

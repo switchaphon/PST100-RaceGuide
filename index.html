@@ -140,6 +140,14 @@ table.mx .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overf
 .r1 .td{white-space:normal}
 .r3>div{min-width:0}
 .r3 .ic{max-width:100%}
+.gps-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+.gps-row .small{flex:1;min-width:0}
+.gps-row .warn{color:var(--warn)}.gps-row .bad{color:var(--bad)}
+.gps-button{flex:none;min-height:44px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card2);color:var(--tx);font:600 14px system-ui,sans-serif;touch-action:manipulation}
+.route-position{margin-top:6px}
+.aid-list{margin-top:10px;border-top:1px solid var(--line)}
+.aid-list summary{padding:12px 0;cursor:pointer;font-size:15px;font-weight:600;color:var(--mut);line-height:1.5;min-height:44px;box-sizing:border-box}
+.aid-list .small{padding-bottom:8px}
 .hero{box-shadow:none}
 .hero .big:not(.bad):not(.warn):not(.good){color:var(--focus)}
 .nsname{color:var(--focus)}
@@ -366,6 +374,8 @@ function savePlan(){
 function resetPlan(){delete S.plans[S.pid];save();render()}
 
 /* ---------- VIEWS ---------- */
+// Aid-station listing supplied 10 Nov 2026; per-CP availability comes from the station table.
+var AID_LIST='<details class="aid-list"><summary>Drinks &amp; food</summary><div class="small">Pocari · Water · Soft drinks · Fruit / snacks · Food</div><div class="small">Availability varies by CP. See station supplies.</div></details>';
 var ITEMS=[
  {l:'Pocari',c:'#4da3ff',p:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>'},
  {l:'Water',c:'#22d3ee',p:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>'},
@@ -433,11 +443,18 @@ function nextStopCard(j,from,title){
   var h='<div class="card ns"><h2>'+title+'</h2>'
    +'<div class="nsname">'+p.id+' · '+p.n+'</div>'
    +'<div class="small">'+p.km+' km · Leg '+(p.km-P[from].km).toFixed(1)+' km · +'+P[from].gain+' / −'+P[from].loss+' m</div>'
+   +'<div class="gps-row"><div class="small" data-k="gpsStatus">—</div><button class="gps-button" data-k="gpsToggle" onclick="if(G.on)gpsStop();else gpsStart()">Start GPS</button></div>'
+   +'<div class="small route-position">Course km <b data-k="courseKm">—</b></div>'
+   +'<div class="g2"><div><div class="lab">To '+p.id+'</div><div class="v" data-k="toCP">—</div></div>'
+   +'<div><div class="lab">To finish</div><div class="v" data-k="toFinish">—</div></div></div>'
+   +'<div class="g2"><div><div class="lab">Climb left</div><div class="v" data-k="climbLeft">—</div></div>'
+   +'<div><div class="lab">Descent left</div><div class="v" data-k="descentLeft">—</div></div></div>'
    +'<div class="g3"><div><div class="lab">Planned</div><div class="v">'+tC(pa)+'</div></div>'
-   +'<div><div class="lab">ETA</div><div class="v" data-k="nsEta">-</div></div>'
+   +'<div><div class="lab">ETA (plan)</div><div class="v" data-k="nsEta">-</div></div>'
    +'<div><div class="lab">'+cutLab+'</div><div class="v">'+tC(START+p.cut*60000)+'</div></div></div>';
   if(j<10)h+='<div class="small" style="margin-top:6px">Rest '+tM(stp()[j])+' · Depart '+tC(START+planDep(j)*60000)+'</div>';
   h+='<div class="chips" style="margin-top:8px">'+chips(j)+'</div>';
+  if(j<10&&model().mode!=='atcp')h+=AID_LIST;
   if(p.arrive.length)h+='<div class="small" style="margin-top:10px">'+p.id+' checklist</div>'+checklist(j);
   return h+'</div>';
 }
@@ -496,7 +513,7 @@ function viewNow(m){
    +'<div class="small" data-k="arrDelta"></div></div>';
   h+='<button class="btn alt" onclick="act(&quot;dep&quot;,'+L+')">Depart '+p.id+'</button>'+lastRec();
   h+=planBar(m);
-  h+='<div class="card"><h2>'+p.id+' checklist</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+checklist(L)+'</div>';
+  h+='<div class="card"><h2>'+p.id+' checklist</h2><div class="chips" style="margin:0 0 8px">'+chips(L)+'</div>'+AID_LIST+checklist(L)+'</div>';
   h+=nextStopCard(L+1,L,'Next CP');
   h+='<div class="card"><h2>Next leg</h2><div class="tip" style="margin:0">'+p.leg+wtr(L)+'</div></div>';
   h+=finCard();
@@ -529,6 +546,7 @@ function viewAll(m){
     }
     h+='<div class="small" style="padding:8px 4px 2px">* Sun 15 Nov · + Behind / − Ahead · W0 06:00 advisory only</div><div class="lg"><span><b>Plan '+S.pid+' · '+PINFO[S.pid].t+'</b></span></div>';
   } else {
+    h+=AID_LIST;
     h+='<div class="r3 hd"><div></div>';
     SLOTS.forEach(function(k){var it=ITEMS[k];h+='<div class="supply-'+k+'"><span class="ic sm yes">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l+'</div></div>'});
     h+='</div>';
@@ -559,6 +577,16 @@ function viewSet(m){
 function nextCut(j){if(j===7)j=8;return j>10?null:j}
 function live(){
   var m=model(),n=now(),o={};
+  if(m.mode!=='done'){
+    var from=m.mode==='pre'?0:m.last,progress=routeProgress(from,from+1);
+    o.gpsStatus=[progress.status,progress.tone];
+    o.gpsToggle=[G.on?'Stop GPS':'Start GPS',''];
+    o.courseKm=[progress.km.toFixed(1),''];
+    o.toFinish=[progress.toFinish.toFixed(1)+U('km'),''];
+    o.toCP=[progress.toCP==null?'—':progress.toCP.toFixed(1)+U('km'),''];
+    o.climbLeft=[progress.gain==null?'—':'+'+Math.round(progress.gain)+U('m'),''];
+    o.descentLeft=[progress.loss==null?'—':'−'+Math.round(progress.loss)+U('m'),''];
+  }
   PIDS.forEach(function(k){
     var f=finFor(k,m),em=f==null?null:(f-START)/60000;
     o['plan'+k]=f==null?['—','']:[tC(f,{noicon:1}),em<=PINFO[k].goal?'good':(em<=P[10].cut?'warn':'bad')];
@@ -575,7 +603,7 @@ function live(){
   o.elapsed=[tDur(m.mode==='pre'?0:Math.floor(((m.mode==='done'?S.arr[10]:n)-START)/1000),{sec:1,noicon:1,fh:1}),''];
   o.raceclk=[m.mode==='pre'?'Starts in '+tDur(Math.floor((START-n)/1000),{sec:1,days:1,noicon:1}):'Start '+tC(START,{noicon:1,noday:1}),''];
   var delta=null,cj=null;
-  if(m.mode==='pre'){o.toStart=[tDur(Math.max(0,Math.floor((START-n)/1000)),{sec:1,days:1}),''];cj=1}
+  if(m.mode==='pre'){o.toStart=[tDur(Math.max(0,Math.floor((START-n)/1000)),{sec:1,days:1}),''];o.nsEta=[tC(START+planArr(1)*60000),''];cj=1}
   if(m.mode==='enroute'){
     var L=m.last,to=L+1,dep=S.dep[L],used=(n-dep)/60000,pl=legPlan(L,to);
     var eta=Math.max(dep+pl*60000,n);
@@ -670,10 +698,10 @@ var G={on:false,id:null,pos:null,err:'',idx:null,km:null,off:null,t:0,acc:null};
 function gpsStart(){
   if(!navigator.geolocation){G.err='GPS unavailable';render();return}
   G.err='Acquiring GPS…';G.on=true;render();
-  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){if(e.code!==1&&G.km!=null){G.err='GPS lost · Last fix shown';}else{G.err=e.code===1?'GPS permission denied':e.code===2?'No GPS fix':'GPS timed out';}render()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
+  G.id=navigator.geolocation.watchPosition(gpsOk,function(e){if(e.code!==1&&G.km!=null){G.err='GPS lost · Last fix shown';}else{G.err=e.code===1?'GPS permission denied':e.code===2?'No GPS fix':'GPS timed out';}if(S.tab==='map')render();else if(S.tab==='now')applyLive()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000});
 }
 function gpsStop(){if(G.id!=null)navigator.geolocation.clearWatch(G.id);G.id=null;G.on=false;G.err='';render()}
-function gpsOk(pos){G.err='';gpsFix(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);if(S.tab==='map')render()}
+function gpsOk(pos){G.err='';gpsFix(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy);if(S.tab==='map')render();else if(S.tab==='now')applyLive()}
 function gpsFix(la,lo,acc){
   var p=RT.p,best=1e9,bi=0,bt=0,i,r=Math.PI/180,cl=Math.cos(la*r);
   var lo_i=0,hi_i=p.length-2;
@@ -687,7 +715,30 @@ function gpsFix(la,lo,acc){
     }}
   scan(lo_i,hi_i);
   if(best>0.4&&(lo_i>0||hi_i<p.length-2)){best=1e9;scan(0,p.length-2)} // lost: search whole route
-  G.idx=bi;G.km=p[bi].k+(p[bi+1].k-p[bi].k)*bt;G.off=best*1000;G.acc=acc;G.t=now();G.pos=[la,lo];
+  G.idx=bi;G.km=p[bi].k+(p[bi+1].k-p[bi].k)*bt;G.off=best*1000;G.acc=acc;G.t=Date.now();G.pos=[la,lo];
+}
+
+// Keep the recorded CP as the ETA/arrival target; GPS never records a CP for the runner.
+function routeProgress(from,to){
+  var p=P[from],target=P[to].km,total=P[10].km;
+  var r={source:'cp',km:p.km,toCP:target-p.km,toFinish:total-p.km,gain:p.gain,loss:p.loss,status:'From '+p.id+' · '+(G.err||(G.on?'Acquiring GPS…':'GPS off')),tone:G.err?'warn':''};
+  if(!Number.isFinite(G.km)||!Number.isFinite(G.off))return r;
+  if(G.off>2000){r.status='From '+p.id+' · Off route '+(G.off/1000).toFixed(1)+' km';r.tone='bad';return r}
+  if(G.km<p.km-0.15){r.status='From '+p.id+' · GPS before CP';r.tone='warn';return r}
+  var age=Math.max(0,Math.floor((Date.now()-G.t)/1000)),stale=age>60,acc=Number.isFinite(G.acc)?Math.round(G.acc):null;
+  var last=!G.on||stale||!!G.err;
+  r.source='gps';r.km=Math.max(p.km,Math.min(total,G.km));r.toFinish=Math.max(0,total-r.km);
+  r.status=(last?'Last fix':'GPS')+' · '+(age<60?age+'s':Math.floor(age/60)+'m')+' · ±'+(acc==null?'?':acc)+' m';
+  r.tone=last||acc==null||acc>100||G.off>150?'warn':'';
+  if(G.err)r.status+=' · '+G.err.split(' · ')[0];
+  if(G.off>150)r.status+=' · Off route '+Math.round(G.off)+' m';
+  if(r.km>target+0.05){
+    r.toCP=null;r.gain=null;r.loss=null;r.status+=' · Past '+P[to].id+' · Check record';r.tone='warn';
+  }else{
+    r.toCP=Math.max(0,target-r.km);
+    var gl=sumGL(r.km,target);r.gain=gl[0];r.loss=gl[1];
+  }
+  return r;
 }
 
 function planKmAt(minElapsed){ // where the plan says you should be at this race time
@@ -700,7 +751,25 @@ function planKmAt(minElapsed){ // where the plan says you should be at this race
   }
   return P[10].km;
 }
-function sumGL(k0,k1){var p=RT.p,i0=kmToIdx(k0),i1=kmToIdx(k1),g=0,l=0,i;for(i=i0+1;i<=i1;i++){var d=p[i].e-p[i-1].e;if(d>0)g+=d;else l-=d}return [g*RT.gs,l*RT.ls]}
+function sumGL(k0,k1){
+  var p=RT.p,g=0,l=0,c,i;
+  k0=Math.max(0,k0);k1=Math.min(P[10].km,k1);
+  if(k1<=k0)return [0,0];
+  // Scale each leg to its official totals; interpolate partial GPS segments.
+  for(c=0;c<P.length-1;c++){
+    if(k1<=P[c].km||k0>=P[c+1].km)continue;
+    var lo=CPI[c],hi=CPI[c+1],rawG=p[hi].g-(p[lo].g||0),rawL=p[hi].l-(p[lo].l||0),up=0,down=0;
+    for(i=lo+1;i<=hi;i++){
+      var a=Math.max(k0,p[i-1].k),b=Math.min(k1,p[i].k),len=p[i].k-p[i-1].k;
+      if(b<=a||len<=0)continue;
+      var de=(p[i].e-p[i-1].e)*(b-a)/len;
+      if(de>0)up+=de;else down-=de;
+    }
+    g+=rawG>0?up*P[c].gain/rawG:0;
+    l+=rawL>0?down*P[c].loss/rawL:0;
+  }
+  return [g,l];
+}
 
 /* ---------- PROFILE GRAPH ---------- */
 function profileSvg(x0,x1,cur){
@@ -746,8 +815,9 @@ function viewMap(m){
   if(farOff)h+='<div class="tip warn">Off route · '+(G.off/1000).toFixed(1)+' km · ±'+Math.round(G.acc||0)+' m</div>';
   if(G.km!=null&&!farOff){
     var nx=null,i;for(i=1;i<=10;i++){if(cpKm(i)>G.km+0.05){nx=i;break}}
-    var age=Math.round((now()-G.t)/1000);
+    var age=Math.max(0,Math.round((Date.now()-G.t)/1000));
     h+='<div class="kv"><span>Position</span><b>'+G.km.toFixed(1)+' / 105.8 km</b></div>'
+     +'<div class="kv"><span>To finish</span><b>'+Math.max(0,P[10].km-G.km).toFixed(1)+' km</b></div>'
      +'<div class="kv"><span>Elevation</span><b>'+Math.round(eleAt(G.km))+' m</b></div>'
      +'<div class="kv"><span>Off route</span><b class="'+(G.off>150?'bad':'good')+'">'+Math.round(G.off)+' m</b></div>'
      +'<div class="kv"><span>Accuracy / age</span><b>±'+Math.round(G.acc||0)+' m · '+age+' s ago</b></div>';

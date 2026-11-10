@@ -168,7 +168,7 @@ test('running screen uses compact English controls while retaining Thai course a
   const html = a.node('main').innerHTML;
   assert.match(html, />Arrived A1<\/button>/);
   assert.match(html, />Remaining to A1<\/div>/);
-  assert.match(html, />ETA<\/div>/);
+  assert.match(html, />ETA \(plan\)<\/div>/);
   assert.ok(html.includes(a.run('P[0].leg')));
   assert.ok(html.includes(a.run('P[1].arrive[0]')));
   assert.doesNotMatch(html, /เวลาใต้แผน|แตะเพื่อติ๊ก/);
@@ -193,4 +193,112 @@ test('preview can be exited from settings without a manual simulation editor', (
   a.run('resetAll()');
   assert.equal(a.run('S.sim'), 0);
   assert.equal(a.run('model().mode'), 'pre');
+});
+
+test('remaining ascent and descent agree with the official totals at every CP', () => {
+  const a = app();
+  for (let i = 0; i < 10; i++) {
+    const actual = a.run(`sumGL(P[${i}].km,P[${i + 1}].km)`);
+    assert.ok(Math.abs(actual[0] - a.run(`P[${i}].gain`)) < 1e-7, `climb from CP ${i}`);
+    assert.ok(Math.abs(actual[1] - a.run(`P[${i}].loss`)) < 1e-7, `descent from CP ${i}`);
+  }
+});
+
+test('remaining elevation includes the unfinished part of a GPS segment', () => {
+  const a = app();
+  const whole = a.run('sumGL(0,RT.p[1].k)[1]');
+  const half = a.run('sumGL(RT.p[1].k/2,RT.p[1].k)[1]');
+  assert.ok(whole > 0);
+  assert.ok(Math.abs(half - whole / 2) < 1e-7);
+  assert.deepEqual(Array.from(a.run('sumGL(105.8,105.8)')), [0, 0]);
+  assert.deepEqual(Array.from(a.run('sumGL(80,70)')), [0, 0]);
+});
+
+test('Now shows remaining distances, elevation and plan ETA together', () => {
+  const a = app();
+  a.run('S.dep[0]=START;render()');
+  const html = a.node('main').innerHTML;
+  for (const key of ['courseKm', 'toFinish', 'toCP', 'climbLeft', 'descentLeft', 'gpsStatus', 'gpsToggle', 'nsEta']) {
+    assert.ok(html.includes(`data-k="${key}"`), key);
+  }
+});
+
+test('without GPS the remaining metrics are explicitly anchored to the last recorded CP', () => {
+  const a = app();
+  const r = a.run('routeProgress(3,4)');
+  assert.equal(r.source, 'cp');
+  assert.equal(r.km, 38.5);
+  assert.ok(Math.abs(r.toCP - 13.3) < 1e-7);
+  assert.ok(Math.abs(r.toFinish - 67.3) < 1e-7);
+  assert.equal(r.gain, 508);
+  assert.equal(r.loss, 429);
+  assert.match(r.status, /From A3/);
+  assert.match(r.status, /GPS off/);
+});
+
+test('a GPS fix updates remaining metrics on Now without replacing the screen or race records', () => {
+  const a = app();
+  a.run('S.dep[0]=START;S.arr[3]=START;S.dep[3]=START;G.on=true');
+  const before = a.run('JSON.stringify([S.arr,S.dep,S.hist,S.chk,S.pid])');
+  a.run('render=()=>{throw new Error("do not rebuild Now on every fix")};gpsOk({coords:{latitude:RT.p[450].la,longitude:RT.p[450].lo,accuracy:10}})');
+  const r = a.run('routeProgress(3,4)');
+  assert.equal(r.source, 'gps');
+  assert.ok(r.km > 38.5 && r.km < 51.8);
+  assert.ok(r.toCP > 0 && r.toCP < 13.3);
+  assert.ok(r.gain >= 0 && r.gain <= 508);
+  assert.ok(r.loss >= 0 && r.loss <= 429);
+  const live = a.run('live()');
+  assert.match(live.toFinish[0], new RegExp(r.toFinish.toFixed(1)));
+  assert.equal(a.run('JSON.stringify([S.arr,S.dep,S.hist,S.chk,S.pid])'), before);
+});
+
+test('stopped or stale GPS fixes are labelled as last fixes', () => {
+  const a = app();
+  a.run('gpsFix(RT.p[450].la,RT.p[450].lo,10);G.on=true;G.t=Date.now()-120000');
+  let r = a.run('routeProgress(3,4)');
+  assert.equal(r.source, 'gps');
+  assert.match(r.status, /Last fix/);
+  assert.equal(r.tone, 'warn');
+  a.run('G.t=Date.now();G.on=false');
+  r = a.run('routeProgress(3,4)');
+  assert.match(r.status, /Last fix/);
+});
+
+test('GPS far from the course falls back to recorded CP data', () => {
+  const a = app();
+  a.run('G.km=45;G.off=3000;G.acc=10;G.t=Date.now();G.on=true');
+  const r = a.run('routeProgress(3,4)');
+  assert.equal(r.source, 'cp');
+  assert.equal(r.km, 38.5);
+  assert.match(r.status, /Off route/);
+});
+
+test('GPS past an unrecorded CP never silently advances its ETA target', () => {
+  const a = app();
+  a.run('S.dep[0]=START;S.arr[3]=START;S.dep[3]=START;G.km=60;G.off=0;G.acc=10;G.t=Date.now();G.on=true');
+  const r = a.run('routeProgress(3,4)');
+  assert.equal(r.toCP, null);
+  assert.equal(r.gain, null);
+  assert.match(r.status, /Past A4/);
+  assert.equal(a.run('model().last'), 3);
+  assert.equal(a.run('S.arr[4]'), undefined);
+});
+
+test('GPS before a recorded CP uses that CP rather than jumping back to an old leg', () => {
+  const a = app();
+  a.run('G.km=45;G.off=0;G.acc=10;G.t=Date.now();G.on=true');
+  const r = a.run('routeProgress(4,5)');
+  assert.equal(r.source, 'cp');
+  assert.equal(r.km, 51.8);
+  assert.match(r.status, /From A4/);
+});
+
+test('finish distances and elevation stop at zero on the final route point', () => {
+  const a = app();
+  a.run('G.km=105.8;G.off=0;G.acc=10;G.t=Date.now();G.on=true');
+  const r = a.run('routeProgress(9,10)');
+  assert.equal(r.toCP, 0);
+  assert.equal(r.toFinish, 0);
+  assert.equal(r.gain, 0);
+  assert.equal(r.loss, 0);
 });
