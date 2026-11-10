@@ -201,8 +201,8 @@ var P = [
  {id:'A4',n:'วัดนิลประภา',km:51.8, cut:870, crew:1,sup:[1,1,1,1,1,1,0],gain:594,loss:634,
   arrive:['กินอาหารร้อน','เติมน้ำเต็ม','เตรียมไฟฉายตัวที่ 1 ไว้ใช้ได้ทันที (ใกล้มืด)','ซัพพอร์ต: เสื้อ/แบตสำรองสำหรับกลางคืน'],
   leg:'9.9 กม. +594/-634 ถึง A5 ราวเริ่มมืด ไฟฉายติดหัวได้เลย'},
- {id:'A5',n:'บ้านปง (Dropped bag)',km:61.7, cut:1055, crew:1,sup:[1,1,1,1,1,1,1],gain:1117,loss:207,
-  arrive:['รับ Dropped bag (Special Need Bag) ที่ฝากไว้ตอนสตาร์ท','กินมื้อใหญ่ (อาหารร้อน)','เปลี่ยนเสื้อแห้ง/ถุงเท้า','ไฟฉาย + แบตสำรอง เช็คว่าติด','เติมน้ำเต็ม + อาหารพอไป A7 (~25 กม. ไม่มีซัพพอร์ต)','นี่คือจุดซัพพอร์ตจุดสุดท้ายก่อน A7'],
+ {id:'A5',n:'บ้านปง (Bag)',km:61.7, cut:1055, crew:1,sup:[1,1,1,1,1,1,1],gain:1117,loss:207,
+  arrive:['รับ Bag (Special Need Bag) ที่ฝากไว้ตอนสตาร์ท','กินมื้อใหญ่ (อาหารร้อน)','เปลี่ยนเสื้อแห้ง/ถุงเท้า','ไฟฉาย + แบตสำรอง เช็คว่าติด','เติมน้ำเต็ม + อาหารพอไป A7 (~25 กม. ไม่มีซัพพอร์ต)','นี่คือจุดซัพพอร์ตจุดสุดท้ายก่อน A7'],
   leg:'ช่วงโหด +1,117 ม. ใน 10.3 กม. ขึ้นช้า ๆ ใช้โพล/ถุงมือ ระวังงู ไปเป็นกลุ่มถ้าทำได้'},
  {id:'A6',n:'บ้านม้งดอยปุย',km:72.0, cut:1330, crew:0,sup:[1,1,1,1,1,1,0],gain:450,loss:483,
   arrive:['กินอาหารร้อนให้พอ (ถัดไป W0 ไม่มีอาหาร)','เติมน้ำเต็ม','ซัพพอร์ตเข้าไม่ได้','ใส่เสื้อกันหนาวถ้าเย็น (พื้นที่สูง)'],
@@ -392,7 +392,7 @@ var ITEMS=[
  {l:'Medical',c:'#f472b6',p:'<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'},
  {l:'WC',c:'#c084fc',t:'WC'},
  {l:'Food',c:'#fb923c',p:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>'},
- {l:'Dropped bag',c:'#fde047',bag:1,p:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'},
+ {l:'Bag',c:'#fde047',bag:1,p:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>'},
  {l:'Crew',c:'#2dd4bf',p:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'}
 ];
 function svgIc(it,sz,col){
@@ -425,14 +425,14 @@ function icCell(i,k){
 }
 function matrix(){
   var h='<div class="card" style="padding:10px 6px"><h2 style="padding-left:6px">Station supplies</h2><table class="mx"><tr><th></th>';
-  for(var k=0;k<8;k++){var it=ITEMS[k];h+='<th class="supply-'+k+'"><span class="ic sm '+(it.bag?'bag':'yes')+'">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l.replace('Dropped bag','Dropped<br>bag')+'</div></th>'}
+  for(var k=0;k<8;k++){var it=ITEMS[k];h+='<th class="supply-'+k+'"><span class="ic sm '+(it.bag?'bag':'yes')+'">'+svgIc(it,15,'currentColor')+'</span><div class="ml">'+it.l+'</div></th>'}
   h+='</tr>';
   for(var i=0;i<=10;i++){
     h+='<tr><td class="mid-id"><b>'+P[i].id+'</b></td>';
     for(var k=0;k<8;k++)h+=icCell(i,k);
     h+='</tr>';
   }
-  return h+'</table><div class="small" style="padding:6px">× Unavailable · · Unknown · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · เปิดที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00 · Crew access</div></div>';
+  return h+'</table><div class="small" style="padding:6px">× Unavailable · · Unknown · Bag: ฝากที่สตาร์ท 04:00–06:00 · เปิดที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00 · Crew access</div></div>';
 }
 function checklist(i){
   var p=P[i];if(!p.arrive.length)return '';
@@ -561,11 +561,11 @@ function viewAll(m){
     h+='</div>';
     for(var j=0;j<=10;j++){
       var q=P[j],cur2=(m.mode==='enroute'&&j===m.last+1)||(m.mode==='atcp'&&j===m.last);
-      h+='<div class="blk'+(cur2?' cur':'')+'"><div class="r3"><div class="idc"><b>'+q.id+'</b><div class="small">km '+q.km+'</div>'+(j===5?'<div class="bagtag">'+svgIc(ITEMS[6],13,'currentColor')+' Dropped bag</div>':'')+'</div>';
+      h+='<div class="blk'+(cur2?' cur':'')+'"><div class="r3"><div class="idc"><b>'+q.id+'</b><div class="small">km '+q.km+'</div>'+(j===5?'<div class="bagtag">'+svgIc(ITEMS[6],13,'currentColor')+' Bag</div>':'')+'</div>';
       SLOTS.forEach(function(k){h+='<div class="ctr">'+icSpan(j,k)+'</div>'});
       h+='</div></div>';
     }
-    h+='<div class="small" style="padding:8px 4px 2px">× Unavailable · · Unknown · Crew access · Dropped bag: ฝากที่สตาร์ท 04:00–06:00 · รับที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00</div>';
+    h+='<div class="small" style="padding:8px 4px 2px">× Unavailable · · Unknown · Crew access · Bag: ฝากที่สตาร์ท 04:00–06:00 · รับที่ A5 · รับคืนที่เส้นชัย อา. 08:00–14:00</div>';
   }
   return h+'</div>';
 }

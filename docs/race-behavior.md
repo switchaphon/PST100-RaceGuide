@@ -79,7 +79,7 @@ need checking against the latest published material before race day.
   and blue/purple clock icons. Day uses the same blue/green identity on a light
   background, with darker status and supply colors for readable text. Both modes
   retain the enlarged typography. Supplies keep distinct colors and icons; the
-  dropped bag is yellow. Status green/amber/red retains its meaning.
+  Bag badge is yellow. Status green/amber/red retains its meaning.
 - Map labels, markers, units, selected plans, form controls and browser theme color
   all adapt to the selected mode. Warning colors must not remain after the
   underlying race status changes during a tab switch.
