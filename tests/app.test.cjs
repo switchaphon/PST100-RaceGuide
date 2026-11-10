@@ -83,6 +83,40 @@ test('time parser rejects invalid minute fields', () => {
   assert.equal(a.run("parseHM('26:59')"), 1619);
 });
 
+test('elapsed input accepts hr/m units and rejects invalid durations', () => {
+  const a = app();
+  for (const [text, minutes] of [['0 m', 0], ['59 m', 59], ['2 hr 59 m', 179], ['26 hr 59 m', 1619], ['99 hr 59 m', 5999]]) {
+    assert.equal(a.run(`parseHM(${JSON.stringify(text)})`), minutes, text);
+  }
+  for (const text of ['2 hr 60 m', '99 m', '-1 hr 20 m', '2.5 hr 00 m', '100 hr 00 m', '', '2 hr 59 m extra']) {
+    assert.equal(a.run(`parseHM(${JSON.stringify(text)})`), null, text);
+  }
+});
+
+test('plan editor distinguishes elapsed duration from time of day', () => {
+  const a = app();
+  a.run("S.pid='C';setTab('set')");
+  const html = a.node('main').innerHTML;
+  assert.match(html, />Arrival elapsed<\/th>/);
+  assert.match(html, /id="pa1"[^>]*value="2 hr 59 m"/);
+  assert.doesNotMatch(html, /value="\d+:\d{2}"|elapsed h:mm|Arrival \(h:mm\)/);
+  assert.equal(a.run('planArr(1)'), 179);
+  assert.equal(a.run('clock(START+planArr(1)*60000)'), '07:59');
+});
+
+test('saving an elapsed duration beyond midnight retains total hours on reload', () => {
+  const a = app();
+  a.fillPlan();
+  a.node('pa10').value = '26 hr 59 m';
+  a.run('savePlan()');
+  assert.equal(a.run('plan()[10]'), 1619);
+  const state = JSON.parse(a.storage.get('pst100_v1'));
+  const b = app({ state });
+  b.run("setTab('set')");
+  assert.match(b.node('main').innerHTML, /id="pa10"[^>]*value="26 hr 59 m"/);
+  assert.equal(b.run('clock(START+planArr(10)*60000)'), '07:59 (Sun)');
+});
+
 for (const [name, change] of [
   ['arrival before previous departure', a => { a.node('pa2').value = a.node('pa1').value; a.node('ps1').value = '100'; }],
   ['negative rest', a => { a.node('ps1').value = '-1'; }],

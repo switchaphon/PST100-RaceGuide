@@ -21,7 +21,10 @@ need checking against the latest published material before race day.
 ## Plans and predictions
 
 - Plans A/B/C target 23:59, 26:59 and 29:59 elapsed; D targets 31:00.
-- Custom arrival input is elapsed `hr:mm` (0–99 hours, minutes 00–59). Rest is a
+- Custom arrival input displays elapsed units, e.g. `2 hr 59 m` or `26 hr 59 m`,
+  with the heading **Arrival elapsed**. Total hours stay cumulative after midnight.
+  Input accepts these units and the `h:mm` shortcut (0–99 hours, minutes 00–59).
+  Time-of-day displays continue to use `HH:mm`. Rest is a
   finite, nonnegative number of minutes. Every arrival must be strictly after
   departure from the previous station. Invalid edits show an explanation and
   preserve the previously saved plan.

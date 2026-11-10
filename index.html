@@ -70,6 +70,8 @@ nav button{flex:1;background:none;border:0;color:var(--mut);padding:14px 4px;fon
 nav button.on{color:var(--acc);border-top:3px solid var(--acc);padding-top:11px}
 select,input{background:var(--card2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:8px;font-size:16px}
 input.s{width:80px;text-align:center}
+.plan-editor input.elapsed{width:116px;padding:8px 5px;font-variant-numeric:tabular-nums}
+.plan-editor input.rest{width:64px}
 .small{font-size:15px;font-weight:500;line-height:1.5;color:var(--mut)}
 svg text{font-family:inherit}
 .cpbar{display:flex;align-items:center;gap:10px;margin-top:7px;font-size:14px;font-weight:500;color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -320,7 +322,13 @@ function deltaH(d){ // d นาที, + = ช้ากว่าแผน
   if(d<-0.5)return ['<span class="dl">Ahead</span> '+tM(-d),'good'];
   return ['On plan','good'];
 }
-function parseHM(s){var m=/^(\d{1,2}):([0-5]\d)$/.exec((s||'').trim());return m?(+m[1])*60+(+m[2]):null}
+function elapsedText(min){var h=Math.floor(min/60),m=min%60;return (h?h+' hr ':'')+(h?p2(m):m)+' m'}
+function parseHM(s){
+  var text=(s||'').trim(),m=/^(\d{1,2}):([0-5]\d)$/.exec(text);
+  if(m)return (+m[1])*60+(+m[2]);
+  m=/^(?:(\d{1,2})\s*hr\s*)?([0-5]?\d)\s*m$/i.exec(text);
+  return m?(+(m[1]||0))*60+(+m[2]):null;
+}
 
 /* ---------- MODEL ---------- */
 function model(){
@@ -355,7 +363,7 @@ function savePlan(){
     var a=document.getElementById('pa'+i),s=document.getElementById('ps'+i);
     a.style.borderColor='';s.style.borderColor='';
     var v=parseHM(a.value),rest=Number(s.value);
-    if(v===null){errors.push(P[i].id+': use h:mm, minutes 00–59');a.style.borderColor='var(--bad)'}
+    if(v===null){errors.push(P[i].id+': use 2 hr 59 m (or 2:59), minutes 00–59');a.style.borderColor='var(--bad)'}
     if(!s.value.trim()||!Number.isFinite(rest)||rest<0){errors.push(P[i].id+': rest must be a number ≥ 0');s.style.borderColor='var(--bad)'}
     pl.push(v);st.push(rest);
   }
@@ -562,11 +570,11 @@ function viewAll(m){
 }
 
 function viewSet(m){
-  var h='<div class="card"><h2>Plans · elapsed h:mm</h2><div class="pbar">'+PIDS.map(function(k){return '<button class="'+(k===S.pid?'on':'')+'" onclick="setPlan(&quot;'+k+'&quot;)"><b>'+k+'</b><span>'+PINFO[k].t+'</span></button>'}).join('')+'</div><table><tr><th>CP</th><th>Arrival (h:mm)</th><th>Rest (min)</th></tr>';
+  var h='<div class="card plan-editor"><h2>Plans · elapsed time</h2><div class="pbar">'+PIDS.map(function(k){return '<button class="'+(k===S.pid?'on':'')+'" onclick="setPlan(&quot;'+k+'&quot;)"><b>'+k+'</b><span>'+PINFO[k].t+'</span></button>'}).join('')+'</div><table><tr><th>CP</th><th>Arrival elapsed</th><th>Rest (m)</th></tr>';
   var pl=plan(),st=stp();
   for(var i=0;i<=10;i++){
-    var v=Math.floor(pl[i]/60)+':'+p2(pl[i]%60);
-    h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?'0:00':'<input class="s" id="pa'+i+'" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s" id="ps'+i+'" type="number" value="'+st[i]+'">')+'</td></tr>';
+    var v=elapsedText(pl[i]);
+    h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?tM(0,{noicon:1}):'<input class="s elapsed" id="pa'+i+'" aria-label="'+P[i].id+' arrival elapsed" spellcheck="false" autocapitalize="off" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s rest" id="ps'+i+'" aria-label="'+P[i].id+' rest minutes" type="number" value="'+st[i]+'">')+'</td></tr>';
   }
   h+='</table><div id="planError" class="small bad" role="alert"></div><button class="btn alt" onclick="savePlan()">Save plan</button><button class="btn ghost" onclick="resetPlan()">Reset plan '+S.pid+'</button></div>';
   h+='<div class="card"><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">'+(S.sim?'Exit preview':'Clear records')+'</button></div>';
