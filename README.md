@@ -16,6 +16,8 @@ Use the Day/Night button beside CP progress to switch display colors. Your choic
 
 The Now screen shows course position, distance to the next CP and finish, and climb/descent remaining to the next CP. Start GPS there or on Profile. Without a fix, values start from the last recorded CP; a stopped or old fix is labelled with its age and accuracy. These are distances along the embedded course, not a GPS odometer. **ETA (plan)** continues to use your plan and CP records, not GPS speed.
 
+Standalone watch navigation file: [PST100-2026-v3-watch.gpx](downloads/PST100-2026-v3-watch.gpx). It contains the full Official V1 coordinates, V2 smoothed elevations and 11 CPs, with no plan times or synthetic track timestamps. Select it as a route and start recording an exercise on the watch for activity measurements.
+
 Export GPX v3 from Settings using the selected plan and the values currently in its fields, including unsaved edits. Export leaves saved plans and race records intact. Choose **CP only** (11 stops) or **CP + peaks / km** (25 points). The full 8,999-point course and V2 smoothed elevations are cached for offline export. GPX times are fixed plan projections.
 
 Bag drop-off follows the [Race Manual](https://pst.mytrails.run/Racemanual/): shuttle users arrive at CMECC's Ruang Phueng building at 02:30 and deposit before the 03:00 departure; self-arrivals deposit at Wat Wimut Tikaram from 04:00–04:45 on 14 November. Special Need Bags go to A5; finish bags are separate.
