@@ -6,6 +6,7 @@ python tests/browser_smoke.py
 """
 import functools
 import threading
+import xml.etree.ElementTree as ET
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -48,6 +49,18 @@ def exercise(browser_type, url):
     page.locator('#pa10').fill('23:57')
     theme_toggle.click()
     expect(page.locator('#pa10')).to_have_value('23:57')
+    # Export uses current form values without saving or changing records.
+    before_export = page.evaluate('JSON.stringify(S)')
+    with page.expect_download() as download:
+        page.get_by_role('button', name='Export GPX · A', exact=True).click()
+    xml = Path(download.value.path()).read_text()
+    gpx = ET.fromstring(xml)
+    assert len(gpx.findall('.//{*}trkpt')) == 8999
+    assert len(gpx.findall('{*}wpt')) == 11
+    assert '23 hr 57 m' in gpx.findtext('{*}metadata/{*}name')
+    assert 'Guide06:00+1' in xml and '04:00–04:45' in xml
+    assert page.evaluate('JSON.stringify(S)') == before_export
+    assert page.evaluate('planArr(10)') == 1439
     page.get_by_role('button', name='Now', exact=True).click()
 
     # UI unlocks on a timer tick without navigating away.
@@ -167,6 +180,14 @@ def exercise(browser_type, url):
     page.reload(wait_until='networkidle')
     expect(page).to_have_title('PST100 Race Day')
     expect(page.locator('#main')).not_to_be_empty()
+    # Full-resolution data is available on the first offline export after reload.
+    page.get_by_role('button', name='Settings', exact=True).click()
+    page.locator('#gpxPoints').select_option('all')
+    with page.expect_download() as download:
+        page.get_by_role('button', name='Export GPX · A', exact=True).click()
+    gpx = ET.fromstring(Path(download.value.path()).read_text())
+    assert len(gpx.findall('.//{*}trkpt')) == 8999
+    assert len(gpx.findall('{*}wpt')) == 25
     assert not errors, errors
     context.close()
     browser.close()

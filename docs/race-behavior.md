@@ -84,6 +84,25 @@ need checking against the latest published material before race day.
   all adapt to the selected mode. Warning colors must not remain after the
   underlying race status changes during a tab switch.
 
+## GPX v3 export and bag logistics
+
+- Settings exports from the selected plan and current, validated form values.
+  Exporting does not save edits or change race records. The default includes
+  11 CPs; optional mode adds 8 peaks and 6 distance markers in course order.
+- Full-resolution data in data/route-v2.json contains all 8,999 coordinates from
+  the supplied Official V1 and elevations from V2 (7-point smoothed), with
+  provenance hashes. CPs use the original 11 course vertices. Extra POIs snap
+  to course vertices. GPX types Begin/Aid_station/End accompany symbols.
+- Planned clocks use HH:mm and +1 after midnight; durations use hr/m. W0 uses
+  Guide/advisory. Labels use Food and Bag. The file has no synthetic track
+  timestamps. Organizer 105.8 km / +4,732 m / -4,819 m remain reference text;
+  track elevations are V2 values. Physical-watch import still needs checking.
+- Bag logistics follow the Race Manual: shuttle users arrive at CMECC, in front
+  of Ruang Phueng/BIB building, by 02:30 and deposit before the 03:00 shuttle.
+  Self-arrivals deposit at Wat Wimut Tikaram from 04:00–04:45 on 14 November.
+  Special Need Bags are accessed at A5 and returned at CMECC on 15 November,
+  08:00–14:00. Bags for after finishing go to CMECC and are separate.
+
 ## Route and preparation notes
 
 - The aid-station graphic supplied on 10 November 2026 lists Pocari, Water,
@@ -120,6 +139,8 @@ need checking against the latest published material before race day.
   official markers and race rules determine the actual course and COT.
 
 ## Offline operation and updates
+
+- Full-resolution GPX data is cached with the app for offline export.
 
 - Installation caches the HTML, manifest and icons. First installation must
   complete online before offline use; there is currently no readiness indicator.
