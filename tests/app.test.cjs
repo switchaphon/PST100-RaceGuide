@@ -34,15 +34,74 @@ function app({ state, prefersDark = false } = {}) {
   return { run, node, storage, fillPlan };
 }
 
-test('reset after rehearsal returns to real time and persists an empty race', () => {
+test('clear records persists an empty race while keeping saved plans', () => {
   const a = app();
-  a.run('testStart();resetAll()');
+  a.run('S.dep[0]=START;S.arr[1]=START+120*60000;S.plans.B=genPlan("B");resetAll()');
   const state = JSON.parse(a.storage.get('pst100_v1'));
   assert.equal(state.sim, 0);
   assert.deepEqual(state.dep, {});
   assert.deepEqual(state.arr, {});
   assert.deepEqual(state.hist, []);
+  assert.ok(state.plans.B);
   assert.equal(a.run('model().mode'), 'pre');
+});
+
+for (const offset of [-3600000, 3600000]) {
+  test(`old preview offset ${offset} is cleared on load without losing plans or preferences`, () => {
+    const a = app();
+    a.run(`S.sim=${offset};S.dep[0]=START;S.arr[1]=START+120*60000;S.hist=[['dep',0],['arr',1]];S.chk['1:0']=true;S.back=5;S.pid='B';S.plans.B=genPlan('B');S.plans.B.p[10]=1610;S.theme='night';S.gz='all';save()`);
+    const before = JSON.parse(a.storage.get('pst100_v1'));
+    const b = app({ state: before });
+    assert.equal(b.run('model().mode'), 'pre');
+    const after = JSON.parse(b.storage.get('pst100_v1'));
+    for (const key of ['arr', 'dep', 'chk']) assert.deepEqual(after[key], {});
+    assert.deepEqual(after.hist, []);
+    assert.equal(after.back, 0);
+    assert.equal(after.sim, 0);
+    for (const key of ['plans', 'pid', 'theme', 'gz']) assert.deepEqual(after[key], before[key]);
+    assert.equal(app({ state: after }).run('model().mode'), 'pre');
+  });
+}
+
+test('release preserves real race records when no preview offset is saved', () => {
+  const a = app();
+  a.run("S.dep[0]=START;S.arr[1]=START+120*60000;S.hist=[['dep',0],['arr',1]];S.chk['1:0']=true;save()");
+  const state = JSON.parse(a.storage.get('pst100_v1'));
+  const b = app({ state });
+  for (const key of ['arr', 'dep', 'hist', 'chk']) {
+    assert.deepEqual(JSON.parse(b.run(`JSON.stringify(S.${key})`)), state[key]);
+  }
+  assert.equal(b.run('model().mode'), 'atcp');
+});
+
+test('race clock always uses real time even if an obsolete offset is present', () => {
+  const a = app();
+  a.run('S.sim=3600000');
+  assert.ok(Math.abs(a.run('now()-Date.now()')) < 100);
+});
+
+test('canceling plan reset keeps saved plans, records and current editor intact', () => {
+  const a = app();
+  a.run("S.pid='B';S.plans.B=genPlan('B');S.plans.B.p[10]=1610;S.dep[0]=START;save();setTab('set');var resetPrompt='';confirm=message=>{resetPrompt=message;return false}");
+  a.node('pa10').value = '26 hr 45 m';
+  const before = a.run('JSON.stringify(S)');
+  const saved = a.storage.get('pst100_v1');
+  a.run('resetPlan()');
+  assert.match(a.run('resetPrompt'), /Reset plan B/);
+  assert.equal(a.run('JSON.stringify(S)'), before);
+  assert.equal(a.storage.get('pst100_v1'), saved);
+  assert.equal(a.node('pa10').value, '26 hr 45 m');
+});
+
+test('confirmed plan reset only restores the selected plan', () => {
+  const a = app();
+  a.run("S.pid='B';S.plans.A=genPlan('A');S.plans.A.p[10]=1430;S.plans.B=genPlan('B');S.plans.B.p[10]=1610;S.dep[0]=START;S.chk['1:0']=true;var resetPrompt='';confirm=message=>{resetPrompt=message;return true}");
+  const before = a.run('JSON.stringify([S.plans.A,S.arr,S.dep,S.hist,S.chk,S.pid])');
+  a.run('resetPlan()');
+  assert.match(a.run('resetPrompt'), /Reset plan B/);
+  assert.equal(a.run('planArr(10)'), 1619);
+  assert.equal(a.run('JSON.stringify([S.plans.A,S.arr,S.dep,S.hist,S.chk,S.pid])'), before);
+  assert.equal(JSON.parse(a.storage.get('pst100_v1')).plans.B, undefined);
 });
 
 test('start button unlocks as the live clock crosses one hour before start', () => {
@@ -229,7 +288,7 @@ test('saved Day/Night choice takes precedence over the device preference', () =>
 
 test('theme switching preserves race data and unsaved form edits without rerendering', () => {
   const a = app();
-  a.run('testStart();S.arr[1]=START+120*60000;S.chk["1:0"]=true;S.pid="B"');
+  a.run('S.dep[0]=START;S.arr[1]=START+120*60000;S.chk["1:0"]=true;S.pid="B"');
   const before = a.run('JSON.stringify({arr:S.arr,dep:S.dep,hist:S.hist,chk:S.chk,pid:S.pid,sim:S.sim,plans:S.plans})');
   a.node('pa10').value = '26:40';
   a.run('render=()=>{throw new Error("theme must not replace the current view")};toggleTheme()');
@@ -263,16 +322,16 @@ test('profile keeps live course position without GPS diagnostics and demo contro
   assert.doesNotMatch(html, /Secure context|location\.protocol|type="range"|gpsOnce\(|gpsDemo\(/);
 });
 
-test('preview can be exited from settings without a manual simulation editor', () => {
+test('race-day interface has no preview entry or simulation editor', () => {
   const a = app();
-  a.run('testStart();setTab("set")');
+  a.run('now=()=>START-24*3600000;render()');
+  assert.doesNotMatch(a.node('main').innerHTML, /Preview race|testStart\(/);
+  assert.equal(a.run('typeof testStart'), 'undefined');
+  a.run('setTab("set")');
   const html = a.node('main').innerHTML;
   assert.match(html, />Save plan<\/button>/);
-  assert.match(html, />Exit preview<\/button>/);
-  assert.doesNotMatch(html, /id="simv"|datetime-local|Secure context|ใช้เล่นลองกด/);
-  a.run('resetAll()');
-  assert.equal(a.run('S.sim'), 0);
-  assert.equal(a.run('model().mode'), 'pre');
+  assert.match(html, />Clear records<\/button>/);
+  assert.doesNotMatch(html, /Exit preview|id="simv"|datetime-local|Secure context|ใช้เล่นลองกด/);
 });
 
 test('remaining ascent and descent agree with the official totals at every CP', () => {

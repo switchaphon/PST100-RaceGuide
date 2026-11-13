@@ -10,7 +10,7 @@ need checking against the latest published material before race day.
   Tapping start records actual departure; it does not move the gun start or COTs.
 - Before a start record exists, the app remains in pre-race mode. The start button
   unlocks one hour before gun start, including when the page stays open across
-  that boundary. Earlier use offers a rehearsal starting at simulated gun time.
+  that boundary. Earlier use shows the countdown without a rehearsal button.
 - Recording arrival enters a CP stop; recording departure enters the next leg.
   W0 is a recorded stop, but its listed time is advisory, not a COT.
 - Recording FIN ends the race. Elapsed time freezes at the finish record while
@@ -40,11 +40,17 @@ need checking against the latest published material before race day.
 
 ## Reset and storage
 
-- Race records, checklist, simulation offset and custom plans persist locally.
-- “Clear records” (or “Exit preview” during a preview) clears arrivals, departures, history, checklist,
-  backdating and simulation; it preserves custom plans and UI preferences.
+- Race records, checklist and custom plans persist locally. The clock always uses
+  real time. On load, a saved nonzero preview offset marks old rehearsal records:
+  clear those arrivals, departures, history, checklist and backdating, reset the
+  offset and persist the result. Custom plans and UI preferences are preserved.
+  Records without a preview offset are not cleared by this migration.
+- “Clear records” clears arrivals, departures, history, checklist and backdating;
+  it preserves custom plans and UI preferences.
 - After reset and reload, the next race uses real time. Resetting a plan is a
-  separate action affecting only the selected plan.
+  separate action affecting only the selected plan. Both actions are collapsed
+  under **Reset options** at the bottom of Settings and require confirmation.
+  Canceling leaves saved data and unsaved editor fields intact.
 
 ## Compact interface language
 
@@ -54,9 +60,9 @@ need checking against the latest published material before race day.
 - Time-of-day values use HH:mm (or HH:mm:ss), with an English day badge after
   midnight. Elapsed durations retain readable hr/m/s units. COT and W0 advisory
   times, bag logistics and GPS fix age/accuracy remain visible.
-- Pre-race **Preview race** and Settings **Exit preview** remain available. The
-  manual simulation-date editor, GPS diagnostics, one-shot GPS test and simulated
-  position slider are removed. Live GPS tracking and route projection are retained.
+- Rehearsal controls, the manual simulation-date editor, GPS diagnostics, one-shot
+  GPS test and simulated position slider are removed. Live GPS tracking and route
+  projection are retained.
 - Plan formulas, color-legend tutorials, installation/storage guidance and GPS
   usage tips are documented outside the running interface rather than filling
   race-day cards. Plan-button times are labelled **Finish ETA by plan**.
@@ -116,8 +122,8 @@ need checking against the latest published material before race day.
   only when requested; neither a fix nor passing a CP records an arrival.
 - Without a fix, Now uses the last recorded CP and labels the source **From CP**.
   A stopped fix, a fix older than 60 seconds or an error retains the last position
-  with a **Last fix** label, age and accuracy. Fix age uses real device time even
-  during a rehearsal. Fixes over 2 km off route or more than 150 m before the
+  with a **Last fix** label, age and accuracy. Fix age uses real device time.
+  Fixes over 2 km off route or more than 150 m before the
   recorded CP fall back to CP values; lesser off-route/poor accuracy warns.
 - If GPS passes the pending CP by over 50 m, Now shows **Check record** and leaves
   that CP's remaining distance/ascent/descent blank until records are corrected.

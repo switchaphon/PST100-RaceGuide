@@ -37,6 +37,13 @@ def exercise(browser_type, url):
     page.evaluate('navigator.serviceWorker.ready')
     page.wait_for_function('navigator.serviceWorker.controller !== null')
 
+    # Upgrade from a saved rehearsal without discarding custom plans.
+    page.evaluate("S.sim=3600000;S.dep[0]=START;S.arr[1]=START+120*60000;S.hist=[['dep',0],['arr',1]];S.chk['1:0']=true;S.back=5;S.plans.B=JSON.parse(JSON.stringify(planOf('B')));S.plans.B.p[10]=1610;save()")
+    page.reload(wait_until='networkidle')
+    assert page.evaluate("S.sim===0 && Object.keys(S.dep).length===0 && Object.keys(S.arr).length===0 && S.hist.length===0 && Object.keys(S.chk).length===0 && S.back===0 && S.plans.B.p[10]===1610")
+    assert page.evaluate("JSON.parse(localStorage.getItem('pst100_v1')).sim===0")
+    expect(page.get_by_role('button', name='Preview race', exact=True)).to_have_count(0)
+
     theme_toggle = page.get_by_role('button', name='Night mode', exact=True)
     expect(theme_toggle).to_be_visible(timeout=2000)
     expect(page.locator('html')).to_have_attribute('data-theme', 'day')
@@ -65,25 +72,44 @@ def exercise(browser_type, url):
 
     # UI unlocks on a timer tick without navigating away.
     page.evaluate('now=()=>START-61*60000;render()')
-    expect(page.get_by_role('button', name='Preview race')).to_be_visible()
+    expect(page.get_by_role('button', name='Preview race', exact=True)).to_have_count(0)
+    expect(page.get_by_role('button', name='Start race', exact=True)).to_have_count(0)
     page.evaluate('now=()=>START-59*60000;applyLive()')
     expect(page.get_by_role('button', name='Start race', exact=True)).to_be_visible()
-    page.evaluate('now=()=>Date.now()+(S.sim||0)')
 
-    # A full rehearsal, valid/invalid edits, then reset and reload.
-    page.evaluate('testStart()')
+    # Exercise race actions on a controlled test clock; no production demo API.
+    page.evaluate('now=()=>START')
+    page.get_by_role('button', name='Start race', exact=True).click()
     page.get_by_role('button', name='Arrived A1', exact=True).click()
     page.get_by_role('button', name='Settings', exact=True).click()
     page.locator('#pa10').fill('23 hr 58 m')
     page.get_by_role('button', name='Save plan', exact=True).click()
     assert page.evaluate('plan()[10]') == 1438
     expect(page.locator('#pa10')).to_have_value('23 hr 58 m')
+    assert page.locator('.plan-editor').get_by_role('button', name='Reset plan A', exact=True).count() == 0
+    expect(page.get_by_role('button', name='Reset plan A', exact=True)).not_to_be_visible()
+    page.locator('.reset-options summary').click()
+    reset_button = page.get_by_role('button', name='Reset plan A', exact=True)
+    expect(reset_button).to_be_visible()
+    assert page.locator('.reset-options').bounding_box()['y'] > page.locator('#gpxExport').bounding_box()['y']
+    page.locator('#pa10').fill('23 hr 55 m')
+    reset_prompts = []
+
+    def cancel_reset(dialog):
+        reset_prompts.append(dialog.message)
+        dialog.dismiss()
+
+    page.once('dialog', cancel_reset)
+    reset_button.click()
+    assert len(reset_prompts) == 1 and 'Reset plan A' in reset_prompts[0]
+    assert page.evaluate('plan()[10]') == 1438
+    expect(page.locator('#pa10')).to_have_value('23 hr 55 m')
     page.locator('#pa2').fill('1:99')
     page.get_by_role('button', name='Save plan', exact=True).click()
     expect(page.get_by_role('alert')).to_contain_text('00–59')
     assert page.evaluate('plan()[10]') == 1438
     page.on('dialog', lambda dialog: dialog.accept())
-    page.get_by_role('button', name='Exit preview', exact=True).click()
+    page.get_by_role('button', name='Clear records', exact=True).click()
     page.reload(wait_until='networkidle')
     assert page.evaluate('S.sim===0 && S.dep[0]==null && S.arr[1]==null && plan()[10]===1438')
 
@@ -146,8 +172,8 @@ def exercise(browser_type, url):
     assert page.locator('[data-k="elapsed"]').inner_text() == elapsed
     assert '23' in elapsed and '59' in elapsed
 
-    # Start another rehearsal and advance through every outgoing leg via real buttons.
-    page.evaluate('resetAll();testStart()')
+    # Advance through every outgoing leg via real buttons.
+    page.evaluate('resetAll();now=()=>START;act("dep",0)')
     expected_notes = {5: '1,117', 6: 'A6 คืออาหารร้อนสุดท้าย', 7: 'W0 ไม่มีอาหารร้อน',
                       8: 'ที่ A7', 9: 'ช่วงสุดท้าย'}
     for i, station in enumerate(['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'W0', 'A7', 'A8'], 1):
@@ -191,7 +217,7 @@ def exercise(browser_type, url):
     assert not errors, errors
     context.close()
     browser.close()
-    print(f'{browser_type.name}: PASS (mobile UI, all CPs, validation, live time, HTTP 503, offline reload)')
+    print(f'{browser_type.name}: PASS (preview migration, reset cancellation, mobile UI, all CPs, validation, live time, HTTP 503, offline reload)')
 
 
 if __name__ == '__main__':

@@ -154,6 +154,7 @@ table.mx .ml{font-size:13px;line-height:1.4;margin-top:2px;font-weight:600;overf
 .hero .big:not(.bad):not(.warn):not(.good){color:var(--focus)}
 .nsname{color:var(--focus)}
 .clock.acc{color:var(--acc)}
+.reset-options summary{cursor:pointer;font-weight:700}
 [data-k="hdCut"].bad,[data-k="hdCut"].warn{background:var(--negative-bg)}
 [data-k="hdCut"] .sub2{color:inherit}
 </style>
@@ -268,6 +269,8 @@ if(!S.plans)S.plans={};if(PIDS.indexOf(S.pid)<0)S.pid='A';
 // records made long before race day without test mode were accidental taps: clear them
 try{if(S.dep&&S.dep[0]!=null&&!S.sim&&S.dep[0]<START-2*3600000){S.arr={};S.dep={};S.hist=[];S.chk={}}}catch(e){}
 function save(){try{localStorage.setItem('pst100_v1',JSON.stringify(S));}catch(e){}}
+// Retire saved rehearsals while preserving custom plans and display preferences.
+if(S.sim){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;S.sim=0;save()}
 if(S.theme!=='day'&&S.theme!=='night')S.theme=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'night':'day';
 function applyTheme(){
   document.documentElement.dataset.theme=S.theme;
@@ -283,7 +286,7 @@ function plan(){return planOf(S.pid).p}
 function stp(){return planOf(S.pid).s}
 function goalMin(){return PINFO[S.pid].goal}
 function setPlan(k){S.pid=k;save();render()}
-function now(){return Date.now()+(S.sim||0)}
+function now(){return Date.now()}
 function planArr(i){return plan()[i]}
 function planDep(i){return plan()[i]+stp()[i]}
 
@@ -352,10 +355,9 @@ function act(kind,i){
 }
 function undo(){var h=S.hist.pop();if(!h)return;if(h[0]==='dep')delete S.dep[h[1]];else delete S.arr[h[1]];save();render()}
 function adjLast(min){var h=S.hist[S.hist.length-1];if(!h)return;var o=h[0]==='dep'?S.dep:S.arr;o[h[1]]+=min*60000;save();render()}
-function testStart(){S.sim=START-Date.now();S.dep[0]=START;S.hist=[['dep',0]];save();render()}
 function toggleChk(k){S.chk[k]=!S.chk[k];save();render()}
 function setTab(t){S.tab=t;save();render()}
-function resetAll(){if(confirm('Clear race records and exit preview? Saved plans are kept.')){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;S.sim=0;save();render()}}
+function resetAll(){if(confirm('Clear race records? Saved plans are kept.')){S.arr={};S.dep={};S.hist=[];S.chk={};S.back=0;S.sim=0;save();render()}}
 function readPlanForm(){
   var pl=[],st=[],errors=[];
   pl.push(0);st.push(0);
@@ -381,7 +383,7 @@ function readPlanForm(){
   return {p:pl,s:st};
 }
 function savePlan(){var pl=readPlanForm();if(!pl)return;S.plans[S.pid]=pl;save();render()}
-function resetPlan(){delete S.plans[S.pid];save();render()}
+function resetPlan(){if(confirm('Reset plan '+S.pid+' to defaults? Saved edits for this plan will be removed.')){delete S.plans[S.pid];save();render()}}
 
 /* ---------- VIEWS ---------- */
 var BAG_NOTE='Bag: รถงาน — ถึง CMECC หน้าอาคารรวงผึ้ง 02:30 · ฝากก่อนรถออก 03:00; ไปเอง — วัดวิมุตติการาม 04:00–04:45 · เสาร์ 14 พ.ย. · Special Need Bag ใช้ที่ A5; กระเป๋าหลังวิ่งส่งเส้นชัย แยกถุง · รับ Special Need Bag คืนที่ CMECC อา. 08:00–14:00';
@@ -491,8 +493,7 @@ function viewNow(m){
   if(m.mode==='pre'){
     var early=now()<START-60*60000;
     h+='<div class="card hero"><div class="st">Start · Sat 14 Nov 05:00</div><div class="big" data-k="toStart">-</div></div>';
-    if(early)h+='<button class="btn ghost" onclick="testStart()">Preview race</button>';
-    else h+='<button class="btn" onclick="act(&quot;dep&quot;,0)">Start race</button>';
+    if(!early)h+='<button class="btn" onclick="act(&quot;dep&quot;,0)">Start race</button>';
     h+=planBar(m);h+=nextStopCard(1,0,'First CP');
     h+='<div class="card"><h2>First leg</h2><div class="tip" style="margin:0">'+P[0].leg+wtr(0)+'</div></div>';
     return h;
@@ -579,9 +580,9 @@ function viewSet(m){
     var v=elapsedText(pl[i]);
     h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?tM(0,{noicon:1}):'<input class="s elapsed" id="pa'+i+'" aria-label="'+P[i].id+' arrival elapsed" spellcheck="false" autocapitalize="off" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s rest" id="ps'+i+'" aria-label="'+P[i].id+' rest minutes" type="number" value="'+st[i]+'">')+'</td></tr>';
   }
-  h+='</table><div id="planError" class="small bad" role="alert"></div><button class="btn alt" onclick="savePlan()">Save plan</button><button class="btn ghost" onclick="resetPlan()">Reset plan '+S.pid+'</button></div>';
+  h+='</table><div id="planError" class="small bad" role="alert"></div><button class="btn alt" onclick="savePlan()">Save plan</button></div>';
   h+='<div class="card"><h2>GPX · Plan '+S.pid+'</h2><label class="small" for="gpxPoints">Waypoints</label> <select id="gpxPoints"><option value="cp">CP only</option><option value="all">CP + peaks / km</option></select><button id="gpxExport" class="btn ghost" onclick="exportGpx()">Export GPX · '+S.pid+'</button><div id="gpxStatus" class="small" role="status"></div></div>';
-  h+='<div class="card"><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">'+(S.sim?'Exit preview':'Clear records')+'</button></div>';
+  h+='<details class="card reset-options"><summary>Reset options</summary><button class="btn ghost" style="color:var(--bad)" onclick="resetPlan()">Reset plan '+S.pid+'</button><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">Clear records</button></details>';
   return h;
 }
 
@@ -662,7 +663,7 @@ function live(){
     o.cpProg=['<span class="dots">'+d+'</span><span>CP <b>'+cnt+'</b>/9'+(fin?' · FIN ✓':(nx>0?' · Next '+P[nx].id:' · Next FIN'))+'</span>',''];
   })();
   o.hdDeltaLab=[IC_TMR+'Plan '+S.pid+' · '+PINFO[S.pid].t,''];
-  o.sim=[S.sim?'Preview':'',''];
+  o.sim=['',''];
   o.elapsed=[tDur(m.mode==='pre'?0:Math.floor(((m.mode==='done'?S.arr[10]:n)-START)/1000),{sec:1,noicon:1,fh:1}),''];
   o.raceclk=[m.mode==='pre'?'Starts in '+tDur(Math.floor((START-n)/1000),{sec:1,days:1,noicon:1}):'Start '+tC(START,{noicon:1,noday:1}),''];
   var delta=null,cj=null;

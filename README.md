@@ -10,7 +10,7 @@ Labels and controls use concise English; station names, course descriptions and 
 
 Behavior and acceptance criteria: [docs/race-behavior.md](docs/race-behavior.md).
 
-Before race day, use **Preview race** to try the planner. Use **Exit preview** in Settings to clear sample records and return to real time while keeping custom plans.
+The race-day interface uses real time and has no rehearsal controls. Opening this version clears old records marked as a preview, while preserving custom plans and preferences. Real race records are retained. **Reset options** at the bottom of Settings contains **Reset plan** and **Clear records**; both require confirmation.
 
 Use the Day/Night button beside CP progress to switch display colors. Your choice is saved on this device; switching keeps race records and unsaved plan edits intact.
 
