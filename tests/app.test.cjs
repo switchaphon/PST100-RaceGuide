@@ -3,7 +3,6 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
-const fullRoute = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/route-v2.json'), 'utf8'));
 
 // Run the actual page script. Only browser APIs are substituted; race logic is real.
 function app({ state, prefersDark = false } = {}) {
@@ -141,51 +140,6 @@ test('time parser rejects invalid minute fields', () => {
   const a = app();
   assert.equal(a.run("parseHM('1:99')"), null);
   assert.equal(a.run("parseHM('26:59')"), 1619);
-});
-
-test('GPX export preserves the full route and anchors all 11 CPs to original vertices', () => {
-  const a = app();
-  assert.equal(a.run('typeof buildGpx'), 'function');
-  a.run('var exportRoute='+JSON.stringify(fullRoute));
-  const xml = a.run("buildGpx(exportRoute,'A',planOf('A'),'cp')");
-  const points = [...xml.matchAll(/<trkpt lat="([^"]+)" lon="([^"]+)"><ele>([^<]+)<\/ele><\/trkpt>/g)].map(m=>m.slice(1).map(Number));
-  assert.deepEqual(points, fullRoute.p);
-  const waypoints = [...xml.matchAll(/<wpt lat="([^"]+)" lon="([^"]+)"/g)].map(m=>m.slice(1).map(Number));
-  assert.deepEqual(waypoints, fullRoute.cp.map(i=>fullRoute.p[i].slice(0,2)));
-  assert.equal((xml.match(/<type>Aid_station<\/type>/g)||[]).length, 9);
-  assert.doesNotMatch(xml, /<time>|HOT|DROPBAG|Dropped bag/);
-});
-
-test('GPX export uses the selected custom plan, clock days, and W0 advisory without changing records', () => {
-  const a = app();
-  assert.equal(a.run('typeof buildGpx'), 'function');
-  a.run('var exportRoute='+JSON.stringify(fullRoute));
-  a.run("var custom=JSON.parse(JSON.stringify(planOf('B')));custom.p[1]=165;custom.s[1]=9;S.plans.B=custom;S.pid='B'");
-  const before=a.run('JSON.stringify(S)');
-  const xml=a.run("buildGpx(exportRoute,S.pid,planOf(S.pid),'cp')");
-  assert.match(xml, /A1 Plan07:45 COT08:50/);
-  assert.match(xml, /Elapsed 2 hr 45 m/);
-  assert.match(xml, /Rest 9 m; Depart 07:54/);
-  assert.match(xml, /W0 Plan01:41\+1 Guide06:00\+1/);
-  assert.doesNotMatch(xml, /W0[^<]*COT/);
-  assert.match(xml, /Next A6: 10\.3 km; climb 1117 m; descent 207 m/);
-  assert.match(xml, /CMECC.*02:30.*03:00/);
-  assert.match(xml, /04:00–04:45/);
-  assert.equal(a.run('JSON.stringify(S)'),before);
-});
-
-test('optional GPX POIs follow course order and escape station text correctly', () => {
-  const a=app();
-  assert.equal(a.run('typeof buildGpx'), 'function');
-  a.run('var exportRoute='+JSON.stringify(fullRoute));
-  a.run('P[1].n="A&B <test>"');
-  const xml=a.run("buildGpx(exportRoute,'C',planOf('C'),'all')");
-  const points=[...xml.matchAll(/<wpt lat="([^"]+)" lon="([^"]+)"/g)].map(m=>m.slice(1).map(Number));
-  const index=points.map(p=>fullRoute.p.findIndex(r=>r[0]===p[0]&&r[1]===p[1]));
-  assert.equal(points.length,25);
-  assert.deepEqual(index,[...index].sort((a,b)=>a-b));
-  assert.match(xml,/A&amp;B &lt;test&gt;/);
-  assert.doesNotMatch(xml,/eta06:56|Plan A finish/);
 });
 
 test('elapsed input accepts hr/m units and rejects invalid durations', () => {
@@ -331,6 +285,7 @@ test('race-day interface has no preview entry or simulation editor', () => {
   const html = a.node('main').innerHTML;
   assert.match(html, />Save plan<\/button>/);
   assert.match(html, />Clear records<\/button>/);
+  assert.doesNotMatch(html, /Export GPX|Waypoints|gpxPoints|gpxExport/);
   assert.doesNotMatch(html, /Exit preview|id="simv"|datetime-local|Secure context|ใช้เล่นลองกด/);
 });
 

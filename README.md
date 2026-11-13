@@ -18,7 +18,7 @@ The Now screen shows course position, distance to the next CP and finish, and cl
 
 Standalone watch navigation file: [PST100-2026-v3-watch.gpx](downloads/PST100-2026-v3-watch.gpx). It contains the full Official V1 coordinates, V2 smoothed elevations and 11 CPs, with no plan times or synthetic track timestamps. Select it as a route and start recording an exercise on the watch for activity measurements.
 
-Export GPX v3 from Settings using the selected plan and the values currently in its fields, including unsaved edits. Export leaves saved plans and race records intact. Choose **CP only** (11 stops) or **CP + peaks / km** (25 points). The full 8,999-point course and V2 smoothed elevations are cached for offline export. GPX times are fixed plan projections.
+The website is a planner for CP records, plan comparison and station details. GPX export controls are removed; the watch uses the standalone course above.
 
 Bag drop-off follows the [Race Manual](https://pst.mytrails.run/Racemanual/): shuttle users arrive at CMECC's Ruang Phueng building at 02:30 and deposit before the 03:00 departure; self-arrivals deposit at Wat Wimut Tikaram from 04:00–04:45 on 14 November. Special Need Bags go to A5; finish bags are separate.
 

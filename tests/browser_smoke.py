@@ -6,7 +6,6 @@ python tests/browser_smoke.py
 """
 import functools
 import threading
-import xml.etree.ElementTree as ET
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -56,17 +55,7 @@ def exercise(browser_type, url):
     page.locator('#pa10').fill('23:57')
     theme_toggle.click()
     expect(page.locator('#pa10')).to_have_value('23:57')
-    # Export uses current form values without saving or changing records.
-    before_export = page.evaluate('JSON.stringify(S)')
-    with page.expect_download() as download:
-        page.get_by_role('button', name='Export GPX · A', exact=True).click()
-    xml = Path(download.value.path()).read_text()
-    gpx = ET.fromstring(xml)
-    assert len(gpx.findall('.//{*}trkpt')) == 8999
-    assert len(gpx.findall('{*}wpt')) == 11
-    assert '23 hr 57 m' in gpx.findtext('{*}metadata/{*}name')
-    assert 'Guide06:00+1' in xml and '04:00–04:45' in xml
-    assert page.evaluate('JSON.stringify(S)') == before_export
+    expect(page.locator('#gpxExport, #gpxPoints')).to_have_count(0)
     assert page.evaluate('planArr(10)') == 1439
     page.get_by_role('button', name='Now', exact=True).click()
 
@@ -91,7 +80,7 @@ def exercise(browser_type, url):
     page.locator('.reset-options summary').click()
     reset_button = page.get_by_role('button', name='Reset plan A', exact=True)
     expect(reset_button).to_be_visible()
-    assert page.locator('.reset-options').bounding_box()['y'] > page.locator('#gpxExport').bounding_box()['y']
+    assert page.locator('.reset-options').bounding_box()['y'] > page.get_by_role('button', name='Save plan', exact=True).bounding_box()['y']
     page.locator('#pa10').fill('23 hr 55 m')
     reset_prompts = []
 
@@ -206,14 +195,11 @@ def exercise(browser_type, url):
     page.reload(wait_until='networkidle')
     expect(page).to_have_title('PST100 Race Day')
     expect(page.locator('#main')).not_to_be_empty()
-    # Full-resolution data is available on the first offline export after reload.
     page.get_by_role('button', name='Settings', exact=True).click()
-    page.locator('#gpxPoints').select_option('all')
-    with page.expect_download() as download:
-        page.get_by_role('button', name='Export GPX · A', exact=True).click()
-    gpx = ET.fromstring(Path(download.value.path()).read_text())
-    assert len(gpx.findall('.//{*}trkpt')) == 8999
-    assert len(gpx.findall('{*}wpt')) == 25
+    expect(page.locator('#pa10')).to_have_value('23 hr 58 m')
+    expect(page.locator('#gpxExport, #gpxPoints')).to_have_count(0)
+    page.get_by_role('button', name='Profile', exact=True).click()
+    expect(page.locator('#main svg').first).to_be_visible()
     assert not errors, errors
     context.close()
     browser.close()

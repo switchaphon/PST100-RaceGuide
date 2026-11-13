@@ -582,60 +582,8 @@ function viewSet(m){
     h+='<tr><td><b>'+P[i].id+'</b></td><td>'+(i===0?tM(0,{noicon:1}):'<input class="s elapsed" id="pa'+i+'" aria-label="'+P[i].id+' arrival elapsed" spellcheck="false" autocapitalize="off" value="'+v+'">')+'</td><td>'+(i===0?'-':'<input class="s rest" id="ps'+i+'" aria-label="'+P[i].id+' rest minutes" type="number" value="'+st[i]+'">')+'</td></tr>';
   }
   h+='</table><div id="planError" class="small bad" role="alert"></div><button class="btn alt" onclick="savePlan()">Save plan</button></div>';
-  h+='<div class="card"><h2>GPX · Plan '+S.pid+'</h2><label class="small" for="gpxPoints">Waypoints</label> <select id="gpxPoints"><option value="cp">CP only</option><option value="all">CP + peaks / km</option></select><button id="gpxExport" class="btn ghost" onclick="exportGpx()">Export GPX · '+S.pid+'</button><div id="gpxStatus" class="small" role="status"></div></div>';
   h+='<details class="card reset-options"><summary>Reset options</summary><button class="btn ghost" style="color:var(--bad)" onclick="resetPlan()">Reset plan '+S.pid+'</button><button class="btn ghost" style="color:var(--bad)" onclick="resetAll()">Clear records</button></details>';
   return h;
-}
-
-/* ---------- GPX EXPORT ---------- */
-function gpxEscape(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]})}
-function gpxClock(min,short){
-  var ms=START+min*60000,d=new Date(ms+7*3600000);
-  var days=Math.floor((ms+7*3600000)/86400000)-Math.floor((START+7*3600000)/86400000);
-  return p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())+(short?(days?'+'+days:''):' '+dateTh(ms));
-}
-function buildGpx(route,pid,pl,mode){
-  if(!route||route.p.length!==8999||route.cp.length!==P.length)throw new Error('Invalid route data');
-  var title='PST100 Plan '+pid+' v3 · '+elapsedText(pl.p[10]),nodes=[];
-  P.forEach(function(st,i){
-    var nm=st.id+(i===5?' Bag':'')+' Plan'+gpxClock(pl.p[i],true);
-    if(i)nm+=' '+(i===7?'Guide':'COT')+gpxClock(st.cut,true);
-    var desc=st.id+' | '+st.n+' | '+st.km+' km\nPlan '+pid+' arrival '+gpxClock(pl.p[i])+'; Elapsed '+elapsedText(pl.p[i]);
-    if(i)desc+='\n'+(i===7?'Guide (advisory)':'COT')+' '+gpxClock(st.cut);
-    if(i<10)desc+='\nRest '+pl.s[i]+' m; Depart '+gpxClock(pl.p[i]+pl.s[i])+'\nNext '+P[i+1].id+': '+(P[i+1].km-st.km).toFixed(1)+' km; climb '+st.gain+' m; descent '+st.loss+' m';
-    var supplies=[];
-    ITEMS.forEach(function(it,k){if(supVal(i,k)===1)supplies.push(it.l)});
-    desc+='\nSupplies: '+(supplies.length?supplies.join(', '):'See organizer table')+'; Crew: '+(st.crew?'Yes':'No');
-    if(i===0||i===5)desc+='\n'+BAG_NOTE;
-    nodes.push({i:route.cp[i],name:nm,desc:desc,type:i===0?'Begin':(i===10?'End':'Aid_station'),sym:i===0?'Flag, Blue':(i===10?'Finish':'Drinking Water')});
-  });
-  if(mode==='all')route.extra.forEach(function(p){nodes.push({i:p.i,name:p.name,desc:'Additional course marker; not an aid station.',type:p.type,sym:p.sym})});
-  nodes.sort(function(a,b){return a.i-b.i});
-  var xml='<?xml version="1.0" encoding="UTF-8"?>\n<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="PST100 RaceGuide v3">';
-  xml+='<metadata><name>'+gpxEscape(title)+'</name><desc>'+gpxEscape('Plan times are fixed projections in Thailand UTC+07:00. Plan clock: HH:mm; +1 means next day. Official V1 coordinates; V2 smoothed elevation. Organizer course: 105.8 km, climb 4732 m, descent 4819 m. '+BAG_NOTE)+'</desc></metadata>';
-  nodes.forEach(function(w){var p=route.p[w.i];xml+='<wpt lat="'+p[0]+'" lon="'+p[1]+'"><ele>'+p[2]+'</ele><name>'+gpxEscape(w.name)+'</name><desc>'+gpxEscape(w.desc)+'</desc><sym>'+gpxEscape(w.sym)+'</sym><type>'+gpxEscape(w.type)+'</type></wpt>'});
-  xml+='<trk><name>'+gpxEscape(title)+'</name><trkseg>';
-  route.p.forEach(function(p){xml+='<trkpt lat="'+p[0]+'" lon="'+p[1]+'"><ele>'+p[2]+'</ele></trkpt>'});
-  return xml+'</trkseg></trk></gpx>\n';
-}
-var exportRoutePromise=null;
-function loadExportRoute(){
-  if(!exportRoutePromise)exportRoutePromise=fetch('data/route-v2.json').then(function(r){if(!r.ok)throw new Error('Route download failed');return r.json()}).catch(function(e){exportRoutePromise=null;throw e});
-  return exportRoutePromise;
-}
-async function exportGpx(){
-  var pl=readPlanForm();if(!pl)return;
-  var pid=S.pid,mode=document.getElementById('gpxPoints').value;
-  var button=document.getElementById('gpxExport'),status=document.getElementById('gpxStatus');
-  button.disabled=true;status.className='small';status.textContent='Preparing GPX…';
-  try{
-    var route=await loadExportRoute(),xml=buildGpx(route,pid,pl,mode);
-    var url=URL.createObjectURL(new Blob([xml],{type:'application/gpx+xml;charset=utf-8'})),a=document.createElement('a');
-    a.href=url;a.download='PST100-Plan-'+pid+'-v3-'+(mode==='all'?'all-points':'CP')+'.gpx';document.body.appendChild(a);a.click();a.remove();
-    setTimeout(function(){URL.revokeObjectURL(url)},60000);
-    status.textContent='GPX downloaded · Plan '+pid;
-  }catch(e){status.className='small bad';status.textContent='GPX download failed. Try again.'}
-  finally{button.disabled=false}
 }
 
 /* ---------- LIVE VALUES ---------- */
